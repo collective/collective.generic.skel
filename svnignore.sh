@@ -43,6 +43,7 @@ parts
 
 downloads
 src.others
+src/collective.generic.skel.egg-info
 .installed.cfg
 .mr.developer.cfg
 *.pt.py
