@@ -1,0 +1,84 @@
+import logging
+
+from ${namespace}${ndot}${nested_namespace}.${project_name} import app_config
+from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.globals import (
+    getTestingOptionsFromIni,
+    errprint,
+    ZOPETESTCASE,
+    UNTESTED_WARNING,
+    format_test_title,
+)
+
+
+_options = getTestingOptionsFromIni()
+FAILS_ON_UNTESTED_ELEMENT = _options['FAILS_ON_UNTESTED_ELEMENT']
+TEST_VERBOSE_MODE =  _options['TEST_VERBOSE_MODE']
+TEST_SEQUENCE_TITLE = format_test_title('Checking Portal MailHost')
+
+
+
+#if $with_ploneproduct_ldap:
+def configureLDAP(portal):
+    """LDAP configuration
+    """
+    LDAP_PARAMETERS = app_config.LDAP_PARAMETERS
+    from Products.PloneLDAP.factory import manage_addPloneLDAPMultiPlugin
+
+    # create ldap plugin
+    pluginid=LDAP_PARAMETERS["pluginid"]
+    if hasattr(portal.acl_users, pluginid):
+        portal.acl_users.manage_delObjects(pluginid)
+    manage_addPloneLDAPMultiPlugin(portal.acl_users, pluginid,
+        title=LDAP_PARAMETERS["title"], LDAP_server=LDAP_PARAMETERS["LDAP_server"],
+        login_attr=LDAP_PARAMETERS["login_attr"], uid_attr=LDAP_PARAMETERS["uid_attr"],
+        users_base=LDAP_PARAMETERS["users_base"], users_scope=LDAP_PARAMETERS["users_scope"],
+        roles=LDAP_PARAMETERS["roles"], groups_base=LDAP_PARAMETERS["groups_base"],
+        groups_scope=LDAP_PARAMETERS["groups_scope"], binduid=LDAP_PARAMETERS["binduid"],
+        bindpwd=LDAP_PARAMETERS["bindpwd"], binduid_usage=LDAP_PARAMETERS["binduid_usage"],
+        rdn_attr=LDAP_PARAMETERS["rdn_attr"], local_groups=LDAP_PARAMETERS["local_groups"],
+        use_ssl=LDAP_PARAMETERS["use_ssl"], encryption=LDAP_PARAMETERS["encryption"],
+        read_only=LDAP_PARAMETERS["read_only"])
+    getattr(portal.acl_users, pluginid).acl_users._user_objclasses=LDAP_PARAMETERS["userobjectclasses"]
+
+    # activate plugin types
+    ldapplugin = portal.acl_users[pluginid]
+    actives=LDAP_PARAMETERS["actives"]
+    ldapplugin.manage_activateInterfaces(actives)
+
+    # re-order plugins
+    for p in actives:
+        i=portal.acl_users.plugins._getInterfaceFromName(p)
+        l=portal.acl_users.plugins._getPlugins(i)
+        if pluginid in l:
+            ordered = [pluginid] + [t for t in l if t<>pluginid]
+        portal.acl_users.plugins._plugins[i]=tuple(ordered)
+#end if
+
+def setupVarious(context):
+    """Miscellanous steps import handle.
+    """
+    logger = logging.getLogger('${namespace}${ndot}${nested_namespace}.${project_name} / setuphandler')
+
+    # Ordinarily, GenericSetup handlers check for the existence of XML files.
+    # Here, we are not parsing an XML file, but we use this text file as a
+    # flag to check that we actually meant for this import step to be run.
+    # The file is found in profiles/default.
+
+    if context.readDataFile('${namespace}${ndot}${nested_namespace}.${project_name}_various.txt') is None:
+        return
+
+    portal = context.getSite()
+
+#if $with_ploneproduct_ldap:
+    # print warning if needed
+    if not app_config.LDAP_CONFIGURED:
+        errprint(UNTESTED_WARNING)
+        errprint("-"*80+"\n")
+        errprint('Activate LDAP configuration '
+                 'after having configured it in app_config.py !!!\n')
+        errprint("set app_config.LDAP_CONFIGURED = True when done.\n")
+        errprint("-"*80+"\n")
+    if app_config.LDAP_CONFIGURED or FAILS_ON_UNTESTED_ELEMENT:
+        configureLDAP(portal)
+#end if
+

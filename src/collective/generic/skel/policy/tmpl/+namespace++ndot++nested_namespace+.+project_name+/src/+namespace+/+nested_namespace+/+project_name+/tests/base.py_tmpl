@@ -1,0 +1,180 @@
+from Products.Five import zcml
+from Products.Five import fiveconfigure
+
+from Testing import ZopeTestCase as ztc
+import transaction
+from OFS.Folder import Folder
+
+from Products.PloneTestCase import PloneTestCase as ptc
+from Products.PloneTestCase.layer import onsetup
+
+
+$hr
+"""
+
+$generate_msg
+
+$generate_file
+
+    - user_base.py
+
+$generate_objects
+
+    - user_base.py
+
+        * method: setup_${namespace}${nunderscore}${nested_namespace}_${project_name}()
+
+            method to setup the plone site
+
+        * class: ${namespace}${nunderscore}${nested_namespace}_${project_name}_TestCase
+
+            Base plone test case like PloneTestCase
+
+        * class: ${namespace}${nunderscore}${nested_namespace}_${project_name}_FunctionalTestCase:
+
+            Functionnal TestBase barely based on the previous TestCase.
+
+
+
+Think to put "FAILS_ON_UNTESTED_ELEMENT" to True in testing.cfg for production mode or to test very strictly your code!
+This will issue errors for untested elements instead of just simple warnings !
+
+
+"""
+$hr
+
+
+TESTED_PRODUCTS = (\
+#for item in $z2products:
+#$item
+#for package in $z2products[$item]:
+#if $package.startswith('#'):
+    #'$package.replace('#', '')',
+#else
+    '$package',
+#end if
+#end for
+#end for
+)
+for product in TESTED_PRODUCTS:
+    ztc.installProduct(product)
+
+@onsetup
+def setup_${project_name}PloneSite():
+    """Set up the additional products required for the ${namespace}${ndot}${nested_namespace}) site ${project_name}.
+
+    The @onsetup decorator causes the execution of this body to be deferred
+    until the setup of the Plone site testing layer.
+    """
+    # ------------------------------------------------------------------------------------
+    # Get five errors if any for making debug easy.
+    # ------------------------------------------------------------------------------------
+    fiveconfigure.debug_mode = True
+
+    # ------------------------------------------------------------------------------------
+    # Import all our python modules required by our packages
+    # ------------------------------------------------------------------------------------
+#for $item in $py_modules:
+\#$item
+#for $package in $py_modules[$item]:
+#if $package.startswith('#'):
+    \#import $package.replace('#', '')
+#else
+    import $package
+#end if
+#end for
+#end for
+
+    # ------------------------------------------------------------------------------------
+    # - Load the ZCML configuration for the ${namespace}${ndot}${nested_namespace}.${project_name} package.
+    # ------------------------------------------------------------------------------------
+
+#for $package in $zcml:
+#if isinstance($package, basestring):
+#$package
+#else
+#set $item, $slug = $package
+#if $item.startswith('#'):
+    \#zcml.load_config('${slug}.zcml', $item.replace('#', ''))
+#else
+    zcml.load_config('${slug}.zcml', $item)
+#end if
+#end if
+#end for
+
+
+    # ------------------------------------------------------------------------------------
+    # - Load the python packages that are registered as Zope2 Products via Five
+    #   which can't happen until we have loaded the package ZCML.
+    # ------------------------------------------------------------------------------------
+
+#for $package in $z2packages:
+#$package
+#for $item in $z2packages[$package]:
+#if $item.startswith('#'):
+    \#ztc.installPackage($item.replace('#', ''))
+#else
+    ztc.installPackage('$item')
+#end if
+#end for
+
+#end for
+
+    # ------------------------------------------------------------------------------------
+    # Load our own ${project_name}
+    # ------------------------------------------------------------------------------------
+    import ${namespace}${ndot}${nested_namespace}.${project_name}
+    zcml.load_config('configure.zcml', ${namespace}${ndot}${nested_namespace}.${project_name})
+
+    ztc.installPackage('${namespace}${ndot}${nested_namespace}.${project_name}')
+    ztc.installPackage('${namespace}${ndot}${nested_namespace}.skin')
+    ztc.installPackage('${namespace}${ndot}${nested_namespace}.tma')
+
+    # ------------------------------------------------------------------------------------
+    # Reset five debug mode as we do not use it anymore
+    # ------------------------------------------------------------------------------------
+    fiveconfigure.debug_mode = False
+
+class TestCase(ptc.PloneTestCase):
+    """We use this base class for all the tests in this package. If necessary,
+    we can put common utility or setup code in here.
+    """
+    class Session(dict):
+        def set(self, key, value):
+            self[key] = value
+
+    def afterSetUp(self):
+        # support for sessions without invalidreferences if using zeo temp storage
+        self.app.REQUEST['SESSION'] = self.Session()
+        if not hasattr(self.app, 'temp_folder'):
+            tf = Folder('temp_folder')
+            self.app._setObject('temp_folder', tf)
+            transaction.commit()
+        ztc.utils.setupCoreSessions(self.app)
+
+class FunctionalTestCase(ptc.FunctionalTestCase, TestCase):
+    """Functionnal base TestCase."""
+
+# try to load user code
+try: from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.user_base import setup_${project_name}PloneSite
+except: pass
+
+try:from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.user_base import TestCase
+except: pass
+
+try:from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.user_base import FunctionalTestCase
+except: pass
+
+# The order here is important: We first call the (deferred) function which
+# installs the products we need for the ${namespace}${ndot}${nested_namespace} package. Then, we let
+# PloneTestCase set up this product on installation.
+def setup_site():
+    setup_${project_name}PloneSite()
+    ptc.setupPloneSite(products=[\
+    #if $with_ploneproduct_csvreplica
+    # if we have csvreplicata, just say that a plone site can't live without it.
+        'csvreplicata',
+    #end if
+        '${namespace}${ndot}${nested_namespace}.${project_name}']
+    )
+# vim:set ft=python:

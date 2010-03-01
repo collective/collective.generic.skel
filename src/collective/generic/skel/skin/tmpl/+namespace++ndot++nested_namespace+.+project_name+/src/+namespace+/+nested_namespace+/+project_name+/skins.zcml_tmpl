@@ -1,0 +1,14 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:cmf="http://namespaces.zope.org/cmf"
+    i18n_domain="${namespace}${ndot}${nested_namespace}.${project_name}">
+
+   <!-- File System Directory Views registration -->
+   <cmf:registerDirectory
+       name="${namespace}${nunderscore}${nested_namespace}_${project_name}_custom_images"/>
+   <cmf:registerDirectory
+       name="${namespace}${nunderscore}${nested_namespace}_${project_name}_custom_templates"/>
+   <cmf:registerDirectory
+       name="${namespace}${nunderscore}${nested_namespace}_${project_name}_styles"/>
+
+</configure>

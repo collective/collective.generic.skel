@@ -1,0 +1,59 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+
+$hr
+"""
+Globals to use in tests.
+
+$generate_msg
+
+$generate_file
+
+    - user_globals.py
+
+All from there will be imported in this namespace
+
+"""
+$hr
+
+import ConfigParser
+import os
+import re
+import sys
+from copy import deepcopy
+from pprint import pprint
+cwd = os.path.dirname(__file__)
+try:import zope
+except:pass
+try:from zope.interface.verify import verifyObject
+except:pass
+
+try:from zope import interface, schema
+except:pass
+try:from zope.component import adapts, getMultiAdapter, getAdapter, getAdapters
+except:pass
+try:import z3c
+except:pass
+
+def get_interfaces(o):
+    return [o for o in o.__provides__.interfaces()]
+
+try:from zope.interface import implementedBy, providedBy
+except:pass
+
+# used on testing
+# copied from ZopeLite Class from zope.testingZope.TestCase
+# but we can't import it
+# if we do we polluate our os.environment and ZopeTestcase usecase detction
+def errprint(msg):
+    """Writes 'msg' to stderr and flushes the stream."""
+    sys.stderr.write(msg)
+    sys.stderr.flush()
+
+def pstriplist(s):
+    print '\n'.join([a.rstrip() for a in s.split('\n') if a.strip()])
+
+# load user specific globals
+try: from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.user_globals import *
+except: pass
+

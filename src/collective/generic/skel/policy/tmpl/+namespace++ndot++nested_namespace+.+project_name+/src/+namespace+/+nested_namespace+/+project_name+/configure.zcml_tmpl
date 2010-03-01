@@ -1,0 +1,31 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:five="http://namespaces.zope.org/five"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="${namespace}${ndot}${nested_namespace}.${project_name}">
+  <five:registerPackage package="." initialize=".${project_name}.initialize" />
+  <!-- Include direct package dependencies -->
+  <include package="${namespace}${ndot}${nested_namespace}.skin" />
+  <include package="${namespace}${ndot}${nested_namespace}.tma" />
+#if $with_ploneproduct_fss
+  <include package="iw.fss" file="atct.zcml" />
+#end if
+  <genericsetup:registerProfile
+      name="default"
+      title="${namespace}${ndot}${nested_namespace} Policy"
+      directory="profiles/default"
+      description="Turn a Plone site into the ${namespace}${ndot}${nested_namespace} site."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+  <adapter factory=".dashboard.MyPortalDefaultDashboard"/>
+  <utility factory=".app_config.HiddenProducts" name="${namespace}${ndot}${nested_namespace}.hiddenproducts"/>
+  <utility factory=".app_config.HiddenProfiles" name="${namespace}${ndot}${nested_namespace}.hiddenprofiles"/>
+  <genericsetup:importStep
+      name="${namespace}${nunderscore}${nested_namespace}_${project_name} setupVarious"
+      title="various setup for $project Policy"
+      description="description"
+      handler="${namespace}${ndot}${nested_namespace}.${project_name}.setuphandlers.setupVarious">
+    <depends name="content"/>
+  </genericsetup:importStep>
+<!-- vim:set ft=xml: -->
+</configure>

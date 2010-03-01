@@ -1,0 +1,54 @@
+==============================================================================
+LDAP Checks
+==============================================================================
+
+::
+
+    >>> from ${namespace}${ndot}${nested_namespace}.${project_name}.app_config import LDAP_TEST_PARAMETERS as PARAMS
+    >>> from ${namespace}${ndot}${nested_namespace}.${project_name}.app_config import LDAP_PARAMETERS as CONFIG
+
+Create the browser object we will be using.
+::
+
+    >>> from Products.Five.testbrowser import Browser
+    >>> browser = Browser()
+
+Open portal
+    >>> portal_url = self.portal.absolute_url()
+    >>> browser.open(portal_url)
+
+ACL_USER CONFIGURATION
+-----------------------
+Check if ldap plugin is available
+::
+
+    >>> pluginid = 'nonexistingstuffinportalacl'
+    >>> if app_config.LDAP_CONFIGURED: pluginid = CONFIG['pluginid']
+    >>> hasattr(portal.acl_users, pluginid) or (not app_config.LDAP_CONFIGURED)
+    True
+
+Check if plugin types are properly sorted (first items must be ldap)
+::
+
+    >>> actives = CONFIG['actives']
+    >>> if app_config.LDAP_CONFIGURED: ldapplugin = portal.acl_users[pluginid]
+    >>> l=[portal.acl_users.plugins._getPlugins(portal.acl_users.plugins._getInterfaceFromName(p))[0] for p in actives]
+    >>> (l==len(actives)*[pluginid]) or (not app_config.LDAP_CONFIGURED)
+    True
+
+USER AUTHENTICATION
+--------------------
+Log in with a LDAP account
+::
+
+    >>> browser.getLink('Log in').click()
+    >>> browser.getControl('Login Name').value = PARAMS['testuser1']['userid']
+    >>> browser.getControl('Password').value = PARAMS['testuser1']['password']
+    >>> browser.getControl('Log in').click()
+    >>> browser.open(portal_url)
+    >>> ("""Log out""" in browser.contents) or (not app_config.LDAP_CONFIGURED)
+    True
+
+Log out
+    >>> browser.open(portal_url+'/logout')
+

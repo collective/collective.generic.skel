@@ -1,0 +1,30 @@
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:browser="http://namespaces.zope.org/browser"
+    i18n_domain="${namespace}${ndot}${nested_namespace}.${project_name}">
+
+  <!-- ' ${namespace}${ndot}${nested_namespace}.${project_name}' Zope 3 browser layer -->
+  <interface
+      interface=".interfaces.IThemeSpecific"
+      type="zope.publisher.interfaces.browser.IBrowserSkinType"
+      name="${namespace}${ndot}${nested_namespace}.${project_name}"
+    />
+
+  <!-- Viewlets registration -->
+  <!-- Zope 3 browser resources -->
+
+  <!-- Resource directory for images -->
+  <browser:resourceDirectory
+      name="${namespace}${ndot}${nested_namespace}.${project_name}.images"
+      directory="images"
+      layer=".interfaces.IThemeSpecific"
+    />
+
+  <!-- Resource directory for stylesheets -->
+  <browser:resourceDirectory
+      name="${namespace}${ndot}${nested_namespace}.${project_name}.stylesheets"
+      directory="stylesheets"
+      layer=".interfaces.IThemeSpecific"
+    />
+  <!-- vim:set ft=xml: -->
+</configure>
