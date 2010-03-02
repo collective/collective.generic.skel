@@ -8,7 +8,7 @@ from xml.dom import minidom
 from read_xml_properties import getProperties
 
 
-def getSiteToolProperties(xml_file):
+def getSiteToolProperties(xml_file=None):
     """Get properties from Profile.
     
     >>> from pprint import pprint
@@ -123,11 +123,15 @@ def getSiteToolProperties(xml_file):
     """
     navtree_props = {}
     site_props = {}
+    props_file = None
     try:
+        if not xml_file:
+            xml_file = os.path.join(os.path.dirname(__file__), 'xml_doctests', 'propertiestool.xml')
         props_file = open(xml_file)
         tools_properties = minidom.parse(props_file)
-    finally:
-        props_file.close()
+    except Exception, e:
+        print "something wrong loading portal properties xml file"
+    if props_file: props_file.close()
 
     objects = tools_properties.getElementsByTagName('object')
     for obj in objects :

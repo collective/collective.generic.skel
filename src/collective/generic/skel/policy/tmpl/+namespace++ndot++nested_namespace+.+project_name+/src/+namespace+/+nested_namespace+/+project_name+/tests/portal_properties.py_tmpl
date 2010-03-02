@@ -53,7 +53,7 @@ class BaseCheckProperties(unittest.TestCase):
         else:
             # get default file in getSiteProperties :
             # profile/default/properties.xml
-            self.${project_name} = getSiteProperties()
+            self.${project_name} = getSiteProperties() 
 
         self.default = getSiteProperties(xml_default)
         self.plone = getSiteProperties(xml_plone)

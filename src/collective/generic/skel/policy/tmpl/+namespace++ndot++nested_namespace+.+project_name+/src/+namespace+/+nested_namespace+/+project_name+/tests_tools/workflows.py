@@ -48,7 +48,7 @@ def getWorkflows(xml_file='../profiles/default/workflows.xml'):
 
     try:
         try:
-            props_file = open(os.path.join(os.path.dirname(__file__), xml_file))
+            props_file = open(os.path.join(os.path.dirname(__file__), 'xml_doctests/', xml_file))
             workflows_settings = minidom.parse(props_file)
         except IOError:
             return wkf_props

@@ -6,7 +6,7 @@ import os.path
 from xml.dom import minidom
 
 
-def getMailHost(xml_file):
+def getMailHost(xml_file=None):
     """Get MailHost Settings from Profile.
 
     >>> mailhost_file = 'xml_doctests/mailhost_test.xml'
@@ -22,11 +22,15 @@ def getMailHost(xml_file):
     See Products/GenericSetup/MailHost/exportimport.py
     """
     mailhost = {}
+    mh_file = None
     try :
-        mh_file = open(os.path.join(os.path.dirname(__file__), xml_file))
+        if not xml_file:
+            xml_file = os.path.join(os.path.dirname(__file__), 'xml_doctests', 'mailhost_test.xml')
+        mh_file = open(xml_file)
         mh_object = minidom.parse(mh_file)
-    finally:
-        mh_file.close()
+    except Exception, e:
+        print "something wrong loading mailhost xml file"
+    if mh_file: mh_file.close()
 
     mailhost_settings = mh_object.getElementsByTagName('object')
     for setting in mailhost_settings:
