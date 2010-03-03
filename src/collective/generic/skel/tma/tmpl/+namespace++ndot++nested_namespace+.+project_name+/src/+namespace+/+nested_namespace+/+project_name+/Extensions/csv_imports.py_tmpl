@@ -16,12 +16,12 @@ def structure_from_csv(self):
     else:
         import transaction
         import os
-        from Globals import package_home
         from zope.interface import alsoProvides, noLongerProvides
         from Products.csvreplicata.interfaces import ICSVReplicable, \
                                                      Icsvreplicata
         from ${namespace}${ndot}${nested_namespace}.${project_name}.config import getImportOptionsFromIni
         import_settings, default_transition = getImportOptionsFromIni()
+        import foo
 
         # are we in zopetestcase ?
         # if not we have to install temorarly csvreplicata just to import

@@ -10,12 +10,6 @@ from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.globals import
 )
 
 
-_options = getTestingOptionsFromIni()
-FAILS_ON_UNTESTED_ELEMENT = _options['FAILS_ON_UNTESTED_ELEMENT']
-TEST_VERBOSE_MODE =  _options['TEST_VERBOSE_MODE']
-TEST_SEQUENCE_TITLE = format_test_title('Checking Portal MailHost')
-
-
 
 #if $with_ploneproduct_ldap:
 def configureLDAP(portal):

@@ -4,8 +4,6 @@
 import os
 import ConfigParser
 
-# comment this for local testing
-from Globals import package_home
 
 GLOBALS = globals()
 PROJECTNAME = '${namespace}${ndot}${nested_namespace}.${project_name}'
@@ -18,7 +16,7 @@ cfg_name = "csv_imports.cfg"
 
 # for test without zope machinery
 #DEFAULT_CONFIG_FILE = cfg_name
-DEFAULT_CONFIG_FILE = os.path.join(package_home(GLOBALS), cfg_name)
+DEFAULT_CONFIG_FILE = os.path.join(os.path.dirname(__FILE__), cfg_name)
 
 def getImportOptionsFromIni(cfg=DEFAULT_CONFIG_FILE):
     """Get options for testing.

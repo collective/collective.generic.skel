@@ -65,8 +65,6 @@ try:from five import grok
 except:pass
 try:import collective
 except:pass
-try:from Globals import package_home
-except:pass
 try:from Products.CMFCore.utils import getToolByName
 except:pass
 
@@ -158,8 +156,5 @@ def print_contents(browser, dest='~/.browser.html'):
     with file://~/browser.html."""
     import os
     open(os.path.expanduser(dest), 'w').write(browser.contents)
-
-try:from Products.PloneTestCase.setup import portal_owner, default_password
-except:pass
 
 # vim:set et sts=4 ts=4 tw=80:
