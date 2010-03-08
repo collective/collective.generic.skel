@@ -184,6 +184,7 @@ def test_doctests_suite(directory=__file__,
                     module_relative = False,
                 )
             else:
+                from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.test_doctests import setUp, tearDown
                 if lsetUp:
                     setUp=lsetUp
                 if ltearDown:

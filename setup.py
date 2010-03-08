@@ -37,8 +37,6 @@ setup(
   [paste.paster_create_template]
   collective.generic.plone3_policy = collective.generic.skel.policy.package:P3Package
   collective.generic.plone4_policy = collective.generic.skel.policy.package:P4Package
-  collective.generic.plone3_content = collective.generic.skel.content.package:P3Package
-  collective.generic.plone4_content = collective.generic.skel.content.package:P4Package
   collective.generic.plone3_skin  = collective.generic.skel.skin.package:P3Package
   collective.generic.plone4_skin  = collective.generic.skel.skin.package:P4Package
   collective.generic.plone3_tma  = collective.generic.skel.tma.package:P3Package
