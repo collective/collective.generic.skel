@@ -4,7 +4,7 @@
     xmlns:cmf="http://namespaces.zope.org/cmf"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="${namespace}${ndot}${nested_namespace}.${project_name}">
-  <five:registerPackage package="." initialize=".initialize" />
+  <five:registerPackage package="." initialize=".${project_name}.initialize" />
   <include package=".browser" />
   <include file="skins.zcml" />
   <include file="profiles.zcml" />

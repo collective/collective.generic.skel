@@ -1,15 +1,13 @@
+from collective.generic.skel.policy import package as c
 
-from collective.generic.skel.common.package import plone_vars
-from collective.generic.skel.common.package import Package as Template
+PROJECT_NAME = "tma"
 
-class P3Package(Template):
+class P3Package(c.P3Package):
     """Package template"""
-    project = "tma"
-    vars = Template.vars + plone_vars
-    plone_version = '3'
-    summary = "A Generic Plone %s portal tma policy" % plone_version
+    project = PROJECT_NAME
+    summary = "A Generic Plone3 portal tma policy" 
 
-class P4Package(P3Package):
+class P4Package(c.P4Package):
     """Package template"""
-    plone_version = '4'
-    summary = "A Generic Plone %s portal tma policy" % plone_version
+    project = PROJECT_NAME
+    summary = "A Generic Plone4 portal tma policy" 

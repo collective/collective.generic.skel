@@ -5,12 +5,10 @@ import re
 from paste.script.templates import var
 from paste.script.templates import Template
 
-
 from minitage.paste.common import boolify
 from minitage.paste.projects.plone3 import common
 running_user = common.running_user
 reflags = common.reflags
-from minitage.paste.projects.plone3 import Template as Plone3Template
 
 
 REGENERATE_MSG = """
@@ -29,10 +27,6 @@ SHARP_LINE = '#' * 80
 REGENERATE_OBJECTS = """
 Objects that you can edit and get things overidden are:
 """
-plone_vars = [
-    var('plone_version', 'Major plone version', default='4'),
-]
-
 class Package(Template):
     """
     Package template to do a double namespace egg.
@@ -166,137 +160,191 @@ class Package(Template):
         )
 
         self.output_dir = os.path.join(command.options.output_dir)
+
+
+"""
+PLONE RELATED STUFF
+"""
+from minitage.paste.projects import plone3
+from minitage.paste.projects import plone4
+
+borrowed_vars = [re.compile('with_ploneproduct.*'),
+                 re.compile('with_binding_ldap')]
+
+plone_vars = Package.vars + [ ] 
+excluded_vars = []
+p3_vars = []
+p4_vars = []
+items = ((p3_vars, plone3.Template),
+         (p4_vars, plone4.Template),)
+
+for vars, template in items:
+    for cvar in template.vars:
+        found = False
+        for sre in borrowed_vars:
+            if sre.match(cvar.name) and not found:
+                found = True
+                vars.append(cvar)
+                if cvar.name.startswith('with_ploneproduct'):
+                    vars.append(
+                        var(
+                            cvar.name.replace(
+                                'ploneproduct',
+                                'autoinstall_ploneproduct'
+                            ),
+                            description = cvar.description,
+                            default = 'y'
+                        )
+                    )
+                    break 
+
+
+class P3Package(Package):
+    plone_version = None
+    plone_template = plone3.Template
+    vars = plone_vars + p3_vars
+
+    def __init__(self, *args, **kwargs):
+        Template.__init__(self, *args, **kwargs)
+        self.plone_version = self.plone_template.packaged_version
+        self.plone_major = int(self.plone_version[0])
+
+    def pre(self, command, output_dir, vars):
+        Package.pre(self, command, output_dir, vars)
+        vars['plone_version'] = self.plone_version
+        vars['major'] = self.plone_major
+        self.load_plone_vars(command, output_dir, vars)
+        if not 'with_ploneproduct_fss' in vars:
+            vars['with_ploneproduct_fss'] = False
+
+    def load_plone_vars(self, command, output_dir, vars):
+        eggs_mappings = getattr(self.plone_template, 'eggs_mappings')
+        zcml_mappings = getattr(self.plone_template, 'zcml_mappings')
+        zcml_loading_order = getattr(self.plone_template, 'zcml_loading_order')
+        qi_mappings = getattr(self.plone_template, 'qi_mappings')
+        z2products = getattr(self.plone_template, 'z2products')
+        z2packages = getattr(self.plone_template, 'z2packages')
+        
         vars['products'], vars['tested_products'] = [], []
-        if command.options.output_dir.strip() in ['', '.']:
-            self.output_dir = os.path.join(os.path.dirname(output_dir), self.dn)
+        # quick install / appconfig
+        if not "qi" in vars: vars["qi"] = {}
+        for key in qi_mappings:
+            if vars.get(key, False):
+                if not key in vars["qi"]:
+                    vars["qi"][key] = []
+                aikey = key.replace('ploneproduct', 
+                                    'autoinstall_ploneproduct')
+                if vars.get(aikey, False):
+                    vars["qi"][key].extend(qi_mappings[key])
+                else:
+                    vars["qi"][key].extend(
+                        ["     #'%s'," % i for i in qi_mappings[key]]
+                    )
 
+       # Zope2 new zope products
+        if not "z2packages" in vars: vars["z2packages"] = {}
+        for key in z2packages:
+            if vars.get(key, False):
+                if not key in vars["z2packages"]:
+                    vars["z2packages"][key] = []
+                aikey = key.replace('ploneproduct', 
+                                    'autoinstall_ploneproduct')
+                if vars.get(aikey, False):
+                    vars["z2packages"][key].extend(z2packages[key])
+                else:
+                    vars["z2packages"][key].extend(
+                        ["#%s" % i for i in z2packages[key]]
+                    )
 
-        if 'plone_version' in vars:
-            plone_version = vars['plone_version']
-            if isinstance(plone_version, basestring):
-                if len(plone_version) > 1:
-                    plone_version = plone_version[0]
-                if len(plone_version) < 1:
-                    plone_version = getattr(self, 'plone_version', '4')
-            else:
-                plone_version = getattr(self, 'plone_version', '4')
+        # Zope2 old school products
+        if not "z2products" in vars: vars["z2products"] = {}
+        for key in z2products:
+            if vars.get(key, False):
+                if not key in vars["z2products"]:
+                    vars["z2products"][key] = []
+                aikey = key.replace('ploneproduct', 'autoinstall_ploneproduct')
+                # a zope2 product must not have its namespace 
+                # in the ztc.installProduct call
+                if vars.get(aikey, False):
+                    vars["z2products"][key].extend([i.replace('Products.', '')
+                                                    for i in z2products[key]])
+                else:
+                    vars["z2products"][key].extend(
+                        ["#%s" % i.replace('Products.', '')
+                         for i in z2products[key]]
+                    )
 
-            if plone_version == '3':
-                from minitage.paste.projects.plone3 import eggs_mappings
-                from minitage.paste.projects.plone3 import zcml_mappings, zcml_loading_order
-                from minitage.paste.projects.plone3 import qi_mappings
-                from minitage.paste.projects.plone3 import z2packages, z2products
+        def zcmlsort(obja, objb):
+            apackage = re.sub('^#', '', obja[0]).strip()
+            bpackage = re.sub('^#', '', objb[0]).strip()
+            aslug = obja[1].strip()
+            bslug = objb[1].strip()
+            aorder = zcml_loading_order.get((apackage, aslug), 50000)
+            border = zcml_loading_order.get((bpackage, bslug), 50000)
+            return aorder - border
 
-            if plone_version == '4':
-                from minitage.paste.projects.plone4 import eggs_mappings
-                from minitage.paste.projects.plone4 import zcml_mappings, zcml_loading_order
-                from minitage.paste.projects.plone4 import qi_mappings
-                from minitage.paste.projects.plone4 import z2packages, z2products
+        # Zope2 old school products
+        if not "zcml" in vars: vars["zcml"] = []
+        seen = []
+        for key in zcml_mappings:
+            if vars.get(key, False):
+                aikey = key.replace('ploneproduct', 'autoinstall_ploneproduct')
+                if vars.get(aikey, False):
+                    for i in zcml_mappings[key]:
+                        if not i in seen:
+                            vars["zcml"].append(i)
+                            seen.append(i)
+                else:
+                    for i in zcml_mappings[key]:
+                        if not i in seen:
+                            vars["zcml"].append(("#%s" % i[0], i[1]))
+                            seen.append(i)
 
-            # quick install / appconfig
-            if not "qi" in vars: vars["qi"] = {}
-            for key in qi_mappings:
-                if vars.get(key, False):
-                    if not key in vars["qi"]:
-                        vars["qi"][key] = []
-                    aikey = key.replace('ploneproduct', 'autoinstall_ploneproduct')
-                    if vars.get(aikey, False):
-                        vars["qi"][key].extend(qi_mappings[key])
-                    else:
-                        vars["qi"][key].extend(["     #'%s'," % i for i in qi_mappings[key]])
+        vars['zcml'].sort(zcmlsort)
+        # add option marker
+        for option in zcml_mappings:
+            for p in zcml_mappings[option]:
+                packages = [p, ('#%s' % p[0], p[1])]
+                for package in packages:
+                    if package in vars['zcml']:
+                        i = vars['zcml'].index(package)
+                        vars['zcml'][i:i] = ['%s' % option]
 
-           # Zope2 new zope products
-            if not "z2packages" in vars: vars["z2packages"] = {}
-            for key in z2packages:
-                if vars.get(key, False):
-                    if not key in vars["z2packages"]:
-                        vars["z2packages"][key] = []
-                    aikey = key.replace('ploneproduct', 'autoinstall_ploneproduct')
-                    if vars.get(aikey, False):
-                        vars["z2packages"][key].extend(z2packages[key])
-                    else:
-                        vars["z2packages"][key].extend(["#%s" % i for i in z2packages[key]])
-
-            # Zope2 old school products
-            if not "z2products" in vars: vars["z2products"] = {}
-            for key in z2products:
-                if vars.get(key, False):
-                    if not key in vars["z2products"]:
-                        vars["z2products"][key] = []
-                    aikey = key.replace('ploneproduct', 'autoinstall_ploneproduct')
-                    # a zope2 product must not have its namespace in the ztc.installProduct call
-                    if vars.get(aikey, False):
-                        vars["z2products"][key].extend([i.replace('Products.', '')
-                                                        for i in z2products[key]])
-                    else:
-                        vars["z2products"][key].extend(["#%s" % i.replace('Products.', '')
-                                                        for i in z2products[key]])
-
-            def zcmlsort(obja, objb):
-                apackage = re.sub('^#', '', obja[0]).strip()
-                bpackage = re.sub('^#', '', objb[0]).strip()
-                aslug = obja[1].strip()
-                bslug = objb[1].strip()
-                aorder = zcml_loading_order.get((apackage, aslug), 50000)
-                border = zcml_loading_order.get((bpackage, bslug), 50000)
-                return aorder - border
-
-            # Zope2 old school products
-            if not "zcml" in vars: vars["zcml"] = []
-            seen = []
-            for key in zcml_mappings:
-                if vars.get(key, False):
-                    aikey = key.replace('ploneproduct', 'autoinstall_ploneproduct')
-                    if vars.get(aikey, False):
-                        for i in zcml_mappings[key]:
-                            if not i in seen:
-                                vars["zcml"].append(i)
-                                seen.append(i)
-                    else:
-                        for i in zcml_mappings[key]:
-                            if not i in seen:
-                                vars["zcml"].append(("#%s" % i[0], i[1]))
-                                seen.append(i)
-
-            vars['zcml'].sort(zcmlsort)
-            # add option marker
-            for option in zcml_mappings:
-                for p in zcml_mappings[option]:
-                    packages = [p, ('#%s' % p[0], p[1])]
-                    for package in packages:
-                        if package in vars['zcml']:
-                            i = vars['zcml'].index(package)
-                            vars['zcml'][i:i] = ['%s' % option]
-
-            # gather python moduloes to import
-            vars['py_modules'], imported_modules = {}, []
-            for v in vars['z2packages']:
-                found = False
-                for w in vars["z2packages"][v]:
-                    if not w in imported_modules:
-                        if not v in vars['py_modules']:
-                            vars['py_modules'][v] = []
-                        vars['py_modules'][v].append(w)
+        # gather python moduloes to import
+        vars['py_modules'], imported_modules = {}, []
+        for v in vars['z2packages']:
+            found = False
+            for w in vars["z2packages"][v]:
+                if not w in imported_modules:
+                    if not v in vars['py_modules']:
+                        vars['py_modules'][v] = []
+                    vars['py_modules'][v].append(w)
+                    if not w in vars['py_modules'][v]:
                         imported_modules.append(w)
-            # normallly thz zope products are needed only if they need zcml slugs.
-            #for v in vars['z2packages']:
-            #     found = False
-            #     for w in vars["z2packages"][v]:
-            #         if not w in imported_modules:
-            #             if not v in vars['py_modules']:
-            #                 vars['py_modules'][v] = []
-            #             vars['py_modules'][v].append(w)
-            #             imported_modules.append(w)
 
-            opt = '#default'
-            for v in vars['zcml']:
-                if isinstance(v, basestring):
-                    opt = v
-                if not isinstance(v, basestring):
-                    w = v[0]
-                    if not w in imported_modules:
-                        if not opt in vars['py_modules']:
-                            vars['py_modules'][opt] = []
+        # normallly thz zope products are needed only if they need zcml slugs.
+        #for v in vars['z2packages']:
+        #     found = False
+        #     for w in vars["z2packages"][v]:
+        #         if not w in imported_modules:
+        #             if not v in vars['py_modules']:
+        #                 vars['py_modules'][v] = []
+        #             vars['py_modules'][v].append(w)
+        #             imported_modules.append(w)
+
+        opt = '#default'
+        for v in vars['zcml']:
+            if isinstance(v, basestring):
+                opt = v
+            if not isinstance(v, basestring):
+                w = v[0]
+                if not w in imported_modules:
+                    if not opt in vars['py_modules']:
+                        vars['py_modules'][opt] = []
+                    if not w in vars['py_modules'][opt]:
                         vars['py_modules'][opt].append(w)
-                        imported_modules.append(w)
 
+class P4Package(P3Package):
+    plone_template = plone4.Template
+    vars = plone_vars + p4_vars
+ 
