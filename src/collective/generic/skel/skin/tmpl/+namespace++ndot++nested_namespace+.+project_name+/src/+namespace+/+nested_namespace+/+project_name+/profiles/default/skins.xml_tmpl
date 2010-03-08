@@ -10,7 +10,7 @@
  <object name="${namespace}${nunderscore}${nested_namespace}_${project_name}_styles"
     meta_type="Filesystem Directory View"
     directory="${namespace}${ndot}${nested_namespace}.${project_name}:skins/${namespace}${nunderscore}${nested_namespace}_${project_name}_styles"/>
- <skin-path name="${namespace}${ndot}${nested_namespace}.${project_name}" based-on="Plone Default">
+<skin-path name="${namespace}${ndot}${nested_namespace}.${project_name}" based-on="${plone_skin}">
   <layer name="${namespace}${nunderscore}${nested_namespace}_${project_name}_custom_images"
      insert-after="custom"/>
   <layer name="${namespace}${nunderscore}${nested_namespace}_${project_name}_custom_templates"

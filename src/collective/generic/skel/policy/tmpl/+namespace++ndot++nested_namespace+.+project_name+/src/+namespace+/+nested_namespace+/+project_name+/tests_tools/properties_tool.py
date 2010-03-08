@@ -10,12 +10,12 @@ from read_xml_properties import getProperties
 
 def getSiteToolProperties(xml_file=None):
     """Get properties from Profile.
-    
+
     >>> from pprint import pprint
-    
+
     >>> site_prop_file = 'xml_doctests/propertiestool.xml'
     >>> propertiestool = getSiteToolProperties(xml_file=site_prop_file)
-    
+
     >>> pprint(propertiestool[0])
     {u'bottomLevel': '',
      u'currentFolderOnlyInNavtree': False,
@@ -137,13 +137,13 @@ def getSiteToolProperties(xml_file=None):
     for obj in objects :
         if obj.attributes['name'].nodeValue == 'navtree_properties':
             navtree_props = getProperties(obj)
-            
+
         if obj.attributes['name'].nodeValue == 'site_properties':
             site_props = getProperties(obj)
 
     return (navtree_props, site_props)
 
-    
+
 if __name__ == "__main__":
     import doctest
     OPTIONS = doctest.REPORT_ONLY_FIRST_FAILURE | doctest.ELLIPSIS |\

@@ -39,7 +39,7 @@ def getSiteProperties(xml_file=None):
 
     site = site_properties.documentElement
     site_props = getProperties(site)
-    
+
     return site_props
 
 if __name__ == "__main__":

@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <site>
  <property name="title">${namespace}${ndot}${nested_namespace}</property>
- <property name="description">Bienvenue sur le site de ${namespace}${ndot}${nested_namespace}</property>
- <property name="default_page" type="string">front-page</property>
+ <property name="description">Welcome to the ${namespace}${ndot}${nested_namespace} website</property> 
  <property name="selectable_views" type="lines">
   <element value="folder_listing"/>
   <element value="news_listing"/>
@@ -10,7 +9,7 @@
  <property name="email_from_address"
     type="string">testeur@makina-corpus.com</property>
  <property name="email_from_name"
-    type="string">Portal Administrator</property>
+    type="string">Site Administrator</property>
  <property name="validate_email" type="boolean">True</property>
  <property name="email_charset" type="string">utf-8</property>
  <property name="enable_permalink" type="boolean">False</property>

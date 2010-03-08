@@ -60,7 +60,8 @@ import os.path
 \# eg: (pdb) from foo import bar;preload(bar)
 \# see utils.py for details
 
-from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.globals import *
+try:from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.globals import *
+except:pass
 try:from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.user_globals import *
 except:pass
 

@@ -1,8 +1,7 @@
 <?xml version="1.0"?>
 <site>
  <property name="title">${namespace}${ndot}${nested_namespace}</property>
- <property name="description">Bienvenue sur le site de ${namespace}${ndot}${nested_namespace}</property>
- <property name="default_page">front-page</property>
+ <property name="description">Welcome to the ${namespace}${ndot}${nested_namespace} website</property> 
  <property name="email_from_address"
     type="string">testeur@makina-corpus.com</property>
  <property name="email_from_name"

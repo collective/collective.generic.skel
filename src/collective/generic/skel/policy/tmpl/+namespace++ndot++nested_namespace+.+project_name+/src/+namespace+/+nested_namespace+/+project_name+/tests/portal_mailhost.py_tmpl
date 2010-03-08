@@ -86,7 +86,7 @@ def check_portal_mailhost(portal, xml_${project_name}=None):
         if TEST_VERBOSE_MODE:
             errprint(TEST_SEQUENCE_TITLE)
         for property in defaults.iteritems():
-            suite.addTest(CheckMailHost(portal, property).runTest())
+            suite.addTest(CheckMailHost(portal, property))
         return suite
     else:
         logging.getLogger('Test mailhost').info(TEST_SEQUENCE_TITLE)
