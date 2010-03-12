@@ -223,6 +223,9 @@ def test_suite():
 #if $test_layer:
     if layer:
         suite.layer = layer
+#else:
+#     if layer:
+#        suite.layer = layer 
 #end if
     return test_doctests_suite(suite=suite)
 
