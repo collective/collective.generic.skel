@@ -12,6 +12,7 @@ $generate_file
     - user_testcase.py
     - user_utils.py
     - user_globals.py
+    - layers/user_layer.py
 
 $generate_objects
 
@@ -27,6 +28,10 @@ $generate_objects
         * class:  DocTestCase
 
             Default Zope2 testCase class
+
+    - ${namespace}${ndot}${nested_namespace}.${project_name}.tests.layers.user_layer.layer::
+
+        A zope.testing layer to wire your tests
 
     - ${namespace}${ndot}${nested_namespace}.${project_name}.tests.user_utils:
 
@@ -201,9 +206,24 @@ def test_doctests_suite(directory=__file__,
             if ft: suite.addTest(ft)
     return suite
 
+
+#if $test_layer:
+layer = None
+try: from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.layers.${test_layer}layer import ${test_layer}Layer as layer
+except Exception, e:
+    pass
+
+try: from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.layers.user_layer import layer
+except: pass
+#end if
+
 def test_suite():
     """."""
     suite = unittest.TestSuite()
+#if $test_layer:
+    if layer:
+        suite.layer = layer
+#end if
     return test_doctests_suite(suite=suite)
 
 \# vim:set ft=python:

@@ -10,5 +10,6 @@ class Package(Template):
     """Package template"""
     summary = "A Generic testing infrastructure."
     project = 'testing'
-    vars = Template.vars + vars
+    vars = Template.vars + vars +\
+    [pvar('test_layer', 'Use a test layer (availables: Django', default='')]
 
