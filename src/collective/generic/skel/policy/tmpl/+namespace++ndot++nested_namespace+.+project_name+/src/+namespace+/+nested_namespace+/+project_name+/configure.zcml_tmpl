@@ -9,6 +9,9 @@
   <include package="${namespace}${ndot}${nested_namespace}.tma" />
 #if $with_ploneproduct_fss
   <include package="iw.fss" file="atct.zcml" />
+#else
+<!--uncomment to register at content types with fss
+  <include package="iw.fss" file="atct.zcml" />-->
 #end if
   <genericsetup:registerProfile
       name="default"
