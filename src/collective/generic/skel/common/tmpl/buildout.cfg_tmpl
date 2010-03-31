@@ -1,0 +1,39 @@
+[buildout]
+extensions=buildout.minitagificator mr.developer
+version=versions
+parts=
+    zopepy
+    test
+    omelette
+unzip=true
+develop=.
+sources=sources
+sources-dir=\${buildout:directory}/src.others
+auto-checkout=
+eggs=
+    ${namespace}${ndot}${nested_namespace}.${project_name} [test]
+
+[versions]
+
+[sources]
+
+[zopepy]
+recipe=minitage.recipe.scripts
+eggs=\${buildout:eggs} 
+    minitage.paste
+interpreter=zopepy
+scripts=
+    ipython
+    paster
+    ${project}
+env-file=\${buildout:directory}/${project_name}.env
+
+[test]
+recipe=zc.recipe.testrunner
+eggs=\${zopepy:eggs}
+
+[omelette]
+recipe=collective.recipe.omelette
+eggs=\${zopepy:eggs}
+
+# vim:set ft=cfg:

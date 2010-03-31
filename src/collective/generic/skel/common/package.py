@@ -161,6 +161,11 @@ class Package(Template):
 
         self.output_dir = os.path.join(command.options.output_dir)
 
+    def post(self, command, output_dir, vars):
+        Template.post(self, command, output_dir, vars) 
+        isolated_init = os.path.join(output_dir, 'src', '__init__.py')
+        if os.path.exists(isolated_init) and not bool(vars['namespace']):
+            os.remove(isolated_init)
 
 """
 PLONE RELATED STUFF
