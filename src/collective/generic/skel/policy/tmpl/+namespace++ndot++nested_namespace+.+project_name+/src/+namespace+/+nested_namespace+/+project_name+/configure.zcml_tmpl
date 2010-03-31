@@ -31,5 +31,6 @@
       handler="${namespace}${ndot}${nested_namespace}.${project_name}.setuphandlers.setupVarious">
     <depends name="content"/>
   </genericsetup:importStep>
+  <include package=".migrations"/>
 <!-- vim:set ft=xml: -->
 </configure>
