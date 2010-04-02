@@ -1,0 +1,12 @@
+<metadata>
+  <version>0.1</version>
+  <dependencies>
+#if $with_ploneproduct_cjqui
+#if $with_ploneproduct_plonejqtools
+      <dependency>profile-collective.js.jqueryui:withjqtools</dependency>
+#else
+      <dependency>profile-collective.js.jqueryui:default</dependency>
+#end if
+#end if
+  </dependencies>
+</metadata>
