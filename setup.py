@@ -27,7 +27,7 @@ long_description = '\n'.join([README,
 setup(
   name='collective.generic.skel',
   version=version,
-  description=("PasteScript templates for collective.generic suite sponsorised by Makina Corpus"),
+  description=("PasteScript templates for collective.generic suite by Makina Corpus"),
   long_description=long_description,
   classifiers=classifiers,
   keywords='paste templates',
