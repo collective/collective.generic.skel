@@ -1,3 +1,5 @@
+import os
+
 from setuptools import setup, find_packages
 version = '0.1.0'
 classifiers = [
@@ -6,11 +8,27 @@ classifiers = [
   "Framework :: Plone",
   "Topic :: Software Development :: Libraries :: Python Modules",
 ]
+
+
+
+
+def read(rnames):
+    setupdir =  os.path.dirname( os.path.abspath(__file__))
+    return open(
+        os.path.join(setupdir, *rnames)
+    ).read()
+
+README =read((os.path.dirname(__file__),'README.txt'))
+CHANGELOG  = read((os.path.dirname(__file__), 'docs', 'HISTORY.txt'))
+
+long_description = '\n'.join([README,
+                              CHANGELOG])+'\n' 
+
 setup(
   name='collective.generic.skel',
   version=version,
-  description=("PasteScript templates for Plone portal "
-               "Makina-Corpus Generic portal."),
+  description=("PasteScript templates for collective.generic suite sponsorised by Makina Corpus"),
+  long_description=long_description,
   classifiers=classifiers,
   keywords='paste templates',
   author='Mathieu Pasquet / Jean-Philippe Camguilhem',
