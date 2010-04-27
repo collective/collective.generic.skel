@@ -7,7 +7,7 @@ GLOBALS = globals()
 
 
 $hr
-# Products that have entries in quickinstaller, 
+# Products that have entries in quickinstaller,
 # here are their 'id' (not the translated name)
 $hr
 
@@ -23,13 +23,101 @@ $product
 #end for
 
 #end for
-    '${namespace}${ndot}${nested_namespace}.tma',
-    '${namespace}${ndot}${nested_namespace}.skin',
 )
 
 EXTENSION_PROFILES = ('${namespace}${ndot}${nested_namespace}.${project_name}:default',)
 
 SKIN = '${namespace}${ndot}${nested_namespace}.skin'
+HIDDEN_PRODUCTS = [u'plone.app.openid', u'NuPlone',
+#for package, profile, order in $gs
+      u'${package}',
+#end for
+#if $with_ploneproduct_cjqui
+      u'collective.js.jqueryui',
+#end if
+    #for var in $hqi:
+    #$var
+    #for product in $hqi[$var]:
+    #if re.match('\s*#.*', $product):
+    $product
+    #else
+    u'$product',
+    #end if
+    #end for
+    #end for
+    u'${namespace}${ndot}${nested_namespace}.skin',
+    u'${namespace}${ndot}${nested_namespace}.tma',
+    u'${namespace}${ndot}${nested_namespace}.${project_name}.migrations.v1_1',
+    u'${namespace}${ndot}${nested_namespace}.${project_name}.migrations',
+#if $with_ploneproduct_atschemaeditor:
+    u'ATSchemaEditorNG',
+    u'Products.ATSchemaEditorNG',
+#end if    
+#if $with_ploneproduct_agridfield
+    u'DataGridField',
+    u'Products.DataGridField',
+#end if    
+#if $with_ploneproduct_facultystaff or $with_ploneproduct_membrane
+    u'Relations',
+    u'Products.Relations',
+#end if   
+#if $with_ploneproduct_facultystaff:
+    u'FacultyStaffDirectory',
+    u'Products.FacultyStaffDirectory',
+#end if  
+#if $with_ploneproduct_quaestrio:
+    u'Products.Quaestrio',
+    u'Quaestrio',
+#end if 
+#if $with_ploneproduct_csvreplica:
+    u'csvreplicata',
+    u'Products.csvreplicata',
+#end if
+#if $with_ploneproduct_cachesetup
+    u'CMFSquidTool',
+    u'Products.CMFSquidTool',
+#end if      
+]
+HIDDEN_PROFILES = [u'plone.app.openid', u'NuPlone',
+    u'${namespace}${ndot}${nested_namespace}.skin',
+    u'${namespace}${ndot}${nested_namespace}.tma',
+    u'${namespace}${ndot}${nested_namespace}.${project_name}.migrations.v1_1',
+    u'${namespace}${ndot}${nested_namespace}.${project_name}.migrations',
+#if $with_ploneproduct_atschemaeditor:
+    u'ATSchemaEditorNG',
+    u'Products.ATSchemaEditorNG',
+#end if    
+#if $with_ploneproduct_agridfield
+    u'DataGridField',
+    u'Products.DataGridField',
+#end if    
+#if $with_ploneproduct_facultystaff or $with_ploneproduct_membrane
+    u'Relations',
+    u'Products.Relations',
+#end if   
+#if $with_ploneproduct_facultystaff:
+    u'FacultyStaffDirectory',
+    u'Products.FacultyStaffDirectory',
+#end if  
+#if $with_ploneproduct_quaestrio:
+    u'Products.Quaestrio',
+    u'Quaestrio',
+#end if 
+#if $with_ploneproduct_csvreplica:
+    u'csvreplicata',
+    u'Products.csvreplicata',
+#end if
+#if $with_ploneproduct_cachesetup
+    u'CMFSquidTool',
+    u'Products.CMFSquidTool',
+#end if       
+#for package, profile, order in $gs
+      u'${package}',
+#end for
+#if $with_ploneproduct_cjqui
+      u'collective.js.jqueryui',
+#end if
+]
 
 #if $with_ploneproduct_ldap:
 LDAP_CONFIGURED = False
@@ -76,7 +164,7 @@ class HiddenProducts(object):
     implements(INonInstallableProducts)
 
     def getNonInstallableProducts(self):
-        return [ u'plone.app.openid', u'NuPlone', ]
+        return HIDDEN_PRODUCTS
 
 class HiddenProfiles(object):
     implements(INonInstallableProfiles)

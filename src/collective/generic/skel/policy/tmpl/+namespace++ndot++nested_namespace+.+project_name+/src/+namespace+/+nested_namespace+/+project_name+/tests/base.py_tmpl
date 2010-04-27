@@ -86,24 +86,6 @@ def setup_${project_name}PloneSite():
 #end for
 
     # ------------------------------------------------------------------------------------
-    # - Load the ZCML configuration for the ${namespace}${ndot}${nested_namespace}.${project_name} package.
-    # ------------------------------------------------------------------------------------
-
-#for $package in $zcml:
-#if isinstance($package, basestring):
-#$package
-#else
-#set $item, $slug = $package
-#if $item.startswith('#'):
-    \#zcml.load_config('${slug}.zcml', $item.replace('#', ''))
-#else
-    zcml.load_config('${slug}.zcml', $item)
-#end if
-#end if
-#end for
-
-
-    # ------------------------------------------------------------------------------------
     # - Load the python packages that are registered as Zope2 Products via Five
     #   which can't happen until we have loaded the package ZCML.
     # ------------------------------------------------------------------------------------
@@ -120,15 +102,16 @@ def setup_${project_name}PloneSite():
 
 #end for
 
+    ztc.installPackage('${namespace}${ndot}${nested_namespace}.${project_name}')
+    ztc.installPackage('${namespace}${ndot}${nested_namespace}.skin')
+    ztc.installPackage('${namespace}${ndot}${nested_namespace}.tma') 
+
     # ------------------------------------------------------------------------------------
-    # Load our own ${project_name}
+    # Load our own ${project_name} & dependency zcml
     # ------------------------------------------------------------------------------------
     import ${namespace}${ndot}${nested_namespace}.${project_name}
     zcml.load_config('configure.zcml', ${namespace}${ndot}${nested_namespace}.${project_name})
 
-    ztc.installPackage('${namespace}${ndot}${nested_namespace}.${project_name}')
-    ztc.installPackage('${namespace}${ndot}${nested_namespace}.skin')
-    ztc.installPackage('${namespace}${ndot}${nested_namespace}.tma')
 
     # ------------------------------------------------------------------------------------
     # Reset five debug mode as we do not use it anymore

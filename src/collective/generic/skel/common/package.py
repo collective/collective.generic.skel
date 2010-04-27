@@ -227,6 +227,8 @@ class P3Package(Package):
         zcml_mappings = getattr(self.plone_template, 'zcml_mappings')
         zcml_loading_order = getattr(self.plone_template, 'zcml_loading_order')
         qi_mappings = getattr(self.plone_template, 'qi_mappings')
+        qi_hidden_mappings = getattr(self.plone_template, 'qi_hidden_mappings')
+        gs_mappings = getattr(self.plone_template, 'gs_mappings')
         z2products = getattr(self.plone_template, 'z2products')
         z2packages = getattr(self.plone_template, 'z2packages')
         
@@ -244,6 +246,20 @@ class P3Package(Package):
                 else:
                     vars["qi"][key].extend(
                         ["     #'%s'," % i for i in qi_mappings[key]]
+                    )
+        # quick install / appconfig
+        if not "hqi" in vars: vars["hqi"] = {}
+        for key in qi_hidden_mappings:
+            if vars.get(key, False):
+                if not key in vars["hqi"]:
+                    vars["hqi"][key] = []
+                aikey = key.replace('ploneproduct', 
+                                    'autoinstall_ploneproduct')
+                if vars.get(aikey, False):
+                    vars["hqi"][key].extend(qi_hidden_mappings[key])
+                else:
+                    vars["hqi"][key].extend(
+                        ["     #'%s'," % i for i in qi_hidden_mappings[key]]
                     )
 
        # Zope2 new zope products
@@ -304,6 +320,16 @@ class P3Package(Package):
                         if not i in seen:
                             vars["zcml"].append(("#%s" % i[0], i[1]))
                             seen.append(i)
+
+        # generic setup
+        vars['gs'] = []
+        gsk = gs_mappings.keys()
+        gsk.sort(lambda x,y: x[2] - y[2])
+        for k in gsk:
+            for o in gs_mappings[k]:
+                if vars.get(o, False):
+                    if not k in vars['gs']:
+                        vars['gs'].append(k)
 
         vars['zcml'].sort(zcmlsort)
         # add option marker

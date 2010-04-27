@@ -1,6 +1,9 @@
 import logging
+import transaction
+from Products.CMFCore.utils import getToolByName
 
 from ${namespace}${ndot}${nested_namespace}.${project_name} import app_config
+from ${namespace}${ndot}${nested_namespace}.${project_name}.app_config import PRODUCT_DEPENDENCIES, EXTENSION_PROFILES
 from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.globals import (
     getTestingOptionsFromIni,
     errprint,
@@ -10,6 +13,11 @@ from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.globals import
 )
 
 
+_options = getTestingOptionsFromIni()
+FAILS_ON_UNTESTED_ELEMENT = _options['FAILS_ON_UNTESTED_ELEMENT']
+TEST_VERBOSE_MODE =  _options['TEST_VERBOSE_MODE']
+TEST_SEQUENCE_TITLE = format_test_title(' Checking Portal Properties')
+ 
 
 #if $with_ploneproduct_ldap:
 def configureLDAP(portal):
@@ -75,4 +83,28 @@ def setupVarious(context):
     if app_config.LDAP_CONFIGURED or FAILS_ON_UNTESTED_ELEMENT:
         configureLDAP(portal)
 #end if
+
+def setupQi(context):
+    """Miscellanous steps import handle.
+    """
+    logger = logging.getLogger('${namespace}${ndot}${nested_namespace}.${project_name} / setuphandler')
+
+    # Ordinarily, GenericSetup handlers check for the existence of XML files.
+    # Here, we are not parsing an XML file, but we use this text file as a
+    # flag to check that we actually meant for this import step to be run.
+    # The file is found in profiles/default.
+
+    if context.readDataFile('${namespace}${ndot}${nested_namespace}.${project_name}_qi.txt') is None:
+        return
+
+    portal = context.getSite() 
+    portal_quickinstaller = getToolByName(portal, 'portal_quickinstaller')
+    portal_setup = getToolByName(portal, 'portal_setup')
+    logger = logging.getLogger('${namespace}${ndot}${nested_namespace}.${project_name}.Install')
+
+    for product in PRODUCT_DEPENDENCIES:
+        logger.info('(RE)Installing %s.' % product)
+        if not portal_quickinstaller.isProductInstalled(product):
+            portal_quickinstaller.installProduct(product)
+            transaction.savepoint()
 

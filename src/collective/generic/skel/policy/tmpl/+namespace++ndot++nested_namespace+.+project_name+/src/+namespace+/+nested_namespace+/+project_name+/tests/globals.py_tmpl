@@ -136,7 +136,7 @@ UNTESTED_WARNING = """
 *
 * * you are testing with FAILS_ON_UNTESTED_ELEMENT setted to False
 * *
-* * The only exception to do this is : cath all untested element on one shot !
+* * The only exception to do this is : catch all untested element on one shot !
 * *
 * ******************************************************************************
 *
