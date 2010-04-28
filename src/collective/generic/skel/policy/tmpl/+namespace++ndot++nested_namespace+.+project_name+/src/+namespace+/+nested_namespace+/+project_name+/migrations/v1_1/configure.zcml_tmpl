@@ -16,7 +16,7 @@
       source="1.0"
       destination="1.1">
     <genericsetup:upgradeStep
-        title="icsu.migrations 1.0 - 1.1"
+        title="${namespace}${ndot}${nested_namespace}.${project_name}.migrations 1.0 - 1.1"
         description=""
         handler=".upgrade"
       />
