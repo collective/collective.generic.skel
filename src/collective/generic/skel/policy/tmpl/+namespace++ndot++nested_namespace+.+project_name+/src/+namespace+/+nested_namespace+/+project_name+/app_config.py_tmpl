@@ -29,6 +29,17 @@ EXTENSION_PROFILES = ('${namespace}${ndot}${nested_namespace}.${project_name}:de
 
 SKIN = '${namespace}${ndot}${nested_namespace}.skin'
 HIDDEN_PRODUCTS = [u'plone.app.openid', u'NuPlone',
+#for var in $qi:
+#$var
+#for product in $qi[$var]:
+#if re.match('\s*#.*', $product):
+$product
+#else
+     '$product',
+#end if
+#end for
+
+#end for     
 #for package, profile, order in $gs
       u'${package}',
 #end for
