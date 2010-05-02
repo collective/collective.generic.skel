@@ -1,3 +1,5 @@
+import os
+import sys
 from collective.generic.skel.common  import package as c
 from paste.script.templates import var
 PROJECT_NAME = "skin"
@@ -30,6 +32,21 @@ class P3Package(c.P3Package):
         c.P3Package.pre(self, command, output_dir, vars)
         skin_chooser(self, command, output_dir, vars)
 
+    def post(self, command, output_dir, vars):
+        c.P3Package.post(self, command, output_dir, vars)
+        otp = os.path.join(
+            self.output_dir,
+            '%s%s%s.%s' % (vars['namespace'], vars['ndot'], vars['nested_namespace'], vars['project_name']),
+            'src',
+            vars['namespace'],
+            vars['nested_namespace'],
+            vars['project_name'],
+        )
+        for f in [ff for ff in os.listdir(otp) if ff.endswith('.sh')]:
+            fp = os.path.join(otp, f)
+            os.chmod(fp, 0755)
+
+
 class P4Package(c.P4Package):
     """Package template"""
     project = PROJECT_NAME
@@ -42,4 +59,7 @@ class P4Package(c.P4Package):
         c.P4Package.pre(self, command, output_dir, vars)
         skin_chooser(self, command, output_dir, vars)
 
+    def post(self, command, output_dir, vars):
+        c.P4Package.post(self, command, output_dir, vars)
+ 
 
