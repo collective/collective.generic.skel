@@ -242,10 +242,10 @@ class P3Package(Package):
                 aikey = key.replace('ploneproduct', 
                                     'autoinstall_ploneproduct')
                 if vars.get(aikey, False):
-                    vars["qi"][key].extend(qi_mappings[key])
+                    vars["qi"][key].extend([i['name'] for i in qi_mappings[key]])
                 else:
                     vars["qi"][key].extend(
-                        ["     #'%s'," % i for i in qi_mappings[key]]
+                        ["     #'%s'," % i['name'] for i in qi_mappings[key]]
                     )
         # quick install / appconfig
         if not "hqi" in vars: vars["hqi"] = {}

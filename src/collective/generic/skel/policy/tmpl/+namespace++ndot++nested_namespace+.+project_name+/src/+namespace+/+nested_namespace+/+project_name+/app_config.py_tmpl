@@ -84,16 +84,21 @@ $product
     u'csvreplicata',
     u'Products.csvreplicata',
 #end if
+#if $major < 4:
 #if $with_ploneproduct_cachesetup
     u'CMFSquidTool',
     u'Products.CMFSquidTool',
 #end if      
+#end if       
 ]
 HIDDEN_PROFILES = [u'plone.app.openid', u'NuPlone',
     u'${namespace}${ndot}${nested_namespace}.skin',
     u'${namespace}${ndot}${nested_namespace}.tma',
     u'${namespace}${ndot}${nested_namespace}.${project_name}.migrations.v1_1',
     u'${namespace}${ndot}${nested_namespace}.${project_name}.migrations',
+#for package, profile, order in $gs
+      u'${package}',
+#end for 
 #if $with_ploneproduct_atschemaeditor:
     u'ATSchemaEditorNG',
     u'Products.ATSchemaEditorNG',
@@ -118,13 +123,13 @@ HIDDEN_PROFILES = [u'plone.app.openid', u'NuPlone',
     u'csvreplicata',
     u'Products.csvreplicata',
 #end if
+#if $major < 4:
 #if $with_ploneproduct_cachesetup
     u'CMFSquidTool',
     u'Products.CMFSquidTool',
 #end if       
-#for package, profile, order in $gs
-      u'${package}',
-#end for
+#end if       
+
 #if $with_ploneproduct_cjqui
       u'collective.js.jqueryui',
 #end if

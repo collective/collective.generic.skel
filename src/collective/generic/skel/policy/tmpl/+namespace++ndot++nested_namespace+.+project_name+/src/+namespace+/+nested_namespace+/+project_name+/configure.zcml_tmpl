@@ -11,9 +11,13 @@
 #else
 #set $item, $slug = $package
 #if $item.startswith('#'):
-  <!--<include package="$item.replace('#', '')" file="${slug}.zcml"/>-->
+  <!--<${includeDirective} package="$item.replace('#', '')" file="${slug}.zcml"/>-->
+#else
+#if $slug.endswith('overrides')
+  <!--<includeOverrides package="$item" file="${slug}.zcml"-->
 #else
   <include package="$item" file="${slug}.zcml"/>
+#end if     
 #end if
 #end if
 #end for 

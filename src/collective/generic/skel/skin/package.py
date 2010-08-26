@@ -18,7 +18,12 @@ def skin_chooser(self, command, output_dir, vars):
     s = vars.get('default_theme').lower().strip()
     if not s in self.themes: s = 'classic'
     vars['plone_theme'] = s
+    vars['first_layer'] = 'custom'
     vars['plone_skin'] = self.themes[s] 
+    if 'with_ploneproduct_cynin' in vars:
+        if vars['with_ploneproduct_cynin']:
+            vars['plone_skin'] = 'cynin'
+            vars['first_layer'] = 'icons'
  
 class P3Package(c.P3Package):
     """Package template"""
