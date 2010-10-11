@@ -123,18 +123,19 @@ class Package(Template):
         # As we are using namespaces constructed, and args[0] was maybe not yet ready
         # by default paster will fail to resolve the distrbition name.
         from paste.script import pluginlib
-        pluginlib.old_egg_info_dir = pluginlib.egg_info_dir
-        self.module = self.__class__.__module__
-        def wrap_egg_info_dir(c, n):
-            print "%s" % (
-                "%s> Monkey patching egg_info_dir "
-                "to resolve good distro name: "
-                "'%s' (old was '%s')" % (
-                    self.module, self.dn, n
+        if not 'old_egg_info_dir' in dir(pluginlib):
+            pluginlib.old_egg_info_dir = pluginlib.egg_info_dir
+            self.module = self.__class__.__module__
+            def wrap_egg_info_dir(c, n):
+                print "%s" % (
+                    "%s> Monkey patching egg_info_dir "
+                    "to resolve good distro name: "
+                    "'%s' (old was '%s')" % (
+                        self.module, self.dn, n
+                    )
                 )
-            )
-            return pluginlib.old_egg_info_dir(c, self.dn)
-        pluginlib.egg_info_dir = wrap_egg_info_dir
+                return pluginlib.old_egg_info_dir(c, self.dn)
+            pluginlib.egg_info_dir = wrap_egg_info_dir
         return vars
 
     def pre(self, command, output_dir, vars):
@@ -162,7 +163,7 @@ class Package(Template):
         self.output_dir = os.path.join(command.options.output_dir)
 
     def post(self, command, output_dir, vars):
-        Template.post(self, command, output_dir, vars) 
+        Template.post(self, command, output_dir, vars)
         isolated_init = os.path.join(output_dir, 'src', '__init__.py')
         if os.path.exists(isolated_init) and not bool(vars['namespace']):
             os.remove(isolated_init)
@@ -172,16 +173,20 @@ PLONE RELATED STUFF
 """
 from minitage.paste.projects import plone3
 from minitage.paste.projects import plone4
+from minitage.paste.projects import django
 
 borrowed_vars = [re.compile('with_ploneproduct.*'),
                  re.compile('with_binding_ldap')]
 
-plone_vars = Package.vars + [ ] 
+plone_vars = Package.vars + [ ]
 excluded_vars = []
 p3_vars = []
 p4_vars = []
+django_vars = []
 items = ((p3_vars, plone3.Template),
-         (p4_vars, plone4.Template),)
+         (p4_vars, plone4.Template),
+         (django_vars, django.Template),
+        )
 
 for vars, template in items:
     for cvar in template.vars:
@@ -201,7 +206,7 @@ for vars, template in items:
                             default = 'y'
                         )
                     )
-                    break 
+                    break
 
 
 class P3Package(Package):
@@ -231,7 +236,7 @@ class P3Package(Package):
         gs_mappings = getattr(self.plone_template, 'gs_mappings')
         z2products = getattr(self.plone_template, 'z2products')
         z2packages = getattr(self.plone_template, 'z2packages')
-        
+
         vars['products'], vars['tested_products'] = [], []
         # quick install / appconfig
         if not "qi" in vars: vars["qi"] = {}
@@ -239,7 +244,7 @@ class P3Package(Package):
             if vars.get(key, False):
                 if not key in vars["qi"]:
                     vars["qi"][key] = []
-                aikey = key.replace('ploneproduct', 
+                aikey = key.replace('ploneproduct',
                                     'autoinstall_ploneproduct')
                 if vars.get(aikey, False):
                     vars["qi"][key].extend([i['name'] for i in qi_mappings[key]])
@@ -253,7 +258,7 @@ class P3Package(Package):
             if vars.get(key, False):
                 if not key in vars["hqi"]:
                     vars["hqi"][key] = []
-                aikey = key.replace('ploneproduct', 
+                aikey = key.replace('ploneproduct',
                                     'autoinstall_ploneproduct')
                 if vars.get(aikey, False):
                     vars["hqi"][key].extend(qi_hidden_mappings[key])
@@ -268,7 +273,7 @@ class P3Package(Package):
             if vars.get(key, False):
                 if not key in vars["z2packages"]:
                     vars["z2packages"][key] = []
-                aikey = key.replace('ploneproduct', 
+                aikey = key.replace('ploneproduct',
                                     'autoinstall_ploneproduct')
                 if vars.get(aikey, False):
                     vars["z2packages"][key].extend(z2packages[key])
@@ -284,7 +289,7 @@ class P3Package(Package):
                 if not key in vars["z2products"]:
                     vars["z2products"][key] = []
                 aikey = key.replace('ploneproduct', 'autoinstall_ploneproduct')
-                # a zope2 product must not have its namespace 
+                # a zope2 product must not have its namespace
                 # in the ztc.installProduct call
                 if vars.get(aikey, False):
                     vars["z2products"][key].extend([i.replace('Products.', '')
@@ -378,4 +383,16 @@ class P3Package(Package):
 class P4Package(P3Package):
     plone_template = plone4.Template
     vars = plone_vars + p4_vars
- 
+
+class DjangoPackage(Package):
+    vars = Package.vars + django_vars
+
+    def __init__(self, *args, **kwargs):
+        Template.__init__(self, *args, **kwargs)
+
+    def pre(self, command, output_dir, vars):
+        Package.pre(self, command, output_dir, vars)
+        self.load_django_vars(command, output_dir, vars)
+
+    def load_django_vars(self, command, output_dir, vars):
+        vars['eggs_mappings'] = getattr(django.Template, 'eggs_mappings')

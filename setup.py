@@ -53,6 +53,7 @@ setup(
   entry_points="""
   # -*- Entry points: -*-
   [paste.paster_create_template]
+  collective.generic.django = collective.generic.skel.django.package:DjangoPackage
   collective.generic.plone3_policy = collective.generic.skel.policy.package:P3Package
   collective.generic.plone4_policy = collective.generic.skel.policy.package:P4Package
   collective.generic.plone3_skin  = collective.generic.skel.skin.package:P3Package
