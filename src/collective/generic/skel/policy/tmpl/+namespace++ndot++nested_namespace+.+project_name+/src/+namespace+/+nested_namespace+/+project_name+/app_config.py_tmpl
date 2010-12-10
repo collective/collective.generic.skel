@@ -18,7 +18,7 @@ PRODUCT_DEPENDENCIES = (\
 #if re.match('\s*#.*', $product):
 $product
 #else
-     '$product',
+#     '$product',
 #end if
 #end for
 
@@ -35,59 +35,59 @@ HIDDEN_PRODUCTS = [u'plone.app.openid', u'NuPlone',
 #if re.match('\s*#.*', $product):
 $product
 #else
-     '$product',
+#     '$product',
 #end if
 #end for
 
 #end for     
 #for package, profile, order in $gs
-      u'${package}',
+#      u'${package}',
 #end for
 #if $with_ploneproduct_cjqui
-      u'collective.js.jqueryui',
+#      u'collective.js.jqueryui',
 #end if
     #for var in $hqi:
     #$var
     #for product in $hqi[$var]:
     #if re.match('\s*#.*', $product):
     $product
-    #else
-    u'$product',
+#    #else
+#    u'$product',
     #end if
     #end for
     #end for
-    u'${namespace}${ndot}${nested_namespace}.skin',
-    u'${namespace}${ndot}${nested_namespace}.tma',
-    u'${namespace}${ndot}${nested_namespace}.${project_name}.migrations.v1_1',
-    u'${namespace}${ndot}${nested_namespace}.${project_name}.migrations',
+#    u'${namespace}${ndot}${nested_namespace}.skin',
+#    u'${namespace}${ndot}${nested_namespace}.tma',
+#    u'${namespace}${ndot}${nested_namespace}.${project_name}.migrations.v1_1',
+#    u'${namespace}${ndot}${nested_namespace}.${project_name}.migrations',
 #if $with_ploneproduct_atschemaeditor:
-    u'ATSchemaEditorNG',
-    u'Products.ATSchemaEditorNG',
+#    u'ATSchemaEditorNG',
+#    u'Products.ATSchemaEditorNG',
 #end if    
 #if $with_ploneproduct_agridfield
-    u'DataGridField',
-    u'Products.DataGridField',
+#    u'DataGridField',
+#    u'Products.DataGridField',
 #end if    
 #if $with_ploneproduct_facultystaff or $with_ploneproduct_membrane
-    u'Relations',
-    u'Products.Relations',
+#    u'Relations',
+#    u'Products.Relations',
 #end if   
 #if $with_ploneproduct_facultystaff:
-    u'FacultyStaffDirectory',
-    u'Products.FacultyStaffDirectory',
+#    u'FacultyStaffDirectory',
+#    u'Products.FacultyStaffDirectory',
 #end if  
 #if $with_ploneproduct_quaestrio:
-    u'Products.Quaestrio',
-    u'Quaestrio',
+#    u'Products.Quaestrio',
+#    u'Quaestrio',
 #end if 
 #if $with_ploneproduct_csvreplica:
-    u'csvreplicata',
-    u'Products.csvreplicata',
+#    u'csvreplicata',
+#    u'Products.csvreplicata',
 #end if
 #if $major < 4:
 #if $with_ploneproduct_cachesetup
-    u'CMFSquidTool',
-    u'Products.CMFSquidTool',
+#    u'CMFSquidTool',
+#    u'Products.CMFSquidTool',
 #end if      
 #end if       
 ]
@@ -100,38 +100,38 @@ HIDDEN_PROFILES = [u'plone.app.openid', u'NuPlone',
       u'${package}',
 #end for 
 #if $with_ploneproduct_atschemaeditor:
-    u'ATSchemaEditorNG',
-    u'Products.ATSchemaEditorNG',
+#    u'ATSchemaEditorNG',
+#    u'Products.ATSchemaEditorNG',
 #end if    
 #if $with_ploneproduct_agridfield
-    u'DataGridField',
-    u'Products.DataGridField',
+#    u'DataGridField',
+#    u'Products.DataGridField',
 #end if    
 #if $with_ploneproduct_facultystaff or $with_ploneproduct_membrane
-    u'Relations',
-    u'Products.Relations',
+#    u'Relations',
+#    u'Products.Relations',
 #end if   
 #if $with_ploneproduct_facultystaff:
-    u'FacultyStaffDirectory',
-    u'Products.FacultyStaffDirectory',
+#    u'FacultyStaffDirectory',
+#    u'Products.FacultyStaffDirectory',
 #end if  
 #if $with_ploneproduct_quaestrio:
-    u'Products.Quaestrio',
-    u'Quaestrio',
+#    u'Products.Quaestrio',
+#    u'Quaestrio',
 #end if 
 #if $with_ploneproduct_csvreplica:
-    u'csvreplicata',
-    u'Products.csvreplicata',
+#    u'csvreplicata',
+#    u'Products.csvreplicata',
 #end if
 #if $major < 4:
 #if $with_ploneproduct_cachesetup
-    u'CMFSquidTool',
-    u'Products.CMFSquidTool',
+#    u'CMFSquidTool',
+#    u'Products.CMFSquidTool',
 #end if       
 #end if       
 
 #if $with_ploneproduct_cjqui
-      u'collective.js.jqueryui',
+#      u'collective.js.jqueryui',
 #end if
 ]
 
