@@ -19,6 +19,7 @@ $hr
 \# and in your doctests, you can do:
 \# >>> bar.something
 from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.globals import *
+from ${namespace}${ndot}${nested_namespace}.${project_name}.tests import base
 $hr
 
 def test_suite():
@@ -26,7 +27,7 @@ def test_suite():
     return test_doctests_suite(
         __file__,
         globs=globals(),
-        testklass=FunctionalTestCase
+        testklass=base.FunctionalTestCase
     )
 
 # vim:set ft=python:
