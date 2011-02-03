@@ -1,9 +1,8 @@
 """
-
 Launching all doctests in the tests directory using:
 
     - The test_suite helper from the testing product
-    - the base FunctionalTestCase in base.py
+    - the base layer in layer.py
 
 """
 
@@ -24,7 +23,6 @@ $hr
 
 def test_suite():
     """."""
-    setup_site()
     return test_doctests_suite(
         __file__,
         globs=globals(),

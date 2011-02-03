@@ -49,6 +49,7 @@ setup(
         'setuptools',
         'z3c.autoinclude',
         # -*- Extra requirements: -*-
+        'collective.testcaselayer',
     ],
     entry_points = {
         'z3c.autoinclude.plugin': [
