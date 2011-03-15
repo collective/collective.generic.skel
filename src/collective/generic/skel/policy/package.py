@@ -44,3 +44,12 @@ class P4Package(c.P4Package):
         policy_post(self, command, output_dir, vars) 
 
 
+class P41Package(c.P41Package):
+    """Package template"""
+    project = PROJECT_NAME
+    summary = "A Generic Plone41 portal policy"
+    vars = c.P41Package.vars + policy_vars
+
+    def post(self, command, output_dir, vars):
+        c.P41Package.post(self, command, output_dir, vars)
+        policy_post(self, command, output_dir, vars)  

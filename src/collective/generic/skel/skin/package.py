@@ -67,4 +67,19 @@ class P4Package(c.P4Package):
     def post(self, command, output_dir, vars):
         c.P4Package.post(self, command, output_dir, vars)
  
+class P41Package(c.P41Package):
+    """Package template"""
+    project = PROJECT_NAME
+    summary = "A Generic Plone41 portal skin"
+    vars = skin4_vars + c.P41Package.vars
+    default_theme = 'classic'
+    themes = p4_themes
 
+    def pre(self, command, output_dir, vars):
+        c.P41Package.pre(self, command, output_dir, vars)
+        skin_chooser(self, command, output_dir, vars)
+
+    def post(self, command, output_dir, vars):
+        c.P41Package.post(self, command, output_dir, vars)
+ 
+ 

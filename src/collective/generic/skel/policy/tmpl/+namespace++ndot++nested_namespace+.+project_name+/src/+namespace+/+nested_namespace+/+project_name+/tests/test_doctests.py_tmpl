@@ -6,7 +6,7 @@ Launching all doctests in the tests directory using:
 
 """
 
-from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.base import FunctionalTestCase, setup_site
+from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.base import FunctionalTestCase
 from ${namespace}${ndot}${nested_namespace}.testing.tests.test_doctests import test_doctests_suite
 
 $hr

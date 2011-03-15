@@ -173,6 +173,7 @@ PLONE RELATED STUFF
 """
 from minitage.paste.projects import plone3
 from minitage.paste.projects import plone4
+from minitage.paste.projects import plone41
 from minitage.paste.projects import django
 
 borrowed_vars = [re.compile('with_ploneproduct.*'),
@@ -182,9 +183,11 @@ plone_vars = Package.vars + [ ]
 excluded_vars = []
 p3_vars = []
 p4_vars = []
+p41_vars = []
 django_vars = []
 items = ((p3_vars, plone3.Template),
          (p4_vars, plone4.Template),
+         (p41_vars, plone41.Template),
          (django_vars, django.Template),
         )
 
@@ -383,6 +386,10 @@ class P3Package(Package):
 class P4Package(P3Package):
     plone_template = plone4.Template
     vars = plone_vars + p4_vars
+
+class P41Package(P4Package):
+    plone_template = plone41.Template
+    vars = plone_vars + p41_vars 
 
 class DjangoPackage(Package):
     vars = Package.vars + django_vars
