@@ -175,6 +175,7 @@ from minitage.paste.projects import plone3
 from minitage.paste.projects import plone4
 from minitage.paste.projects import plone41
 from minitage.paste.projects import django
+from minitage.paste.projects import pyramid
 
 borrowed_vars = [re.compile('with_ploneproduct.*'),
                  re.compile('with_binding_ldap')]
@@ -185,10 +186,12 @@ p3_vars = []
 p4_vars = []
 p41_vars = []
 django_vars = []
+pyramid_vars = []
 items = ((p3_vars, plone3.Template),
          (p4_vars, plone4.Template),
          (p41_vars, plone41.Template),
          (django_vars, django.Template),
+         (pyramid_vars, pyramid.Template),
         )
 
 for vars, template in items:
@@ -403,3 +406,16 @@ class DjangoPackage(Package):
 
     def load_django_vars(self, command, output_dir, vars):
         vars['eggs_mappings'] = getattr(django.Template, 'eggs_mappings')
+
+class PyramidPackage(Package):
+    vars = Package.vars + pyramid_vars
+
+    def __init__(self, *args, **kwargs):
+        Template.__init__(self, *args, **kwargs)
+
+    def pre(self, command, output_dir, vars):
+        Package.pre(self, command, output_dir, vars)
+        self.load_pyramid_vars(command, output_dir, vars)
+
+    def load_pyramid_vars(self, command, output_dir, vars):
+        vars['eggs_mappings'] = getattr(pyramid.Template, 'eggs_mappings') 

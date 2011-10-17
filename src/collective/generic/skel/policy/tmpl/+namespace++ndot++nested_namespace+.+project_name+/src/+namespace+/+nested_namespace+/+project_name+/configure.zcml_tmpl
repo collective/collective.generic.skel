@@ -4,6 +4,7 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="${namespace}${ndot}${nested_namespace}.${project_name}">
   <include package="Products.Five" file="configure.zcml"/>
+  <include package="Products.CMFCore" file="permissions.zcml" />
   <!-- Load the ZCML configuration for the ${namespace}${ndot}${nested_namespace}.${project_name} package.-->
 #for $package in $zcml:
 #if isinstance($package, basestring):
