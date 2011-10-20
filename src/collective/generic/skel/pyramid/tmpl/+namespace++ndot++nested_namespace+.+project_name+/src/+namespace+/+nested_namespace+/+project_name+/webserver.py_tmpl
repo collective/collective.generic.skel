@@ -16,7 +16,7 @@ from ${namespace}${ndot}${nested_namespace}.${project_name} import utils
 
 def wsgi_app_factory(global_config, **local_config):
     """
-    A paste.httpfactory to wrap a django WSGI based application.
+    A paste.httpfactory to wrap a pyramid WSGI based application.
     """
     dn = name = '${namespace}${ndot}${nested_namespace}.${project_name}'
     wconf = global_config.copy()

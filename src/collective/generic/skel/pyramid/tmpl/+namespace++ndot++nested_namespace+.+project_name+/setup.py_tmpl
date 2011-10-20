@@ -24,7 +24,11 @@ setup(
 #else
     url='http://pypi.python.org/pypi/%s' % name,
 #end if
-    install_requires = [],
+    install_requires = [#slurp
+#for i in $python_eggs
+            "$i",
+                        #end for
+                       ],
     classifiers=[
         'Development Status :: 4 - Beta',
         'Environment :: Web Environment',

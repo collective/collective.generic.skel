@@ -197,7 +197,14 @@ items = ((p3_vars, plone3.Template),
 for vars, template in items:
     for cvar in template.vars:
         found = False
-        for sre in borrowed_vars:
+        bv = borrowed_vars[:]
+        if template == pyramid.Template:
+            bv.extend([re.compile('with_binding.*'),
+                       re.compile('with_pyramid.*'), 
+                       re.compile('with_database.*'), 
+                       re.compile('with_egg.*'),  
+                      ])
+        for sre in bv:
             if sre.match(cvar.name) and not found:
                 found = True
                 vars.append(cvar)
@@ -215,33 +222,28 @@ for vars, template in items:
                     break
 
 
-class P3Package(Package):
-    plone_version = None
-    plone_template = plone3.Template
-    vars = plone_vars + p3_vars
-
-    def __init__(self, *args, **kwargs):
-        Template.__init__(self, *args, **kwargs)
-        self.plone_version = self.plone_template.packaged_version
-        self.plone_major = int(self.plone_version[0])
-
-    def pre(self, command, output_dir, vars):
-        Package.pre(self, command, output_dir, vars)
-        vars['plone_version'] = self.plone_version
-        vars['major'] = self.plone_major
-        self.load_plone_vars(command, output_dir, vars)
-        if not 'with_ploneproduct_fss' in vars:
-            vars['with_ploneproduct_fss'] = False
-
+class MinitagePackage(Package):
     def load_plone_vars(self, command, output_dir, vars):
-        eggs_mappings = getattr(self.plone_template, 'eggs_mappings')
-        zcml_mappings = getattr(self.plone_template, 'zcml_mappings')
-        zcml_loading_order = getattr(self.plone_template, 'zcml_loading_order')
-        qi_mappings = getattr(self.plone_template, 'qi_mappings')
-        qi_hidden_mappings = getattr(self.plone_template, 'qi_hidden_mappings')
-        gs_mappings = getattr(self.plone_template, 'gs_mappings')
-        z2products = getattr(self.plone_template, 'z2products')
-        z2packages = getattr(self.plone_template, 'z2packages')
+        eggs_mappings = getattr(self.paster_template, 'eggs_mappings', {})
+        zcml_mappings = getattr(self.paster_template, 'zcml_mappings', {})
+        zcml_loading_order = getattr(self.paster_template, 'zcml_loading_order', {})
+        qi_mappings = getattr(self.paster_template, 'qi_mappings', {})
+        qi_hidden_mappings = getattr(self.paster_template, 'qi_hidden_mappings', {})
+        gs_mappings = getattr(self.paster_template, 'gs_mappings', {})
+        z2products = getattr(self.paster_template, 'z2products', {})
+        z2packages = getattr(self.paster_template, 'z2packages', {})
+
+        vars['python_eggs'] = []
+        for var in eggs_mappings:
+            if vars.get(var, None):
+                for e in eggs_mappings[var]:
+                    if not e in vars['python_eggs']:
+                        vars['python_eggs'].append(e)
+        if self.paster_template == pyramid.Template:
+            for e in pyramid.base_pyramid_eggs:
+                if not e in vars['python_eggs']:
+                    vars['python_eggs'].append(e)
+
 
         vars['products'], vars['tested_products'] = [], []
         # quick install / appconfig
@@ -385,13 +387,36 @@ class P3Package(Package):
                         vars['py_modules'][opt] = []
                     if not w in vars['py_modules'][opt]:
                         vars['py_modules'][opt].append(w)
+ 
+    def pre(self, command, output_dir, vars):
+        Package.pre(self, command, output_dir, vars)
+        self.load_plone_vars(command, output_dir, vars)
+
+class P3Package(MinitagePackage):
+    plone_version = None
+    paster_template = plone3.Template
+    vars = plone_vars + p3_vars
+
+    def __init__(self, *args, **kwargs):
+        Template.__init__(self, *args, **kwargs)
+        self.plone_version = self.paster_template.packaged_version
+        self.plone_major = int(self.plone_version[0])
+
+    def pre(self, command, output_dir, vars):
+        Package.pre(self, command, output_dir, vars)
+        vars['plone_version'] = self.plone_version
+        vars['major'] = self.plone_major
+        self.load_plone_vars(command, output_dir, vars)
+        if not 'with_ploneproduct_fss' in vars:
+            vars['with_ploneproduct_fss'] = False
+
 
 class P4Package(P3Package):
-    plone_template = plone4.Template
+    paster_template = plone4.Template
     vars = plone_vars + p4_vars
 
 class P41Package(P4Package):
-    plone_template = plone41.Template
+    paster_template = plone41.Template
     vars = plone_vars + p41_vars 
 
 class DjangoPackage(Package):
@@ -407,15 +432,7 @@ class DjangoPackage(Package):
     def load_django_vars(self, command, output_dir, vars):
         vars['eggs_mappings'] = getattr(django.Template, 'eggs_mappings')
 
-class PyramidPackage(Package):
+class PyramidPackage(MinitagePackage):
     vars = Package.vars + pyramid_vars
+    paster_template = pyramid.Template
 
-    def __init__(self, *args, **kwargs):
-        Template.__init__(self, *args, **kwargs)
-
-    def pre(self, command, output_dir, vars):
-        Package.pre(self, command, output_dir, vars)
-        self.load_pyramid_vars(command, output_dir, vars)
-
-    def load_pyramid_vars(self, command, output_dir, vars):
-        vars['eggs_mappings'] = getattr(pyramid.Template, 'eggs_mappings') 
