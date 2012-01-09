@@ -13,6 +13,7 @@ p4_themes = {
 } 
 skin3_vars = [var('default_theme', 'default theme %s' % (tuple(p3_themes.keys()),), default='default'),]
 skin4_vars = [var('default_theme', 'default theme %s' % (tuple(p4_themes.keys()),), default='classic'),] 
+skin41_vars = [var('default_theme', 'default theme %s' % (tuple(p4_themes.keys()),), default='sunburst'),] 
 
 def skin_chooser(self, command, output_dir, vars):
     s = vars.get('default_theme').lower().strip()
@@ -30,7 +31,6 @@ class P3Package(c.P3Package):
     project = PROJECT_NAME
     summary = "A Generic Plone3 portal skin"
     vars = skin3_vars + c.P3Package.vars
-    default_theme = 'default'
     themes = p3_themes
 
     def pre(self, command, output_dir, vars):
@@ -57,7 +57,6 @@ class P4Package(c.P4Package):
     project = PROJECT_NAME
     summary = "A Generic Plone4 portal skin"
     vars = skin4_vars + c.P4Package.vars
-    default_theme = 'classic'
     themes = p4_themes
 
     def pre(self, command, output_dir, vars):
@@ -71,8 +70,7 @@ class P41Package(c.P41Package):
     """Package template"""
     project = PROJECT_NAME
     summary = "A Generic Plone41 portal skin"
-    vars = skin4_vars + c.P41Package.vars
-    default_theme = 'classic'
+    vars = skin41_vars + c.P41Package.vars
     themes = p4_themes
 
     def pre(self, command, output_dir, vars):
