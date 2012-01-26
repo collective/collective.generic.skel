@@ -1,25 +1,26 @@
+<?xml version="1.0"?>
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="${namespace}${ndot}${nested_namespace}.${project_name}">
   <genericsetup:registerProfile
-      name="1.0-1.1"
-      title="${namespace}${ndot}${nested_namespace}.${project_name} migration 1.0 to 1.1"
+      name="1011"
+      title="${namespace}${ndot}${nested_namespace}.${project_name} migration 10 to 11"
       description=""
       directory="profile"
       for="Products.CMFPlone.interfaces.IMigratingPloneSiteRoot"
       provides="Products.GenericSetup.interfaces.EXTENSION"
     />
   <genericsetup:upgradeSteps
-      profile="${namespace}${ndot}${nested_namespace}.${project_name}.migrations:default"
-      source="1.0"
-      destination="1.1">
+      profile="${namespace}${ndot}${nested_namespace}.${project_name}:default"
+      source="10"
+      destination="11">
     <genericsetup:upgradeStep
-        title="${namespace}${ndot}${nested_namespace}.${project_name}.migrations 1.0 - 1.1"
+        title="${namespace}${ndot}${nested_namespace}.${project_name}.migrations 10 - 11"
         description=""
         handler=".upgrade"
       />
   </genericsetup:upgradeSteps>
-<!-- vim:set ft=xml: -->
+  <!-- vim:set ft=xml: -->
 </configure>

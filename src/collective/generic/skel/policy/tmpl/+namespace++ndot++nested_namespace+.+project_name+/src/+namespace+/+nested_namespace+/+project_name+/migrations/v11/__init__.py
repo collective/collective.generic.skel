@@ -19,6 +19,10 @@ def upgrade(portal_setup):
     # install Products.PloneSurvey and dependencies
     #migration_util.loadMigrationProfile(site,
     #                                    'profile-Products.PloneSurvey:default')
+    migration_util.loadMigrationProfile(
+        site,
+        'profile-${namespace}${ndot}${nested_namespace}.${project_name}.migrations.v11:1011')
+ 
 
 
 
