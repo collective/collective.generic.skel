@@ -18,7 +18,7 @@ def read(rnames):
         os.path.join(setupdir, *rnames)
     ).read()
 
-README =read((os.path.dirname(__file__),'README.txt'))
+README =read((os.path.dirname(__file__),'README.rst'))
 CHANGELOG  = read((os.path.dirname(__file__), 'docs', 'HISTORY.txt'))
 
 long_description = '\n'.join([README,
