@@ -1,0 +1,70 @@
+import os, sys
+
+from setuptools import setup, find_packages
+
+version = ${repr($version) or "1.0"}
+
+def read(*rnames):
+    return open(
+        os.path.join('.', *rnames)
+    ).read()
+
+long_description = "\n\n".join(
+    [read('README.rst'),
+     read('docs', 'INSTALL.rst'),
+     read('docs', 'HISTORY.rst'),
+    ]
+)
+
+classifiers = [
+    "Programming Language :: Python",
+    "Topic :: Software Development",]
+
+name = '${namespace}${ndot}${nested_namespace}.${project_name}'
+setup(
+    name=name,
+    namespace_packages=[#slurp
+#if $namespace:
+'${namespace}',#slurp
+#end if
+         '${namespace}${ndot}${nested_namespace}',
+         '${namespace}${ndot}${nested_namespace}.${project_name}',],
+    version=version,
+    description='$description ${project_name} product',
+    long_description=long_description,
+    classifiers=classifiers,
+    keywords='$keywords',
+    author='$author',
+    author_email='$author_email',
+#if $url
+    url='$url',
+#else
+    url='http://pypi.python.org/pypi/%s' % name,
+#end if
+    license='$license_name',
+    packages=find_packages('src'),
+    package_dir = {'': 'src'},
+    include_package_data=True,
+    install_requires=[
+        'setuptools',
+        'z3c.autoinclude',
+        #set $skipped = ['binding_pil', 'ploneproduct_tinymce']
+        #for $k in $python_eggs_mapping:
+        #if not True in [$l in $k.lower() for $l in $skipped]:
+        \# $k
+        #for $egg in $python_eggs_mapping[$k]:
+        '$egg',
+        #end for
+        #end if
+        #end for
+        # -*- Extra requirements: -*-
+        'collective.testcaselayer',
+    ],
+    entry_points = {
+        'z3c.autoinclude.plugin': [
+            'target = plone',
+        ],
+
+    },
+)
+# vim:set ft=python:

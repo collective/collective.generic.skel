@@ -1,0 +1,12 @@
+[buildout]
+extends = http://svn.plone.org/svn/collective/buildout/plonetest/test-4.0.x.cfg base.cfg
+
+[versions]
+#for version in $p4_versions:
+#if $version[0].startswith('#'):
+$version[0]
+#else
+$version[0] = $version[1]
+#end if
+#end for
+

@@ -1,0 +1,4 @@
+<layers>
+  <layer name="${namespace}${ndot}${nested_namespace}.${project_name}"
+      interface="${namespace}${ndot}${nested_namespace}.${project_name}.browser.interfaces.IThemeSpecific"/>
+</layers>

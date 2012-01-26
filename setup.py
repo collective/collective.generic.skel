@@ -42,6 +42,7 @@ setup(
                       'collective.generic.skel',
                       'collective.generic.skel.policy',
                       'collective.generic.skel.tma',
+                      'collective.generic.skel.addon',
                       'collective.generic.skel.skin',
                       'collective.generic.skel.testing',
                      ],
@@ -64,6 +65,7 @@ setup(
   collective.generic.plone3_tma  = collective.generic.skel.tma.package:P3Package
   collective.generic.plone4_tma  = collective.generic.skel.tma.package:P4Package
   collective.generic.plone41_tma  = collective.generic.skel.tma.package:P41Package
+  collective.generic.plone_addon  = collective.generic.skel.addon.package:PAddon
   collective.generic.egg  = collective.generic.skel.common.package:Package
   collective.generic.testing    = collective.generic.skel.testing.package:Package
   """

@@ -1,0 +1,27 @@
+from Products.PloneTestCase import PloneTestCase as ptc
+
+from ${namespace}${ndot}${nested_namespace}.${project_name}.testing import layer 
+
+$hr
+"""
+
+$generate_msg
+
+Think to put "FAILS_ON_UNTESTED_ELEMENT" to True in testing.cfg for production mode or to test very strictly your code!
+This will issue errors for untested elements instead of just simple warnings !
+
+"""
+$hr
+
+
+class TestCase(ptc.PloneTestCase):
+    """We use this base class for all the tests in this package. 
+    If necessary, we can put common utility or setup code in here.
+    """
+    layer = layer
+
+class FunctionalTestCase(ptc.FunctionalTestCase):
+    """Functionnal base TestCase."""
+    layer = layer
+
+# vim:set ft=python:

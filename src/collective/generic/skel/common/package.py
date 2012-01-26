@@ -1,3 +1,4 @@
+from minitage.core.common import search_latest
 import sys
 import os
 import re
@@ -134,7 +135,23 @@ class Package(Template):
                         self.module, self.dn, n
                     )
                 )
-                return pluginlib.old_egg_info_dir(c, self.dn)
+                ret = None
+                try:
+                    ret = pluginlib.old_egg_info_dir(c, self.dn)
+                except Exception, e:
+                    try:
+                        os.makedirs(os.path.join(
+                            c,
+                            "src",
+                            "%s.egg-info" % self.dn
+                        ))
+                    except Exception, e:
+                        pass
+                    try:
+                        ret = pluginlib.old_egg_info_dir(c, self.dn)
+                    except Exception, e:
+                        raise
+                return ret
             pluginlib.egg_info_dir = wrap_egg_info_dir
         return vars
 
@@ -178,7 +195,17 @@ from minitage.paste.projects import django
 from minitage.paste.projects import pyramid
 
 borrowed_vars = [re.compile('with_ploneproduct.*'),
-                 re.compile('with_binding_ldap')]
+                 re.compile('with_binding.*'),
+                 re.compile('with_egg.*'),
+                 re.compile('address'),
+                 re.compile('http_port'),
+                 re.compile('uri'),
+                 re.compile('scm_type'),
+                 re.compile('opt_deps'),
+                 re.compile('inside_minitage'),
+                 re.compile('smtp.*'),
+                 re.compile('with_database.*'),
+                ]
 
 plone_vars = Package.vars + [ ]
 excluded_vars = []
@@ -198,12 +225,6 @@ for vars, template in items:
     for cvar in template.vars:
         found = False
         bv = borrowed_vars[:]
-        if template == pyramid.Template:
-            bv.extend([re.compile('with_binding.*'),
-                       re.compile('with_pyramid.*'), 
-                       re.compile('with_database.*'), 
-                       re.compile('with_egg.*'),  
-                      ])
         for sre in bv:
             if sre.match(cvar.name) and not found:
                 found = True
@@ -223,6 +244,7 @@ for vars, template in items:
 
 
 class MinitagePackage(Package):
+    python = 'python-2.6'
     def load_plone_vars(self, command, output_dir, vars):
         eggs_mappings = getattr(self.paster_template, 'eggs_mappings', {})
         zcml_mappings = getattr(self.paster_template, 'zcml_mappings', {})
@@ -232,17 +254,58 @@ class MinitagePackage(Package):
         gs_mappings = getattr(self.paster_template, 'gs_mappings', {})
         z2products = getattr(self.paster_template, 'z2products', {})
         z2packages = getattr(self.paster_template, 'z2packages', {})
+        versions_mappings         = getattr(self.paster_template, 'versions_mappings', {})
+        checked_versions_mappings = getattr(self.paster_template, 'checked_versions_mappings', {})
+
+
+
+        # do we need some pinned version
+        vars['plone_versions'] = []
+        pin_added = []
+        for var in versions_mappings:
+            tmp, found = [], False
+            tmp.append(('# %s' % var, '',))
+            vmap = versions_mappings[var]
+            vmap.sort()
+            for pin in vmap:
+                if not pin in pin_added:
+                    pin_added.append(pin)
+                    tmp.append(pin)
+                    found = True
+            if found:
+                vars['plone_versions'].extend(tmp)
+
+        for var in checked_versions_mappings:
+            if vars.get(var, False):
+                tmp, found = [], False
+                tmp.append(('# %s' % var, '',))
+                vmap = checked_versions_mappings[var].keys()
+                vmap.sort()
+                for pin in vmap:
+                    if not pin in pin_added:
+                        pin_added.append(pin)
+                        tmp.append((pin, checked_versions_mappings[var][pin]))
+                        found = True
+                if found:
+                    vars['plone_versions'].extend(tmp) 
 
         vars['python_eggs'] = []
+        vars['python_eggs_mapping'] = {}
         for var in eggs_mappings:
             if vars.get(var, None):
                 for e in eggs_mappings[var]:
                     if not e in vars['python_eggs']:
                         vars['python_eggs'].append(e)
+                        if not var in vars['python_eggs_mapping']:
+                            vars['python_eggs_mapping'][var] = []
+                        vars['python_eggs_mapping'][var].append(e)
         if self.paster_template == pyramid.Template:
             for e in pyramid.base_pyramid_eggs:
                 if not e in vars['python_eggs']:
                     vars['python_eggs'].append(e)
+                    if not var in vars['python_eggs_mapping']:
+                        vars['python_eggs_mapping'][var] = []
+                    vars['python_eggs_mapping'][var].append(e)
 
 
         vars['products'], vars['tested_products'] = [], []
@@ -387,10 +450,73 @@ class MinitagePackage(Package):
                         vars['py_modules'][opt] = []
                     if not w in vars['py_modules'][opt]:
                         vars['py_modules'][opt].append(w)
- 
+
     def pre(self, command, output_dir, vars):
         Package.pre(self, command, output_dir, vars)
         self.load_plone_vars(command, output_dir, vars)
+
+    def load_minitage_dependencies(self, command, output_dir, vars):
+        vars['opt_deps'] = ''
+        if vars['inside_minitage']:
+            # databases
+            minitage_dbs = ['mysql', 'postgresql']
+            for db in minitage_dbs:
+                if vars['with_database_%s' % db] and vars['inside_minitage']:
+                    vars['opt_deps'] += ' %s' % search_latest('%s-\d\.\d*'% db, vars['minilays'])
+            # databases
+            if vars['with_binding_mapscript'] and vars['inside_minitage']:
+                vars['opt_deps'] += ' %s' % search_latest('mapserver-\d\.\d*', vars['minilays'])
+            # collective.geo
+            if 'with_ploneproduct_cgeo' in vars:
+                if vars['with_ploneproduct_cgeo'] and vars['inside_minitage']:
+                    for i in ('geos-\d\.\d*','gdal-\d\.\d*'):
+                        vars['opt_deps'] += ' %s' % search_latest(i, vars['minilays'])
+            # tesseact
+            if vars['with_binding_tesseract'] and vars['inside_minitage']:
+                for i in ('tesseract-\d','leptonica-\d'):
+                    vars['opt_deps'] += ' %s' % search_latest(i, vars['minilays'])
+            # pyqt
+            vars['pyqt'] = ''
+            if vars['with_binding_pyqt'] and vars['inside_minitage']:
+                vars['opt_deps'] += ' %s' % search_latest('swiglib-\d\.\d+', vars['minilays'])
+                for i in ('pyqt-\d\.\d+','sip-\d\.\d+'):
+                    vars['opt_deps'] += ' %s' % search_latest(i, vars['minilays'])
+                    vars['pyqt'] += '\n   %s' %  (
+                        '${buildout:directory}/../../'
+                        'eggs/%s/parts'
+                        '/site-packages-%s/site-packages-%s' % (
+                            search_latest(i, vars['minilays']),
+                            vars['pyver'],
+                            vars['pyver'],
+                        )
+                    )
+
+            # openldap
+            if vars['with_binding_ldap'] and vars['inside_minitage']:
+                cs = search_latest('cyrus-sasl-\d\.\d*', vars['minilays'])
+                vars['opt_deps'] += ' %s %s %s' % (
+                    search_latest('openldap-\d\.\d*', vars['minilays']),
+                    search_latest('openssl-1', vars['minilays']),
+                    cs
+                )
+                vars['includesdirs'] = '\n    %s'%  os.path.join(
+                    vars['mt'], 'dependencies', cs, 'parts', 'part', 'include', 'sasl'
+                )
+
+            # htmldoc
+            if vars['with_ploneproduct_awspdfbook'] and vars['inside_minitage']:
+                vars['opt_deps'] += ' %s' % search_latest('htmldoc-\d\.\d*', vars['minilays'])
+
+
+            vars['mt'] = os.environ['MT']
+            vars['minilays'] = minilays = os.path.join(vars['mt'], 'minilays')
+
+            for i in ['libxml2', 'libxslt', 'py-libxml2', 'py-libxslt', 'pil-1', 'libiconv']:
+                vars['opt_deps'] += ' %s' %  search_latest('%s.*' % i, vars['minilays'])
+            # be sure our special python is in priority
+            # plone system dependencies
+            vars['opt_deps'] = re.sub('\s*%s\s*' % self.python, ' ', vars['opt_deps'])
+            vars['opt_deps'] += " %s" % self.python
 
 class P3Package(MinitagePackage):
     plone_version = None
@@ -407,6 +533,7 @@ class P3Package(MinitagePackage):
         vars['plone_version'] = self.plone_version
         vars['major'] = self.plone_major
         self.load_plone_vars(command, output_dir, vars)
+        self.load_minitage_dependencies(command, output_dir, vars)
         if not 'with_ploneproduct_fss' in vars:
             vars['with_ploneproduct_fss'] = False
 
@@ -417,7 +544,7 @@ class P4Package(P3Package):
 
 class P41Package(P4Package):
     paster_template = plone41.Template
-    vars = plone_vars + p41_vars 
+    vars = plone_vars + p41_vars
 
 class DjangoPackage(Package):
     vars = Package.vars + django_vars
