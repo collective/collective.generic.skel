@@ -4,16 +4,11 @@ from collective.generic.skel.common  import package as c
 from paste.script.templates import var
 PROJECT_NAME = "skin"
 
-p3_themes = {
-    'default': 'Plone Default',
-} 
-p4_themes = {
-    'sunburst': 'Sunburst Theme',
-    'classic': 'Plone Classic Theme',
-} 
-skin3_vars = [var('default_theme', 'default theme %s' % (tuple(p3_themes.keys()),), default='default'),]
-skin4_vars = [var('default_theme', 'default theme %s' % (tuple(p4_themes.keys()),), default='classic'),] 
-skin41_vars = [var('default_theme', 'default theme %s' % (tuple(p4_themes.keys()),), default='sunburst'),] 
+
+skin3_vars = [var('default_theme', 'default theme %s' % (tuple( c.p3_themes.keys()),), default='default'),]
+skin4_vars = [var('default_theme', 'default theme %s' % (tuple( c.p4_themes.keys()),), default='classic'),] 
+skin41_vars = [var('default_theme', 'default theme %s' % (tuple(c.p4_themes.keys()),), default='sunburst'),] 
+skin42_vars = [var('default_theme', 'default theme %s' % (tuple(c.p4_themes.keys()),), default='sunburst'),] 
 
 def skin_chooser(self, command, output_dir, vars):
     s = vars.get('default_theme').lower().strip()
@@ -31,7 +26,6 @@ class P3Package(c.P3Package):
     project = PROJECT_NAME
     summary = "A Generic Plone3 portal skin"
     vars = skin3_vars + c.P3Package.vars
-    themes = p3_themes
 
     def pre(self, command, output_dir, vars):
         c.P3Package.pre(self, command, output_dir, vars)
@@ -57,7 +51,6 @@ class P4Package(c.P4Package):
     project = PROJECT_NAME
     summary = "A Generic Plone4 portal skin"
     vars = skin4_vars + c.P4Package.vars
-    themes = p4_themes
 
     def pre(self, command, output_dir, vars):
         c.P4Package.pre(self, command, output_dir, vars)
@@ -71,7 +64,6 @@ class P41Package(c.P41Package):
     project = PROJECT_NAME
     summary = "A Generic Plone41 portal skin"
     vars = skin41_vars + c.P41Package.vars
-    themes = p4_themes
 
     def pre(self, command, output_dir, vars):
         c.P41Package.pre(self, command, output_dir, vars)
@@ -81,3 +73,17 @@ class P41Package(c.P41Package):
         c.P41Package.post(self, command, output_dir, vars)
  
  
+class P42Package(c.P42Package):
+    """Package template"""
+    project = PROJECT_NAME
+    summary = "A Generic Plone42 portal skin"
+    vars = skin42_vars + c.P42Package.vars
+
+    def pre(self, command, output_dir, vars):
+        c.P42Package.pre(self, command, output_dir, vars)
+        skin_chooser(self, command, output_dir, vars)
+
+    def post(self, command, output_dir, vars):
+        c.P42Package.post(self, command, output_dir, vars)
+ 
+  

@@ -1,12 +1,20 @@
-from Products.Five import zcml
-from Products.Five import fiveconfigure
-
 from Testing import ZopeTestCase as ztc
 import transaction
 from OFS.Folder import Folder
 
-from Products.PloneTestCase import PloneTestCase as ptc
-from collective.testcaselayer.ptc import BasePTCLayer, ptc_layer
+import unittest2 as unittest
+
+from zope.configuration import xmlconfig
+
+from plone.app.testing import PloneSandboxLayer
+from plone.app.testing import applyProfile
+from plone.app.testing import PLONE_FIXTURE
+from plone.app.testing import IntegrationTesting, FunctionalTesting
+from plone.app.testing import TEST_USER_NAME, TEST_USER_ID
+from plone.app.testing import login
+from plone.app.testing import setRoles
+from plone.app.testing.selenium_layers import SELENIUM_FUNCTIONAL_TESTING as SELENIUM_TESTING
+from plone.testing import zodb, zca, z2
 
 TESTED_PRODUCTS = (\
 #for item in $z2products:
@@ -22,74 +30,92 @@ TESTED_PRODUCTS = (\
 )
 
 
-class Layer(BasePTCLayer):
+def print_contents(browser, dest='~/.browser.html'):
+    """Print the browser contents somewhere for you to see its context
+    in doctest pdb, type print_contents(browser) and that's it, open firefox
+    with file://~/browser.html."""
+    import os
+    open(os.path.expanduser(dest), 'w').write(browser.contents)  
+
+class Browser(z2.Browser):
+    def print_contents(browser, dest='~/.browser.html'):
+        return print_contents(browser, dest)
+
+class ${PdN}Layer(PloneSandboxLayer):
+
+    defaultBases = (PLONE_FIXTURE, )
     """Layer to setup the $project site"""
     class Session(dict):
         def set(self, key, value):
-            self[key] = value  
+            self[key] = value
 
-    def afterSetUp(self):
+    def setUpZope(self, app, configurationContext):
         """Set up the additional products required for the ${namespace}${ndot}${nested_namespace}) site ${project_name}.
         until the setup of the Plone site testing layer.
-        """ 
+        """
+        self.app = app
+        self.browser = Browser(app)
+        # old zope2 style products
         for product in TESTED_PRODUCTS:
-            ztc.installProduct(product) 
+            z2.installProduct(product)
 
-        # ------------------------------------------------------------------------------------
+        # ----------------------------------------------------------------------
         # Import all our python modules required by our packages
-        # ------------------------------------------------------------------------------------
-    #for $item in $py_modules:
-    \#$item
-    #for $package in $py_modules[$item]:
-    #if $package.startswith('#'):
-    #set $package=$package[1:]
-    #end if
+        # ---------------------------------------------------------------------
+        #for $item in $py_modules:
+        \#$item
+        #for $package in $py_modules[$item]:
+        #if $package.startswith('#'):
+        #set $package=$package[1:]
+        #end if
         import $package
-        self.loadZCML('configure.zcml', package=$package)   
-    #end for
-    #end for
+        self.loadZCML('configure.zcml', package=$package)
+        #end for
+        #end for
 
-        # ------------------------------------------------------------------------------------
-        # - Load the python packages that are registered as Zope2 Products via Five
-        #   which can't happen until we have loaded the package ZCML.
-        # ------------------------------------------------------------------------------------
-
-    #for $package in $z2packages:
-        #$package
-    #for $item in $z2packages[$package]:
-    #if $item.startswith('#'):
-        \#ztc.installPackage($item.replace('#', ''))
-    #else
-        ztc.installPackage('$item')
-
-    #end if
-    #end for
-    #end for
-        ztc.installPackage('${namespace}${ndot}${nested_namespace}.${project_name}')
-
-
-        # ------------------------------------------------------------------------------------
+        # -----------------------------------------------------------------------
         # Load our own ${project_name}
-        # ------------------------------------------------------------------------------------
-        import ${namespace}${ndot}${nested_namespace}.${project_name}
-        self.loadZCML(
-            'configure.zcml', 
-            package=${namespace}${ndot}${nested_namespace}.${project_name}
-        )
-        self.addProfile(
-            '${namespace}${ndot}${nested_namespace}.${project_name}:default'
-        )
-        
-        # ------------------------------------------------------------------------------------
+        # -----------------------------------------------------------------------
+        import ${pdn}
+        self.loadZCML('configure.zcml', package=${pdn})
+
+        # ------------------------------------------------------------------------
+        # - Load the python packages that are registered as Zope2 Products
+        #   which can't happen until we have loaded the package ZCML.
+        # ------------------------------------------------------------------------
+
+        #for $package in $z2packages:
+        #$package
+        #for $item in $z2packages[$package]:
+        #if $item.startswith('#'):
+        #z2.installProduct("$item.replace('#', '')")
+        #else
+        z2.installProduct(app, '$item')
+        #end if
+        #end for
+        #end for
+        z2.installProduct(app, '${pdn}')
+
+        # -------------------------------------------------------------------------
         # support for sessions without invalidreferences if using zeo temp storage
-        # ------------------------------------------------------------------------------------
-        self.app.REQUEST['SESSION'] = self.Session()
-        if not hasattr(self.app, 'temp_folder'):
+        # -------------------------------------------------------------------------
+        app.REQUEST['SESSION'] = self.Session()
+        if not hasattr(app, 'temp_folder'):
             tf = Folder('temp_folder')
-            self.app._setObject('temp_folder', tf)
+            app._setObject('temp_folder', tf)
             transaction.commit()
-        ztc.utils.setupCoreSessions(self.app) 
+        ztc.utils.setupCoreSessions(app)
+
+    def setUpPloneSite(self, portal):
+        applyProfile(
+            portal,
+            '${pdn}:default'
+        )
 
 
-layer = Layer(bases=[ptc_layer])
+${P_D_N}_FIXTURE             = ${PdN}Layer()
+${P_D_N}_INTEGRATION_TESTING = IntegrationTesting(bases = (${P_D_N}_FIXTURE,),name = "${PdN}:Integration")
+${P_D_N}_FUNCTIONAL_TESTING  = FunctionalTesting(bases = (${P_D_N}_FIXTURE,), name = "${PdN}:Functional")
+${P_D_N}_SELENIUM_TESTING    = FunctionalTesting(bases = (SELENIUM_TESTING, ${P_D_N}_FUNCTIONAL_TESTING,), name = "${PdN}:Selenium")
+
 # vim:set ft=python:

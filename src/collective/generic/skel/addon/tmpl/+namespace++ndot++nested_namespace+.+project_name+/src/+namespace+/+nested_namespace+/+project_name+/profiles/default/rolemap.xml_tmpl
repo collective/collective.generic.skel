@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<rolemap>
+<!-- Add permission to roles mappings
+  <roles>
+    <role name="Manager"></role>
+  </roles>
+  <permissions>
+    <permission name="${pdn}: Add Collection" acquire="True">
+      <role name="Manager" />
+      <role name="Site Administrator" />
+    </permission>
+  </permissions>
+-->
+
+  <roles>
+  </roles>
+  <permissions>
+  </permissions>
+</rolemap>

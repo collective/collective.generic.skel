@@ -25,7 +25,7 @@ $product
 #end for
 )
 
-EXTENSION_PROFILES = ('${namespace}${ndot}${nested_namespace}.${project_name}:default',)
+EXTENSION_PROFILES = ('${pdn}:default',)
 
 SKIN = '${namespace}${ndot}${nested_namespace}.skin'
 HIDDEN_PRODUCTS = [u'plone.app.openid', u'NuPlone',
@@ -56,8 +56,8 @@ $product
     #end if
     #end for
     #end for
-#    u'${namespace}${ndot}${nested_namespace}.${project_name}.migrations.v1_1',
-#    u'${namespace}${ndot}${nested_namespace}.${project_name}.migrations',
+#    u'${pdn}.migrations.v1_1',
+#    u'${pdn}.migrations',
 #if $with_ploneproduct_atschemaeditor:
 #    u'ATSchemaEditorNG',
 #    u'Products.ATSchemaEditorNG',
@@ -90,8 +90,8 @@ $product
 #end if       
 ]
 HIDDEN_PROFILES = [u'plone.app.openid', u'NuPlone',
-    u'${namespace}${ndot}${nested_namespace}.${project_name}.migrations.v11',
-    u'${namespace}${ndot}${nested_namespace}.${project_name}.migrations',
+    u'${pdn}.migrations.v11',
+    u'${pdn}.migrations',
 #for package, profile, order in $gs
       u'${package}',
 #end for 

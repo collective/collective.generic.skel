@@ -1,13 +1,11 @@
 """
 Launching all doctests in the tests directory using:
 
-    - The test_suite helper from the testing product
-    - the base layer in layer.py
+    - the base layer in testing.py
 
 """
 
-from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.base import FunctionalTestCase
-from ${namespace}${ndot}${nested_namespace}.testing.tests.test_doctests import test_doctests_suite
+from ${pdn}.tests.base import FunctionalTestCase
 
 $hr
 \# GLOBALS avalaible in doctests
@@ -18,16 +16,45 @@ $hr
 \# from for import bar
 \# and in your doctests, you can do:
 \# >>> bar.something
-from ${namespace}${ndot}${nested_namespace}.${project_name}.tests.globals import *
-from ${namespace}${ndot}${nested_namespace}.${project_name}.tests import base
+from ${pdn}.tests.globals import *
+from ${pdn}.testing import ${P_D_N}_FUNCTIONAL_TESTING as FUNCTIONAL_TESTING
 $hr
+
+
+import unittest2 as unittest
+import glob
+import os
+import logging
+import doctest
+from plone.testing import layered
+
+optionflags = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
 
 def test_suite():
     """."""
-    return test_doctests_suite(
-        __file__,
-        globs=globals(),
-        testklass=base.FunctionalTestCase
-    )
+    logger = logging.getLogger('${pdn}.tests')
+    cwd = os.path.dirname(__file__)
+    files = []
+    try:
+        files = glob.glob(os.path.join(cwd, '*txt'))
+    except Exception,e:
+        logger.warn('No doctests for ${pdn}')
+    suite = unittest.TestSuite()
+    globs = globals()
+    for s in files:
+        suite.addTests([
+            layered(
+                doctest.DocFileSuite(
+                    s, 
+                    globs = globs,
+                    module_relative=False,
+                    optionflags=optionflags,         
+                ),
+                layer=FUNCTIONAL_TESTING
+            ),
+        ])
+    return suite
+    
+
 
 # vim:set ft=python:

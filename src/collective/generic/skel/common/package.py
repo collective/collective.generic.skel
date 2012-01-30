@@ -28,6 +28,15 @@ SHARP_LINE = '#' * 80
 REGENERATE_OBJECTS = """
 Objects that you can edit and get things overidden are:
 """
+
+p3_themes = {
+    'default': 'Plone Default',
+}
+p4_themes = {
+    'sunburst': 'Sunburst Theme',
+    'classic': 'Plone Classic Theme',
+}
+
 class Package(Template):
     """
     Package template to do a double namespace egg.
@@ -171,10 +180,20 @@ class Package(Template):
         vars['generate_msg'] = REGENERATE_MSG % vars
         vars['generate_file'] = REGENERATE_FILE % vars
         vars['generate_objects'] = REGENERATE_OBJECTS % vars
-        self.dn = '%s%s%s.%s' % (
+        vars['pdn'] = self.dn = '%s%s%s.%s' % (
             vars['namespace'], vars['ndot'],
             vars['nested_namespace'] ,
             vars['project']
+        )
+        vars['PdN'] = '%s%s%s' % (
+            vars['namespace'].capitalize(),
+            vars['nested_namespace'].capitalize() ,
+            vars['project'].capitalize()
+        )
+        vars['P_D_N'] = '%s%s_%s' % (
+            (True==bool(vars['namespace'].upper())) and '%s_' % vars['namespace'].upper() or '',
+            vars['nested_namespace'].upper() ,
+            vars['project'].upper()
         )
 
         self.output_dir = os.path.join(command.options.output_dir)
@@ -212,14 +231,21 @@ excluded_vars = []
 p3_vars = []
 p4_vars = []
 p41_vars = []
+p41_vars = []
+plone42 = plone41 # TODO: CHANGE
+p42_vars = []
+ppackage_vars = []
 django_vars = []
 pyramid_vars = []
-items = ((p3_vars, plone3.Template),
-         (p4_vars, plone4.Template),
-         (p41_vars, plone41.Template),
-         (django_vars, django.Template),
-         (pyramid_vars, pyramid.Template),
-        )
+items = (
+    (p3_vars, plone3.Template),
+    (p4_vars, plone4.Template),
+    (p41_vars, plone41.Template),
+    (p42_vars, plone42.Template),
+    (ppackage_vars, plone41.Template),
+    (django_vars, django.Template),
+    (pyramid_vars, pyramid.Template),
+)
 
 for vars, template in items:
     for cvar in template.vars:
@@ -245,6 +271,7 @@ for vars, template in items:
 
 class MinitagePackage(Package):
     python = 'python-2.6'
+    pyver = python[-3:]
     def load_plone_vars(self, command, output_dir, vars):
         eggs_mappings = getattr(self.paster_template, 'eggs_mappings', {})
         zcml_mappings = getattr(self.paster_template, 'zcml_mappings', {})
@@ -256,29 +283,28 @@ class MinitagePackage(Package):
         z2packages = getattr(self.paster_template, 'z2packages', {})
         versions_mappings         = getattr(self.paster_template, 'versions_mappings', {})
         checked_versions_mappings = getattr(self.paster_template, 'checked_versions_mappings', {})
-
-
-
         # do we need some pinned version
-        vars['plone_versions'] = []
+        vars['plone_versions'] = {}
+        addon = 'Addon' in self.__class__.__name__
         pin_added = []
-        for var in versions_mappings:
-            tmp, found = [], False
-            tmp.append(('# %s' % var, '',))
-            vmap = versions_mappings[var]
-            vmap.sort()
-            for pin in vmap:
-                if not pin in pin_added:
-                    pin_added.append(pin)
-                    tmp.append(pin)
-                    found = True
-            if found:
-                vars['plone_versions'].extend(tmp)
+        if not addon:
+            for var in versions_mappings:
+                tmp, found = [], False
+                vmap = versions_mappings[var]
+                vmap.sort()
+                for pin in vmap:
+                    if not pin in pin_added:
+                        pin_added.append(pin)
+                        tmp.append(pin)
+                        found = True
+                if found:
+                    if not var in vars['plone_versions']:
+                        vars['plone_versions'][var] = []
+                    vars['plone_versions'][var].extend(tmp)
 
         for var in checked_versions_mappings:
             if vars.get(var, False):
                 tmp, found = [], False
-                tmp.append(('# %s' % var, '',))
                 vmap = checked_versions_mappings[var].keys()
                 vmap.sort()
                 for pin in vmap:
@@ -287,7 +313,9 @@ class MinitagePackage(Package):
                         tmp.append((pin, checked_versions_mappings[var][pin]))
                         found = True
                 if found:
-                    vars['plone_versions'].extend(tmp) 
+                    if not var in vars['plone_versions']:
+                        vars['plone_versions'][var] = []
+                    vars['plone_versions'][var].extend(tmp)
 
         vars['python_eggs'] = []
         vars['python_eggs_mapping'] = {}
@@ -456,8 +484,11 @@ class MinitagePackage(Package):
         self.load_plone_vars(command, output_dir, vars)
 
     def load_minitage_dependencies(self, command, output_dir, vars):
+        vars['pyver'] = self.pyver
         vars['opt_deps'] = ''
         if vars['inside_minitage']:
+            vars['mt'] = os.environ['MT']
+            vars['minilays'] = minilays = os.path.join(vars['mt'], 'minilays')
             # databases
             minitage_dbs = ['mysql', 'postgresql']
             for db in minitage_dbs:
@@ -508,8 +539,6 @@ class MinitagePackage(Package):
                 vars['opt_deps'] += ' %s' % search_latest('htmldoc-\d\.\d*', vars['minilays'])
 
 
-            vars['mt'] = os.environ['MT']
-            vars['minilays'] = minilays = os.path.join(vars['mt'], 'minilays')
 
             for i in ['libxml2', 'libxslt', 'py-libxml2', 'py-libxslt', 'pil-1', 'libiconv']:
                 vars['opt_deps'] += ' %s' %  search_latest('%s.*' % i, vars['minilays'])
@@ -518,10 +547,10 @@ class MinitagePackage(Package):
             vars['opt_deps'] = re.sub('\s*%s\s*' % self.python, ' ', vars['opt_deps'])
             vars['opt_deps'] += " %s" % self.python
 
-class P3Package(MinitagePackage):
+class PlonePackage(MinitagePackage):
     plone_version = None
-    paster_template = plone3.Template
-    vars = plone_vars + p3_vars
+    paster_template = plone41.Template
+    vars = plone_vars + ppackage_vars
 
     def __init__(self, *args, **kwargs):
         Template.__init__(self, *args, **kwargs)
@@ -537,14 +566,22 @@ class P3Package(MinitagePackage):
         if not 'with_ploneproduct_fss' in vars:
             vars['with_ploneproduct_fss'] = False
 
+class P3Package(PlonePackage):
+    themes = p3_themes
+    vars = plone_vars + p3_vars
 
 class P4Package(P3Package):
+    themes = p4_themes
     paster_template = plone4.Template
     vars = plone_vars + p4_vars
 
 class P41Package(P4Package):
     paster_template = plone41.Template
     vars = plone_vars + p41_vars
+
+class P42Package(P41Package):
+    paster_template = plone42.Template
+    vars = plone_vars + p42_vars
 
 class DjangoPackage(Package):
     vars = Package.vars + django_vars

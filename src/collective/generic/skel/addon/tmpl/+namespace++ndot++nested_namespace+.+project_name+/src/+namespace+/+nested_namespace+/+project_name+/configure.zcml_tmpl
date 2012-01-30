@@ -3,10 +3,11 @@
     xmlns="http://namespaces.zope.org/zope"
     xmlns:five="http://namespaces.zope.org/five"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-    i18n_domain="${namespace}${ndot}${nested_namespace}.${project_name}">
+    xmlns:i18n="http://namespaces.zope.org/i18n"
+    i18n_domain="${pdn}">
   <include package="Products.Five" file="configure.zcml"/>
   <include package="Products.CMFCore" file="permissions.zcml" />
-  <!-- Load the ZCML configuration for the ${namespace}${ndot}${nested_namespace}.${project_name} package.-->
+  <!-- Load the ZCML configuration for the ${pdn} package.-->
 #for $package in $zcml:
 #if isinstance($package, basestring):
   <!--$package -->
@@ -19,17 +20,20 @@
   <!--<includeOverrides package="$item" file="${slug}.zcml"-->
 #else
   <include package="$item" file="${slug}.zcml"/>
-#end if     
 #end if
 #end if
-#end for 
+#end if
+#end for
   <five:registerPackage package="." initialize=".${project_name}.initialize" />
   <include package="z3c.autoinclude" file="meta.zcml" />
   <!-- activate to customize the dashboard-->
   <!-- <adapter factory=".dashboard.MyPortalDefaultDashboard"/>-->
   <include package=".browser" />
-  <include file="skins.zcml" />
-  <include file="profiles.zcml" /> 
-  <i18n:registerTranslations directory="locales" /> 
+  <include file="profiles.zcml" />
+  <i18n:registerTranslations directory="locales" />
+  $skins_comment_tag
+  <cmf:registerDirectory
+       name="${namespace}${nunderscore}${nested_namespace}_${project_name}_custom"/>
+  $skins_comment_end
 </configure>
 <!-- vim:set ft=xml: -->

@@ -1,13 +1,13 @@
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
-    i18n_domain="${namespace}${ndot}${nested_namespace}.${project_name}">
+    i18n_domain="${pdn}">
 
-  <!-- ' ${namespace}${ndot}${nested_namespace}.${project_name}' Zope 3 browser layer -->
+  <!-- ' ${pdn}' Zope 3 browser layer -->
   <interface
       interface=".interfaces.IThemeSpecific"
       type="zope.publisher.interfaces.browser.IBrowserSkinType"
-      name="${namespace}${ndot}${nested_namespace}.${project_name}"
+      name="${pdn}"
     />
 
   <!-- Viewlets registration -->
@@ -16,7 +16,7 @@
   <!--
     <browser:page
         layer=".interfaces.IThemeSpecific"
-        for="${namespace}${ndot}${nested_namespace}.${project_name}.interface.mycontent"
+        for="${pdn}.interface.mycontent"
         name="MyView"
         class=".view.MyView"
         allowed_interface=".view.IMyView"
@@ -28,7 +28,7 @@
 
   <!-- Resource directory -->
   <browser:resourceDirectory
-      name="${namespace}${ndot}${nested_namespace}.${project_name}"
+      name="${pdn}"
       directory="resources"
       layer=".interfaces.IThemeSpecific"
     />

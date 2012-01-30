@@ -21,6 +21,6 @@
     available keys and default values.
   -->
   <!--
-    <javascript id="++resource++${namespace}${ndot}${nested_namespace}.${project_name}/something.css"/>
+    <stylesheet id="++resource++${pdn}/something.css"/>
     --> 
 </object>

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-PRODUCTNAME='${namespace}${ndot}${nested_namespace}.${project_name}'
+PRODUCTNAME='${pdn}'
 I18NDOMAIN=\$PRODUCTNAME
 i18ndude=\$(which i18ndude)
 CWD=\$(dirname $0)

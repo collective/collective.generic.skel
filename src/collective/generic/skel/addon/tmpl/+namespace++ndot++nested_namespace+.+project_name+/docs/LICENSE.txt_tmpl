@@ -1,4 +1,4 @@
-  ${namespace}${ndot}${nested_namespace}.${project_name}  copyrighted $author <$author_email>
+  ${pdn}  copyrighted $author <$author_email>
 
   This program is free software; you can redistribute it and/or modify
   it under the terms of the GNU General Public License as published by

@@ -1,27 +1,12 @@
 <?xml version="1.0"?>
-<object name="portal_skins" allow_any="False" cookie_persistence="False">
-  <object name="${namespace}${nunderscore}${nested_namespace}_${project_name}_custom_images"
+<object name="portal_skins" allow_any="False" cookie_persistence="False" ${default_skin_slug}>
+${skins_comment_tag}
+  <object name="${namespace}${nunderscore}${nested_namespace}_${project_name}_custom"
       meta_type="Filesystem Directory View"
-      directory="${namespace}${ndot}${nested_namespace}.${project_name}:skins/${namespace}${nunderscore}${nested_namespace}_${project_name}_custom_images"/>
-  <object name="${namespace}${nunderscore}${nested_namespace}_${project_name}_custom_templates"
-      meta_type="Filesystem Directory View"
-      directory="${namespace}${ndot}${nested_namespace}.${project_name}:skins/${namespace}${nunderscore}${nested_namespace}_${project_name}_custom_templates"/>
-  <object name="${namespace}${nunderscore}${nested_namespace}_${project_name}_styles"
-      meta_type="Filesystem Directory View"
-      directory="${namespace}${ndot}${nested_namespace}.${project_name}:skins/${namespace}${nunderscore}${nested_namespace}_${project_name}_styles"/>
-  <skin-path name="${namespace}${ndot}${nested_namespace}.${project_name}" based-on="${plone_skin}">
-    #if $with_ploneproduct_cynin
-    <layer name="ubify_cyninv2theme_custom_templates" insert-after="custom"/>
-    <layer name="ubify_cyninv2theme_styles" insert-after="ubify_cyninv2theme_custom_templates"/>
-    <layer name="themeroller" insert-after="ubify_cyninv2theme_styles"/>
-    <layer name="images" insert-after="themeroller"/>
-    <layer name="icons" insert-after="images"/>
-    #end if
-    <layer name="${namespace}${nunderscore}${nested_namespace}_${project_name}_custom_images"
-        insert-after="$first_layer"/>
-    <layer name="${namespace}${nunderscore}${nested_namespace}_${project_name}_custom_templates"
-        insert-after="${namespace}${nunderscore}${nested_namespace}_${project_name}_custom_images"/>
-    <layer name="${namespace}${nunderscore}${nested_namespace}_${project_name}_styles"
-        insert-after="${namespace}${nunderscore}${nested_namespace}_${project_name}_custom_templates"/>
+      directory="${pdn}:skins/${namespace}${nunderscore}${nested_namespace}_${project_name}_custom"/>
+  <skin-path name="${pdn}" based-on="${plone_skin}">
+    <layer name="${namespace}${nunderscore}${nested_namespace}_${project_name}_custom"
+        insert-after="custom"/>
   </skin-path>
+${skins_comment_end}
 </object> 

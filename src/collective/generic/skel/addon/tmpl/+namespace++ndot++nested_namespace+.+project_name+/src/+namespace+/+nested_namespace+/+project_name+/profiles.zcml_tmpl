@@ -1,7 +1,8 @@
+<?xml version="1.0"?>
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
-    i18n_domain="${namespace}${ndot}${nested_namespace}.${project_name}">
+    i18n_domain="${pdn}">
   <!-- Include direct package dependencies -->
   <genericsetup:registerProfile
       name="qi"
@@ -12,24 +13,32 @@
     />
   <genericsetup:registerProfile
       name="default"
-      title="${namespace}${ndot}${nested_namespace} Policy"
+      title="$pdn"
       directory="profiles/default"
-      description="Turn a Plone site into the ${namespace}${ndot}${nested_namespace} site."
+      description="Install the $pdn addon on tbis plone site."
       provides="Products.GenericSetup.interfaces.EXTENSION"
     />
+  <genericsetup:registerProfile
+      title="$pdn uninstall" 
+      name="uninstall"
+      description="Uninstall the $pdn addon on tbis plone site."
+      directory="profiles/uninstall"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      />
   <genericsetup:importStep
       name="${namespace}${nunderscore}${nested_namespace}_${project_name} setupVarious"
-      title="various setup for $project Policy"
+      title="various setup for $pdn "
       description="description"
-      handler="${namespace}${ndot}${nested_namespace}.${project_name}.setuphandlers.setupVarious">
+      handler="${pdn}.setuphandlers.setupVarious">
     <depends name="content"/>
   </genericsetup:importStep>
   <!-- migration steps -->
   <genericsetup:importStep
       name="${namespace}${nunderscore}${nested_namespace}_${project_name} setupQi"
-      title="Quick Installer  setup for $project Policy"
+      title="Quick Installer products dependencies setup for $pdn"
       description="description"
-      handler="${namespace}${ndot}${nested_namespace}.${project_name}.setuphandlers.setupQi">
+      handler="${pdn}.setuphandlers.setupQi">
     <depends name="content"/>
   </genericsetup:importStep> 
   <!-- -->

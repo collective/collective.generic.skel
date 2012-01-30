@@ -1,4 +1,4 @@
 <layers>
-  <layer name="${pdn}"
+  <layer name="${pdn}" remove="True"
       interface="${pdn}.browser.interfaces.IThemeSpecific"/>
 </layers>

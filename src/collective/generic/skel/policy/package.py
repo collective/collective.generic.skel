@@ -41,7 +41,7 @@ class P4Package(c.P4Package):
 
     def post(self, command, output_dir, vars):
         c.P4Package.post(self, command, output_dir, vars)
-        policy_post(self, command, output_dir, vars) 
+        policy_post(self, command, output_dir, vars)
 
 
 class P41Package(c.P41Package):
@@ -52,4 +52,15 @@ class P41Package(c.P41Package):
 
     def post(self, command, output_dir, vars):
         c.P41Package.post(self, command, output_dir, vars)
-        policy_post(self, command, output_dir, vars)  
+        policy_post(self, command, output_dir, vars)
+
+
+class P42Package(c.P42Package):
+    """Package template"""
+    project = PROJECT_NAME
+    summary = "A Generic Plone42 portal policy"
+    vars = c.P42Package.vars + policy_vars
+
+    def post(self, command, output_dir, vars):
+        c.P42Package.post(self, command, output_dir, vars)
+        policy_post(self, command, output_dir, vars)

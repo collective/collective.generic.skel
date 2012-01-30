@@ -2,20 +2,21 @@ import logging
 import transaction
 from Products.CMFCore.utils import getToolByName
 
-from ${namespace}${ndot}${nested_namespace}.${project_name} import app_config
-from ${namespace}${ndot}${nested_namespace}.${project_name}.app_config import PRODUCT_DEPENDENCIES, EXTENSION_PROFILES
-)
+from ${pdn} import app_config
+from ${pdn}.app_config import PRODUCT_DEPENDENCIES, EXTENSION_PROFILES
+
+
 def setupVarious(context):
     """Miscellanous steps import handle.
     """
-    logger = logging.getLogger('${namespace}${ndot}${nested_namespace}.${project_name} / setuphandler')
+    logger = logging.getLogger('${pdn} / setuphandler')
 
     # Ordinarily, GenericSetup handlers check for the existence of XML files.
     # Here, we are not parsing an XML file, but we use this text file as a
     # flag to check that we actually meant for this import step to be run.
     # The file is found in profiles/default.
 
-    if context.readDataFile('${namespace}${ndot}${nested_namespace}.${project_name}_various.txt') is None:
+    if context.readDataFile('${pdn}_various.txt') is None:
         return
 
     portal = context.getSite()
@@ -23,20 +24,20 @@ def setupVarious(context):
 def setupQi(context):
     """Miscellanous steps import handle.
     """
-    logger = logging.getLogger('${namespace}${ndot}${nested_namespace}.${project_name} / setuphandler')
+    logger = logging.getLogger('${pdn} / setuphandler')
 
     # Ordinarily, GenericSetup handlers check for the existence of XML files.
     # Here, we are not parsing an XML file, but we use this text file as a
     # flag to check that we actually meant for this import step to be run.
     # The file is found in profiles/default.
 
-    if context.readDataFile('${namespace}${ndot}${nested_namespace}.${project_name}_qi.txt') is None:
+    if context.readDataFile('${pdn}_qi.txt') is None:
         return
 
     portal = context.getSite() 
     portal_quickinstaller = getToolByName(portal, 'portal_quickinstaller')
     portal_setup = getToolByName(portal, 'portal_setup')
-    logger = logging.getLogger('${namespace}${ndot}${nested_namespace}.${project_name}.Install')
+    logger = logging.getLogger('${pdn}.Install')
 
     for product in PRODUCT_DEPENDENCIES:
         logger.info('(RE)Installing %s.' % product)

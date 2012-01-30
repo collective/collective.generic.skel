@@ -16,3 +16,8 @@ class P41Package(c.P41Package):
     """Package template"""
     project = PROJECT_NAME
     summary = "A Generic Plone41 portal tma policy"  
+
+class P42Package(c.P42Package):
+    """Package template"""
+    project = PROJECT_NAME
+    summary = "A Generic Plone42 portal tma policy"   

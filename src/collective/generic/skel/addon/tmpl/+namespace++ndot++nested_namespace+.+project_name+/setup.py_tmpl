@@ -20,7 +20,7 @@ classifiers = [
     "Programming Language :: Python",
     "Topic :: Software Development",]
 
-name = '${namespace}${ndot}${nested_namespace}.${project_name}'
+name = '${pdn}'
 setup(
     name=name,
     namespace_packages=[#slurp
@@ -28,7 +28,7 @@ setup(
 '${namespace}',#slurp
 #end if
          '${namespace}${ndot}${nested_namespace}',
-         '${namespace}${ndot}${nested_namespace}.${project_name}',],
+         '${pdn}',],
     version=version,
     description='$description ${project_name} product',
     long_description=long_description,
@@ -48,6 +48,8 @@ setup(
     install_requires=[
         'setuptools',
         'z3c.autoinclude',
+        'Plone',
+        'plone.app.upgrade',
         #set $skipped = ['binding_pil', 'ploneproduct_tinymce']
         #for $k in $python_eggs_mapping:
         #if not True in [$l in $k.lower() for $l in $skipped]:
@@ -58,13 +60,12 @@ setup(
         #end if
         #end for
         # -*- Extra requirements: -*-
-        'collective.testcaselayer',
     ],
+    extras_require = {
+        'test': ['plone.app.testing',]
+    }, 
     entry_points = {
-        'z3c.autoinclude.plugin': [
-            'target = plone',
-        ],
-
+        'z3c.autoinclude.plugin': ['target = plone',],
     },
 )
 # vim:set ft=python:

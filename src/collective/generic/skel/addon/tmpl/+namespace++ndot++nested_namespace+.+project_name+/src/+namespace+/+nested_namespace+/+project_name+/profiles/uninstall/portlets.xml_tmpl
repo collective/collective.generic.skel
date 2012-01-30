@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<portlets i18n:domain="${pdn}">
+<!--
+  <portlet
+      addview="${pdn}.browser.portlet.Portlet"
+      title = "${pdn} portlet"
+      title = "Add a ${pdn} portlet"
+      remove="True"
+    />
+-->
+</portlets>
