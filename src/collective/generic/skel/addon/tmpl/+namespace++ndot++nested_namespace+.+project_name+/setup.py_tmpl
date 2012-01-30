@@ -30,7 +30,7 @@ setup(
          '${namespace}${ndot}${nested_namespace}',
          '${pdn}',],
     version=version,
-    description='$description ${project_name} product',
+    description='$description',
     long_description=long_description,
     classifiers=classifiers,
     keywords='$keywords',

@@ -1,5 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<portlets i18n:domain="${pdn}">
+<portlets
+    xmlns:i18n="http://xml.zope.org/namespaces/i18n"
+    i18n:domain="${pdn}">
 <!--
   <portlet
       addview="${pdn}.browser.portlet.Portlet"

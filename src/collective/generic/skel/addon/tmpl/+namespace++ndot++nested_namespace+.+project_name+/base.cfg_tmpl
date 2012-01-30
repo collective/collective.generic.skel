@@ -1,24 +1,31 @@
 [buildout]
-parts += omelette
+package-extras = [test]
+package-name = ${pdn}
+develop = .
+parts +=
+    omelette
     zopepy
+    test
     coverage
     report
     report-xml
 extensions =
     mr.developer
     buildout.dumppickedversions
-    buildout.minitagificator
-package-name = ${pdn}
 common-eggs =
     PIL
     ipython
     bpython
     plone.reload
+test-eggs =
+    \${buildout:package-name} \${buildout:package-extras}
 
 [instance]
 http-address = $address:$http_port
-eggs += \${buildout:common-eggs}
-extra-paths +=
+eggs =
+    \${buildout:common-eggs}
+    \${buildout:package-name}
+extra-paths =
 
 [zopepy]
 recipe=zc.recipe.egg
@@ -28,7 +35,11 @@ interpreter = zopepy
 scripts =
 
 [test]
-eggs += \${buildout:common-eggs}
+recipe = zc.recipe.testrunner
+defaults = ['-v', '-s', '\${buildout:package-name}']
+eggs =
+    \${buildout:common-eggs}
+    \${buildout:test-eggs}
 
 [coverage]
 recipe = zc.recipe.egg

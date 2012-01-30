@@ -5,7 +5,7 @@ src_uri=$uri
 src_type=$scm_type
 category=zope
 homepage=$url
-description= a plone $plone_version buildout for $project
+description= a plone 4.0 buildout for $project
 buildout_config=minitage-test-4.0.x.cfg
 
 

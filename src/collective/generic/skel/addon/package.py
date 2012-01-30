@@ -36,7 +36,7 @@ class PAddon(c.P42Package):
         var('with_zope2_skins', 'install zope2 skin directory', default = 'n'),
         var('with_policy_support', 'install this product as a plone policy', default = 'n'),
         pvar('smtp_host', 'SMTP host if you are creating a policy addon', default='localhost'),
-        pvar('smtp_port', 'SMTP port if you are creating a policy addon', default='25'),  
+        pvar('smtp_port', 'SMTP port if you are creating a policy addon', default='25'),
     ]
 
     def post(self, command, output_dir, vars):
@@ -46,7 +46,7 @@ class PAddon(c.P42Package):
         if not vars['with_zope2_skins']:
             remove_path(glob.glob(egg+'/skins')[0])
         if not vars['with_policy_support']:
-            remove_path(egg+'/profiles/defaultt/mailhost.xml')
+            remove_path(egg+'/profiles/default/mailhost.xml')
         for f in glob.glob(out+'/scripts/*') + [egg+'/rebuild_i18n.sh']:
             os.chmod(f, 0700)
 
@@ -84,12 +84,12 @@ class PAddon(c.P42Package):
             vars['skins_comment_end'] = ''
         if not vars['with_policy_support']:
             vars['policy_tag']='<!--'
-            vars['policy_end']='-->'  
+            vars['policy_end']='-->'
             vars['default_skin_slug']=''
         else:
             vars['default_skin_slug']='default_skin="%s"' % vars['pdn']
             vars['policy_tag']=''
-            vars['policy_end']='' 
+            vars['policy_end']=''
         return ret
 
     def __init__(self, *args, **kwargs):
