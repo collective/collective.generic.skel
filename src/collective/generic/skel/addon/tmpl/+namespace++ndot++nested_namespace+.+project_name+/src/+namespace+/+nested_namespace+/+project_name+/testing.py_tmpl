@@ -9,7 +9,7 @@ from zope.configuration import xmlconfig
 from plone.app.testing import PloneSandboxLayer
 from plone.app.testing import applyProfile
 from plone.app.testing import PLONE_FIXTURE
-from plone.app.testing import IntegrationTesting, FunctionalTesting
+from plone.app.testing import IntegrationTesting as BIntegrationTesting, FunctionalTesting as BFunctionalTesting
 from plone.app.testing import TEST_USER_NAME, TEST_USER_ID
 from plone.app.testing import login
 from plone.app.testing import setRoles
@@ -29,13 +29,27 @@ TESTED_PRODUCTS = (\
 #end for
 )
 
+from plone.app.testing import (
+    TEST_USER_ROLES,
+    TEST_USER_NAME,
+    TEST_USER_ID,
+    SITE_OWNER_NAME,
+)
+from plone.app.testing.helpers import (
+    login,
+    logout,
+)
+
+PLONE_MANAGER_NAME = 'Plone_manager'
+PLONE_MANAGER_ID = 'plonemanager'
+PLONE_MANAGER_PASSWORD = 'plonemanager'
 
 def print_contents(browser, dest='~/.browser.html'):
     """Print the browser contents somewhere for you to see its context
     in doctest pdb, type print_contents(browser) and that's it, open firefox
     with file://~/browser.html."""
     import os
-    open(os.path.expanduser(dest), 'w').write(browser.contents)  
+    open(os.path.expanduser(dest), 'w').write(browser.contents)
 
 class Browser(z2.Browser):
     def print_contents(browser, dest='~/.browser.html'):
@@ -107,15 +121,48 @@ class ${PdN}Layer(PloneSandboxLayer):
         ztc.utils.setupCoreSessions(app)
 
     def setUpPloneSite(self, portal):
-        applyProfile(
-            portal,
-            '${pdn}:default'
-        )
+        self.portal = portal
+        applyProfile(portal, '${pdn}:default')
 
+
+class LayerMixin(object):
+    defaultBases = (${PdN}Layer() ,)
+
+    def testSetUp(self):
+        self.add_user(
+            self['portal'],
+            PLONE_MANAGER_ID,
+            PLONE_MANAGER_NAME,
+            PLONE_MANAGER_PASSWORD,
+            ['Menager']+TEST_USER_ROLES)
+
+    def add_user(self, portal, id, username, password, roles=None):
+        if not roles: roles = TEST_USER_ROLES[:]
+        self.loginAsPortalOwner()
+        pas = portal['acl_users']
+        pas.source_users.addUser(id, username, password)
+        setRoles(portal, id, roles)
+        self.logout()
+
+    def loginAsPortalOwner(self):
+        z2.login(self['app']['acl_users'], SITE_OWNER_NAME)
+
+    def logout(self):
+        logout()
+
+class IntegrationTesting(LayerMixin, BIntegrationTesting):
+    def testSetUp(self):
+        BIntegrationTesting.testSetUp(self)
+        LayerMixin.testSetUp(self)
+
+class FunctionalTesting(LayerMixin, BFunctionalTesting):
+    def testSetUp(self):
+        BFunctionalTesting.testSetUp(self)
+        LayerMixin.testSetUp(self) 
 
 ${P_D_N}_FIXTURE             = ${PdN}Layer()
-${P_D_N}_INTEGRATION_TESTING = IntegrationTesting(bases = (${P_D_N}_FIXTURE,),name = "${PdN}:Integration")
-${P_D_N}_FUNCTIONAL_TESTING  = FunctionalTesting(bases = (${P_D_N}_FIXTURE,), name = "${PdN}:Functional")
+${P_D_N}_INTEGRATION_TESTING = IntegrationTesting(name = "${PdN}:Integration")
+${P_D_N}_FUNCTIONAL_TESTING  = FunctionalTesting( name = "${PdN}:Functional")
 ${P_D_N}_SELENIUM_TESTING    = FunctionalTesting(bases = (SELENIUM_TESTING, ${P_D_N}_FUNCTIONAL_TESTING,), name = "${PdN}:Selenium")
 
 # vim:set ft=python:

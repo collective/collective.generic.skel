@@ -1,21 +1,22 @@
+<?xml version="1.0"?>
 <configure
     xmlns="http://namespaces.zope.org/zope"
     xmlns:browser="http://namespaces.zope.org/browser"
     i18n_domain="${pdn}">
 
   <!-- ' ${pdn}' Zope 3 browser layer -->
-  <interface
-      interface=".interfaces.IThemeSpecific"
+  <interface name="${pdn}-theme"
+      interface="${pdn}.interfaces.IThemeSpecific"
       type="zope.publisher.interfaces.browser.IBrowserSkinType"
-      name="${pdn}"
     />
+  <interface  name="${pdn}" interface="${pdn}.interfaces.ILayer" />
 
   <!-- Viewlets registration -->
 
   <!-- Zope 3 browser views -->
   <!--
     <browser:page
-        layer=".interfaces.IThemeSpecific"
+        layer="${pdn}.interfaces.ILayer"
         for="${pdn}.interface.mycontent"
         name="MyView"
         class=".view.MyView"
@@ -30,8 +31,9 @@
   <browser:resourceDirectory
       name="${pdn}"
       directory="resources"
-      layer=".interfaces.IThemeSpecific"
+      layer="${pdn}.interfaces.ILayer"
     />
+
 
   <!-- vim:set ft=xml: -->
 </configure>

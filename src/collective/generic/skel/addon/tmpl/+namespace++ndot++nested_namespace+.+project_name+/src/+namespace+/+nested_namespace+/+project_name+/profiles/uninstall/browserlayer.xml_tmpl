@@ -1,4 +1,5 @@
+<?xml version="1.0"?>
 <layers>
-  <layer name="${pdn}" remove="True"
-      interface="${pdn}.browser.interfaces.IThemeSpecific"/>
+  <layer remove="true" name="${pdn}-theme" interface="${pdn}.interfaces.IThemeSpecific"/>
+  <layer remove="true" name="${pdn}" interface="${pdn}.interfaces.ILayer"/>
 </layers>
