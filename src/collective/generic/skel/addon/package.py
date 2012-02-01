@@ -73,6 +73,15 @@ class PAddon(c.P42Package):
             package.pre(p4_command, p4_output_dir, p4_vars)
             vars['p%s_versions'%packagever] = p4_vars['plone_versions']
         vars['dot'] = '.'
+        if not vars['with_policy_support']:
+            vars['policy_tag']='<!--'
+            vars['policy_end']='-->'
+            vars['default_skin_slug']=''
+        else:
+            vars['default_skin_slug']='default_skin="%s"' % vars['pdn']
+            vars['with_zope2_skins'] = True
+            vars['policy_tag']=''
+            vars['policy_end']=''
         if not vars['with_zope2_skins']:
             vars['skins_comment_tag'] = '%s' % (
                 '<!-- activate this statement '
@@ -81,15 +90,7 @@ class PAddon(c.P42Package):
             vars['skins_comment_end'] = '-->'
         else:
             vars['skins_comment_tag'] = ''
-            vars['skins_comment_end'] = ''
-        if not vars['with_policy_support']:
-            vars['policy_tag']='<!--'
-            vars['policy_end']='-->'
-            vars['default_skin_slug']=''
-        else:
-            vars['default_skin_slug']='default_skin="%s"' % vars['pdn']
-            vars['policy_tag']=''
-            vars['policy_end']=''
+            vars['skins_comment_end'] = '' 
         return ret
 
     def __init__(self, *args, **kwargs):

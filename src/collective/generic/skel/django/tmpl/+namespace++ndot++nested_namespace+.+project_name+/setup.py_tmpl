@@ -19,8 +19,8 @@ setup(
     author_email = '$author_email',
     license = '$license_name',
     keywords = '$keywords',
-#if $url
-    url='$url',
+#if $homepage
+    url='$homepage',
 #else
     url='http://pypi.python.org/pypi/%s' % name,
 #end if 

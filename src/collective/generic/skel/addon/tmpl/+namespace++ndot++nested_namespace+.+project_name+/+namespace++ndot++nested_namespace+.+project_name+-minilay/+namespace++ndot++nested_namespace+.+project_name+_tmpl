@@ -4,7 +4,7 @@ install_method=buildout
 src_uri=$uri
 src_type=$scm_type
 category=zope
-homepage=$url
+homepage=$homepage
 description= a plone buildout for $project
 buildout_config=minitage-buildout.cfg
 

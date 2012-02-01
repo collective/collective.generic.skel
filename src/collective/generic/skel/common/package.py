@@ -53,7 +53,7 @@ class Package(Template):
         var('version', 'Version', default='1.0'),
         var('author', 'Author', default = running_user,),
         var('author_email', 'Email', default = '%s@%s' % (running_user, 'localhost')),
-        var('url', 'URL of homepage', default=''),
+        var('homepage', 'URL of homepage', default=''),
         var('description', 'One-line description of the package', default='Project %s'),
         var('keywords', 'Space-separated keywords/tags'),
         var('license_name', 'License name', default='GPL'),
@@ -126,7 +126,7 @@ class Package(Template):
                     vars[i].default = infos[name]
             if var.name == 'project_name':
                 vars[i].default = self.project
-            if var.name == 'url':
+            if var.name == 'homepage':
                 if '%s' in vars[i].default:
                     vars[i].default = vars[i].default % self.dn
         # this allow to fix the egg-info bug

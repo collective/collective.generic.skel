@@ -36,8 +36,8 @@ setup(
     keywords='$keywords',
     author='$author',
     author_email='$author_email',
-#if $url
-    url='$url',
+#if $homepage
+    url='$homepage',
 #else
     url='http://pypi.python.org/pypi/%s' % name,
 #end if
