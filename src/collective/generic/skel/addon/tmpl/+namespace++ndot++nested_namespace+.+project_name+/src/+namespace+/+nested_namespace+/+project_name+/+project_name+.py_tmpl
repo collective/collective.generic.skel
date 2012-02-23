@@ -1,6 +1,0 @@
-import logging
-from zope.i18nmessageid import MessageFactory
-MessageFactory = ${namespace}${nested_namespace}${project_name}MessageFactory = MessageFactory('${namespace}${ndot}${nested_namespace}.${project_name}') 
-logger = logging.getLogger('${pdn}')
-def initialize(context):
-    """Initializer called when used as a Zope 2 product."""

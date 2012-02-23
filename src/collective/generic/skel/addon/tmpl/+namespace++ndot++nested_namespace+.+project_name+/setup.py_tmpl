@@ -29,10 +29,15 @@ setup(
     name=name,
     namespace_packages=[#slurp
 #if $namespace:
-'${namespace}',#slurp
+         '${namespace}',#slurp
 #end if
+#if "${namespace}${ndot}${nested_namespace}" != $pdn:
          '${namespace}${ndot}${nested_namespace}',
-         '${pdn}',],
+#end if
+#if "${namespace}${ndot}${nested_namespace}" == $pdn:
+         '${pdn}',
+#end if
+    ],
     version=version,
     description='$description',
     long_description=long_description,
@@ -67,7 +72,7 @@ setup(
     ],
     extras_require = {
         'test': ['plone.app.testing',]
-    }, 
+    },
     entry_points = {
         'z3c.autoinclude.plugin': ['target = plone',],
     },

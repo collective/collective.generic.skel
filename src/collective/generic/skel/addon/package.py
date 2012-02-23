@@ -47,6 +47,8 @@ class PAddon(c.P42Package):
             remove_path(glob.glob(egg+'/skins')[0])
         if not vars['with_policy_support']:
             remove_path(egg+'/profiles/default/mailhost.xml')
+        if not vars['with_ploneproduct_patheming']:
+            remove_path(egg+'/diazo_theme')
         for f in glob.glob(out+'/scripts/*') + [egg+'/rebuild_i18n.sh']:
             os.chmod(f, 0700)
 
@@ -90,7 +92,7 @@ class PAddon(c.P42Package):
             vars['skins_comment_end'] = '-->'
         else:
             vars['skins_comment_tag'] = ''
-            vars['skins_comment_end'] = '' 
+            vars['skins_comment_end'] = ''
         return ret
 
     def __init__(self, *args, **kwargs):

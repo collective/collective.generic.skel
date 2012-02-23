@@ -9,6 +9,7 @@
 #end if
     xmlns:cmf="http://namespaces.zope.org/cmf"
     xmlns:browser="http://namespaces.zope.org/browser"
+    xmlns:plone="http://namespaces.plone.org/plone"
     i18n_domain="${pdn}">
   <include package="Products.Five" file="configure.zcml"/>
   <include package="Products.CMFCore" file="permissions.zcml" />
@@ -29,8 +30,7 @@
 #end if
 #end if
 #end for
-  <five:registerPackage package="." initialize=".${project_name}.initialize" />
-  <include package="z3c.autoinclude" file="meta.zcml" />
+  <five:registerPackage package="." initialize=".initialize" />
   <!-- activate to customize the dashboard-->
   <!-- <adapter factory=".dashboard.MyPortalDefaultDashboard"/>-->
   <include package=".browser" />
@@ -42,6 +42,10 @@
   $skins_comment_end
 #if $with_ploneproduct_fivegrok
   <grok:grok package="."/>
+#end if
+#if not $with_ploneproduct_patheming
+  <include package="plone.resource" file="meta.zcml"/>
+  <plone:static directory="static" type="theme" name="${pdn}" />
 #end if
 </configure>
 <!-- vim:set ft=xml: -->
