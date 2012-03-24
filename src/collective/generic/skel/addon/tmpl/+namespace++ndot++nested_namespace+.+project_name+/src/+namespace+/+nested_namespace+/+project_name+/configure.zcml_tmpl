@@ -43,7 +43,7 @@
 #if $with_ploneproduct_fivegrok
   <grok:grok package="."/>
 #end if
-#if not $with_ploneproduct_patheming
+#if $with_ploneproduct_patheming
   <include package="plone.resource" file="meta.zcml"/>
   <plone:static directory="static" type="theme" name="${pdn}" />
 #end if
