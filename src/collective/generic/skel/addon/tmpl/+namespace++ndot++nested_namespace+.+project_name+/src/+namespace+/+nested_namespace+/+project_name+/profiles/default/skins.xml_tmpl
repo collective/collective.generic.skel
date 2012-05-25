@@ -5,6 +5,10 @@ ${skins_comment_tag}
       meta_type="Filesystem Directory View"
       directory="${pdn}:skins/${namespace}${nunderscore}${nested_namespace}_${project_name}_custom"/>
   <skin-path name="${pdn}" based-on="${plone_skin}">
+  #if not $with_policy_support
+  </skin-path>
+  <skin-path name="*">
+  #end if
     <layer name="${namespace}${nunderscore}${nested_namespace}_${project_name}_custom"
         insert-after="custom"/>
   </skin-path>
