@@ -45,7 +45,7 @@
 #end if
 #if $with_ploneproduct_patheming
   <include package="plone.resource" file="meta.zcml"/>
-  <plone:static directory="static" type="theme" name="${pdn}" />
+  <plone:static directory="static" type="theme" name="${pthemename}" />
 #end if
 </configure>
 <!-- vim:set ft=xml: -->

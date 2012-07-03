@@ -1,7 +1,7 @@
 <?xml version="1.0"?>
 <theme>
 <!--
-  <name>${pdn}</name>
+  <name>${pthemename}</name>
   <enabled>true</enabled>
 -->
 </theme>

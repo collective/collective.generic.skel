@@ -2,7 +2,7 @@ import os, sys
 
 from setuptools import setup, find_packages
 
-version = ${repr($version) or "1.0"}
+version = ${str($version) or "1.0"}dev
 
 def read(*rnames):
     return open(

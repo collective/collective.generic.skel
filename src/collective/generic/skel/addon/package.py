@@ -37,6 +37,7 @@ class PAddon(c.P42Package):
         var('with_policy_support', 'install this product as a plone policy', default = 'n'),
         pvar('smtp_host', 'SMTP host if you are creating a policy addon', default='localhost'),
         pvar('smtp_port', 'SMTP port if you are creating a policy addon', default='25'),
+        pvar('pthemename', 'ploneapptheming theme name', default=''),
     ]
 
     def post(self, command, output_dir, vars):
@@ -55,6 +56,7 @@ class PAddon(c.P42Package):
     def pre(self, command, output_dir, vars):
         op4_command = copy.deepcopy(command)
         op4_output_dir = copy.deepcopy(output_dir)
+
         op4_vars = copy.deepcopy(vars)
         skin.skin_chooser(self, command, output_dir, vars)
         ret = c.PlonePackage.pre(self, command, output_dir, vars)
@@ -93,6 +95,8 @@ class PAddon(c.P42Package):
         else:
             vars['skins_comment_tag'] = ''
             vars['skins_comment_end'] = ''
+        if not vars['pthemename']:
+            vars['pthemename'] = vars['pdn'] 
         return ret
 
     def __init__(self, *args, **kwargs):
