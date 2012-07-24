@@ -47,13 +47,16 @@ class Package(Template):
     summary = "A Generic double namespaced egg."
     egg_plugins = ['PasteScript',]
     use_cheetah = True
+    pyver = '2.7'
     vars = [
         var('namespace', 'Namespace', default='%(namespace)s'),
         var('nested_namespace', 'Nested Namespace', default='%(package)s'),
         var('version', 'Version', default='1.0'),
         var('author', 'Author', default = running_user,),
         var('author_email', 'Email', default = '%s@%s' % (running_user, 'localhost')),
+        var('uri', 'URL of checkout', default=''),
         var('homepage', 'URL of homepage', default=''),
+        var('scm_type', 'checkout type', default='git'),
         var('description', 'One-line description of the package', default='Project %s'),
         var('keywords', 'Space-separated keywords/tags'),
         var('license_name', 'License name', default='GPL'),
@@ -195,6 +198,20 @@ class Package(Template):
             vars['nested_namespace'].upper() ,
             vars['project'].upper()
         )
+
+        if not 'opt_deps' in vars:
+            vars['opt_deps'] = " ".join([
+                'libxml2-2.7',
+                'libxslt-1.1',
+                'py-libxml2-2.7',
+                'py-libxslt-1.1',
+                'pil-1.1.7',
+                'libiconv-1.12',
+                'openssl-1',
+                'python-2.7',
+            ])
+        if not 'pyver' in vars:
+            vars['pyver'] = self.pyver
 
         self.output_dir = os.path.join(command.options.output_dir)
 

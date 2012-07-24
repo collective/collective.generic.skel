@@ -2,7 +2,7 @@ import os, sys
 
 from setuptools import setup, find_packages
 
-version = ${repr($version) or "1.0"}
+version = "${str($version) or "1.0"}dev"
 
 def read(*rnames):
     return open(
@@ -20,14 +20,22 @@ classifiers = [
     "Programming Language :: Python",
     "Topic :: Software Development",]
 
-name = '${namespace}${ndot}${nested_namespace}.${project_name}'
+
+
+name = '${pdn}'
 setup(
     name=name,
     namespace_packages=[#slurp
 #if $namespace:
-'${namespace}',#slurp
+         '${namespace}',#slurp
 #end if
-                '${namespace}${ndot}${nested_namespace}', '${namespace}${ndot}${nested_namespace}.${project_name}',],
+#if "${namespace}${ndot}${nested_namespace}" != $pdn:
+         '${namespace}${ndot}${nested_namespace}',
+#end if
+#if "${namespace}${ndot}${nested_namespace}" == $pdn:
+         '${pdn}',
+#end if
+    ],              
     version=version,
     description='$description',
     long_description=long_description,
@@ -45,7 +53,7 @@ setup(
     package_dir = {'': 'src'},
     include_package_data=True,
     extras_require = {
-        'test': ['ipython', 'zope.testing']
+        'test': ['ipython', 'plone.testing']
     },
     install_requires=[
         'setuptools',
