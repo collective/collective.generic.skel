@@ -243,7 +243,8 @@ borrowed_vars = [re.compile('with_ploneproduct.*'),
                  re.compile('with_database.*'),
                 ]
 
-plone_vars = Package.vars + [ ]
+plone_vars = Package.vars + [ 
+              var('with_generic', 'with_generic', default = 'n',),]
 excluded_vars = []
 p3_vars = []
 p4_vars = []

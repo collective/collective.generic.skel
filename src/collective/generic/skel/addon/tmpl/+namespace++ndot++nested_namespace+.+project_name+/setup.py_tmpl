@@ -2,7 +2,7 @@ import os, sys
 
 from setuptools import setup, find_packages
 
-version = ${str($version) or "1.0"}dev
+version = "${str($version) or "1.0"}dev"
 
 def read(*rnames):
     return open(
@@ -59,7 +59,11 @@ setup(
         'z3c.autoinclude',
         'Plone',
         'plone.app.upgrade',
-        #set $skipped = ['binding_pil', 'ploneproduct_tinymce']
+        #if not $with_generic:
+            #set $skipped = ['binding_pil', 'ploneproduct_tinymce']
+        #else:
+            #set $skipped = ['ploneproduct_tinymce']
+        #end if
         #for $k in $python_eggs_mapping:
         #if not True in [$l in $k.lower() for $l in $skipped]:
         \# $k
