@@ -227,6 +227,7 @@ PLONE RELATED STUFF
 from minitage.paste.projects import plone3
 from minitage.paste.projects import plone4
 from minitage.paste.projects import plone41
+from minitage.paste.projects import plone42
 from minitage.paste.projects import django
 from minitage.paste.projects import pyramid
 
@@ -250,7 +251,6 @@ p3_vars = []
 p4_vars = []
 p41_vars = []
 p41_vars = []
-plone42 = plone41 # TODO: CHANGE
 p42_vars = []
 ppackage_vars = []
 django_vars = []

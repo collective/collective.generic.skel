@@ -6,6 +6,26 @@
     xmlns:i18n="http://namespaces.zope.org/i18n"
     xmlns:cmf="http://namespaces.zope.org/cmf"
     i18n_domain="${pdn}">
-  <include package=".v11"/> <!-- read 1.1 because GS has problems to compare 1.1 and 1.0, prefer using ints there -->
+  <!--
+  <include package=".v1000"/> 
+  <genericsetup:upgradeSteps
+      profile="${pdn}:default"
+      source="1000"
+      destination="1001">
+    <genericsetup:upgradeStep
+          title="${pdn} import CSS"
+          description=""
+          handler=".cssimport.upgrade" />  
+    <genericsetup:upgradeStep
+        title="${pdn} import JS"
+        description=""
+        handler=".jsimport.upgrade" />
+    <genericsetup:upgradeStep
+        title="${pdn} Recook resources"
+        description=""
+        handler=".jscssapply.upgrade" />
+  </genericsetup:upgradeSteps>  
+  -->
+
   <!-- vim:set ft=xml: -->
 </configure>

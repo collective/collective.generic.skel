@@ -5,22 +5,11 @@
     xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
     i18n_domain="${pdn}">
   <genericsetup:registerProfile
-      name="1011"
-      title="${pdn} migration 10 to 11"
+      name="recook"
+      title="${pdn} migration: css / js  recook"
       description=""
       directory="profile"
       for="Products.CMFPlone.interfaces.IMigratingPloneSiteRoot"
       provides="Products.GenericSetup.interfaces.EXTENSION"
     />
-  <genericsetup:upgradeSteps
-      profile="${pdn}:default"
-      source="10"
-      destination="11">
-    <genericsetup:upgradeStep
-        title="${pdn} 10 - 11"
-        description=""
-        handler=".upgrade"
-      />
-  </genericsetup:upgradeSteps>
-  <!-- vim:set ft=xml: -->
 </configure>
