@@ -7,7 +7,6 @@
     xmlns:cmf="http://namespaces.zope.org/cmf"
     i18n_domain="${pdn}">
   <!--
-  <include package=".v1000"/> 
   <genericsetup:upgradeSteps
       profile="${pdn}:default"
       source="1000"
@@ -15,16 +14,28 @@
     <genericsetup:upgradeStep
           title="${pdn} import CSS"
           description=""
-          handler=".cssimport.upgrade" />  
+          handler=".import_css" />  
     <genericsetup:upgradeStep
         title="${pdn} import JS"
         description=""
-        handler=".jsimport.upgrade" />
+        handler=".import_js"/>
     <genericsetup:upgradeStep
         title="${pdn} Recook resources"
         description=""
-        handler=".jscssapply.upgrade" />
+        handler=".recook_resources" />
   </genericsetup:upgradeSteps>  
+
+  <genericsetup:upgradeSteps
+      profile="${pdn}:default"
+      source="*"
+      destination="1000">
+    <genericsetup:upgradeStep
+        title="${pdn} * - 1000"
+        description=""
+        handler=".upgrade_1000"
+      />
+  </genericsetup:upgradeSteps> 
+
   -->
 
   <!-- vim:set ft=xml: -->

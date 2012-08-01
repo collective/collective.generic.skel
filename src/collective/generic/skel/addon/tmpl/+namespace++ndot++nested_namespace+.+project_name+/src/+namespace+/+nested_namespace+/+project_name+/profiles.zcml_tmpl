@@ -44,5 +44,5 @@
   <!-- -->
   <utility factory=".app_config.HiddenProducts" name="${namespace}${ndot}${nested_namespace}.hiddenproducts"/>
   <utility factory=".app_config.HiddenProfiles" name="${namespace}${ndot}${nested_namespace}.hiddenprofiles"/> 
-  <include package=".migrations"/>
+  <include package=".upgrades"/>
 </configure> 
