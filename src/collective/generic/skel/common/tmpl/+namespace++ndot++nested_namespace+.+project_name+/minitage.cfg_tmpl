@@ -11,8 +11,7 @@ executable=\${buildout:directory}/../../dependencies/python-${pyver}/parts/part/
 python=python${pyver}
 name=python${pyver}
 
-[scripts]
-executable=\${python2.7:executable}
+
 [buildout]
 extensions +=
     buildout.minitagificator
@@ -35,6 +34,8 @@ auto-checkout +=
 env-file=\${buildout:directory}/plone.env
 includes-dirs =
     \${buildout:directory}/../../dependencies/cyrus-sasl-2.1/parts/part/include/sasl
+executable=\${python2.7:executable}
+extra-paths+=\${buildout:extra-paths}
 [versions]
 PIL=1.1.7
 zc.buildout=1.5.2

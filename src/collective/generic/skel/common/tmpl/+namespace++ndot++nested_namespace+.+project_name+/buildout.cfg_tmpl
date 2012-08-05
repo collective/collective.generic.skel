@@ -1,6 +1,6 @@
 [buildout]
 package-extras = [test]
-extra-paths +=
+extra-paths =
 package-name = ${pdn}
 develop = .
 parts =
@@ -41,11 +41,13 @@ defaults = ['-v', '-s', '\${buildout:package-name}']
 eggs =
     \${buildout:common-eggs}
     \${buildout:test-eggs}
+extra-paths = \${scripts:extra-paths}
 
 
 [coverage]
 recipe = zc.recipe.egg
 eggs = coverage
+extra-paths = \${scripts:extra-paths}
 initialization =
 include = '--source=\${buildout:directory}/src'
 sys.argv = sys.argv[:] + ['run', include, 'bin/test', '--xml']
@@ -53,6 +55,7 @@ sys.argv = sys.argv[:] + ['run', include, 'bin/test', '--xml']
 [report]
 recipe = zc.recipe.egg
 eggs = coverage
+extra-paths = \${scripts:extra-paths}
 scripts = coverage=report
 initialization =
 sys.argv = sys.argv[:] + ['html', '-i']
@@ -60,6 +63,7 @@ sys.argv = sys.argv[:] + ['html', '-i']
 [report-xml]
 recipe = zc.recipe.egg
 eggs = coverage
+extra-paths = \${scripts:extra-paths}
 scripts = coverage=report-xml
 initialization =
 sys.argv = sys.argv[:] + ['xml', '-i']
@@ -67,6 +71,7 @@ sys.argv = sys.argv[:] + ['xml', '-i']
 [omelette]
 recipe = collective.recipe.omelette
 eggs = \${scripts:eggs}
+extra-paths = \${scripts:extra-paths}
 #packages = ./
 
 [versions]

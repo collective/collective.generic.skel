@@ -37,6 +37,7 @@ def test_suite():
     files = []
     try:
         files = glob.glob(os.path.join(cwd, '*txt'))
+        files += glob.glob(os.path.join(cwd, '*rst'))
     except Exception,e:
         logger.warn('No doctests for ${pdn}')
     suite = unittest.TestSuite()
