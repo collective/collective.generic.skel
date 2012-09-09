@@ -1,9 +1,0 @@
-[minibuild]
-dependencies=$opt_deps
-install_method=buildout
-src_uri=$uri
-src_type=$scm_type
-category=zope
-homepage=$homepage
-description= a plone 4.1 buildout for $project
-buildout_config=minitage-test-4.1.x.cfg
