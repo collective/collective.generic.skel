@@ -42,7 +42,7 @@
     <depends name="content"/>
   </genericsetup:importStep> 
   <!-- -->
-  <utility factory=".app_config.HiddenProducts" name="${namespace}${ndot}${nested_namespace}.hiddenproducts"/>
-  <utility factory=".app_config.HiddenProfiles" name="${namespace}${ndot}${nested_namespace}.hiddenprofiles"/> 
+  <utility factory=".app_config.HiddenProducts" name="${namespace}${nunderscore}${nested_namespace}_${project_name}.hiddenproducts"/>
+  <utility factory=".app_config.HiddenProfiles" name="${namespace}${nunderscore}${nested_namespace}_${project_name}.hiddenprofiles"/> 
   <include package=".upgrades"/>
 </configure> 
