@@ -60,7 +60,7 @@ setup(
         'Plone',
         'plone.app.upgrade',
         #if not $with_generic:
-            #set $skipped = ['binding_pil', 'ploneproduct_tinymce']
+            #set $skipped = ['binding_pil', 'ploneproduct_tinymce' 'ploneproduct_paevent']
         #else:
             #set $skipped = ['ploneproduct_tinymce']
         #end if
@@ -68,7 +68,11 @@ setup(
         #if not True in [$l in $k.lower() for $l in $skipped]:
         \# $k
         #for $egg in $python_eggs_mapping[$k]:
+        #if $egg.startswith('plone.app.event'):
+        'plone.app.event [archetypes,ploneintegration,dexterity]',
+        #else
         '$egg',
+        #end if
         #end for
         #end if
         #end for

@@ -25,7 +25,14 @@
 #if $slug.endswith('overrides')
   <!--<includeOverrides package="$item" file="${slug}.zcml"-->
 #else
+  #if $item.startswith('plone.app.event')
+  <include package="plone.app.event" file="configure.zcml"/>
+  <include package="plone.app.event.ploneintegration" file="configure.zcml"/>
+  <include package="plone.app.event.at" file="configure.zcml"/>
+  <include package="plone.app.event.dx" file="configure.zcml"/>
+  #else
   <include package="$item" file="${slug}.zcml"/>
+  #end if
 #end if
 #end if
 #end if
