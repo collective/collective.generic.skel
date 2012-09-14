@@ -273,18 +273,18 @@ for vars, template in items:
             if sre.match(cvar.name) and not found:
                 found = True
                 vars.append(cvar)
-                if cvar.name.startswith('with_ploneproduct'):
-                    vars.append(
-                        var(
-                            cvar.name.replace(
-                                'ploneproduct',
-                                'autoinstall_ploneproduct'
-                            ),
-                            description = cvar.description,
-                            default = 'y'
-                        )
-                    )
-                    break
+                #if cvar.name.startswith('with_ploneproduct'):
+                #    vars.append(
+                #        var(
+                #            cvar.name.replace(
+                #                'ploneproduct',
+                #                'autoinstall_ploneproduct'
+                #            ),
+                #            description = cvar.description,
+                #            default = 'y'
+                #        )
+                #    )
+                #    break
 
 
 class MinitagePackage(Package):
@@ -361,9 +361,9 @@ class MinitagePackage(Package):
             if vars.get(key, False):
                 if not key in vars["qi"]:
                     vars["qi"][key] = []
-                aikey = key.replace('ploneproduct',
-                                    'autoinstall_ploneproduct')
-                if vars.get(aikey, False):
+                #aikey = key.replace('ploneproduct',
+                #                    'autoinstall_ploneproduct')
+                if True:#vars.get(aikey, False):
                     vars["qi"][key].extend([i['name'] for i in qi_mappings[key]])
                 else:
                     vars["qi"][key].extend(
@@ -375,24 +375,24 @@ class MinitagePackage(Package):
             if vars.get(key, False):
                 if not key in vars["hqi"]:
                     vars["hqi"][key] = []
-                aikey = key.replace('ploneproduct',
-                                    'autoinstall_ploneproduct')
-                if vars.get(aikey, False):
+                #aikey = key.replace('ploneproduct',
+                #                    'autoinstall_ploneproduct')
+                if True:#vars.get(aikey, False):
                     vars["hqi"][key].extend(qi_hidden_mappings[key])
                 else:
                     vars["hqi"][key].extend(
                         ["     #'%s'," % i for i in qi_hidden_mappings[key]]
                     )
 
-       # Zope2 new zope products
+        # Zope2 new zope products
         if not "z2packages" in vars: vars["z2packages"] = {}
         for key in z2packages:
             if vars.get(key, False):
                 if not key in vars["z2packages"]:
                     vars["z2packages"][key] = []
-                aikey = key.replace('ploneproduct',
-                                    'autoinstall_ploneproduct')
-                if vars.get(aikey, False):
+                #aikey = key.replace('ploneproduct',
+                #                    'autoinstall_ploneproduct')
+                if True:#vars.get(aikey, False):
                     vars["z2packages"][key].extend(z2packages[key])
                 else:
                     vars["z2packages"][key].extend(
@@ -405,10 +405,10 @@ class MinitagePackage(Package):
             if vars.get(key, False):
                 if not key in vars["z2products"]:
                     vars["z2products"][key] = []
-                aikey = key.replace('ploneproduct', 'autoinstall_ploneproduct')
+                #aikey = key.replace('ploneproduct', 'autoinstall_ploneproduct')
                 # a zope2 product must not have its namespace
                 # in the ztc.installProduct call
-                if vars.get(aikey, False):
+                if True:#vars.get(aikey, False):
                     vars["z2products"][key].extend([i.replace('Products.', '')
                                                     for i in z2products[key]])
                 else:
@@ -431,8 +431,8 @@ class MinitagePackage(Package):
         seen = []
         for key in zcml_mappings:
             if vars.get(key, False):
-                aikey = key.replace('ploneproduct', 'autoinstall_ploneproduct')
-                if vars.get(aikey, False):
+                #aikey = key.replace('ploneproduct', 'autoinstall_ploneproduct')
+                if True:#vars.get(aikey, False):
                     for i in zcml_mappings[key]:
                         if not i in seen:
                             vars["zcml"].append(i)
