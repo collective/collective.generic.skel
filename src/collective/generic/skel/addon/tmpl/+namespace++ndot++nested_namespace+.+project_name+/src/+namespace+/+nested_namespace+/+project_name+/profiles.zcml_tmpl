@@ -39,7 +39,7 @@
       title="Quick Installer products dependencies setup for $pdn"
       description="description"
       handler="${pdn}.setuphandlers.setupQi">
-    <depends name="content"/>
+    <depends name="plone-content"/>
   </genericsetup:importStep> 
   <!-- -->
   <utility factory=".app_config.HiddenProducts" name="${namespace}${nunderscore}${nested_namespace}_${project_name}.hiddenproducts"/>

@@ -16,6 +16,7 @@ import transaction
 
 
 from Products.CMFCore.utils import getToolByName
+from Products.CMFPlone.utils import _createObjectByType
               
 PROFILE =  'profile-${pdn}:default'
 PROFILEID = 'profile-%s' % PROFILE
@@ -40,7 +41,7 @@ def import_js(context):
     site = getToolByName(context, 'portal_url').getPortalObject()
     portal_setup = getToolByName(context, 'portal_setup')
     portal_setup.runImportStepFromProfile(PROFILEID, 'jsregistry', run_dependencies=False)
-    transaction.commit()
+    log('Imported js')
 
 def import_css(context):
     """
@@ -48,7 +49,7 @@ def import_css(context):
     site = getToolByName(context, 'portal_url').getPortalObject()
     portal_setup = getToolByName(context, 'portal_setup')
     portal_setup.runImportStepFromProfile(PROFILEID, 'cssregistry', run_dependencies=False)
-    transaction.commit()
+    log('Imported css')
 
 def upgrade_1000(context):
     """
@@ -63,7 +64,5 @@ def upgrade_1000(context):
     #portal_setup.runImportStepFromProfile('profile-${pdn}:default', 'cssregistry', run_dependencies=False)
     #portal_setup.runImportStepFromProfile('profile-${pdn}:default', 'portlets', run_dependencies=False)
     #portal_setup.runImportStepFromProfile('profile-${pdn}:default', 'propertiestool', run_dependencies=False)
-    #portal_setup.runImportStepFromProfile('profile-${pdn}:default', 'propertiestool', run_dependencies=False)
-    transaction.commit() 
     log('v1000 applied')
 
