@@ -1,0 +1,84 @@
+import os, sys
+
+from setuptools import setup, find_packages
+
+version = "${str($version) or "1.0"}dev"
+
+def read(*rnames):
+    return open(
+        os.path.join('.', *rnames)
+    ).read()
+
+long_description = "\n\n".join(
+    [read('README.rst'),
+     read('docs', 'INSTALL.rst'),
+     read('docs', 'CHANGES.rst'),
+    ]
+)
+
+classifiers = [
+    "Framework :: Plone",
+    "Framework :: Plone :: 4.0",
+    "Framework :: Plone :: 4.1",
+    "Framework :: Plone :: 4.2",
+    "Programming Language :: Python",
+    "Topic :: Software Development",]
+
+name = '${pdn}'
+setup(
+    name=name,
+    namespace_packages=[#slurp
+#if $namespace:
+         '${namespace}',#slurp
+#elif $nested_namespace:
+         '${namespace}${ndot}${nested_namespace}',#slurp
+#end if
+    ],
+    version=version,
+    description='$description',
+    long_description=long_description,
+    classifiers=classifiers,
+    keywords='$keywords',
+    author='$author',
+    author_email='$author_email',
+#if $homepage
+    url='$homepage',
+#else
+    url='http://pypi.python.org/pypi/%s' % name,
+#end if
+    license='$license_name',
+    packages=find_packages('src'),
+    package_dir = {'': 'src'},
+    include_package_data=True,
+    install_requires=[
+        'setuptools',
+        'z3c.autoinclude',
+        'Plone',
+        'plone.app.upgrade',
+        #if not $with_generic:
+            #set $skipped = ['binding_pil', 'ploneproduct_tinymce' 'ploneproduct_paevent']
+        #else:
+            #set $skipped = ['ploneproduct_tinymce']
+        #end if
+        #for $k in $python_eggs_mapping:
+        #if not True in [$l in $k.lower() for $l in $skipped]:
+        \# $k
+        #for $egg in $python_eggs_mapping[$k]:
+        #if $egg.startswith('plone.app.event'):
+        'plone.app.event [archetypes,ploneintegration,dexterity]',
+        #else
+        '$egg',
+        #end if
+        #end for
+        #end if
+        #end for
+        # -*- Extra requirements: -*-
+    ],
+    extras_require = {
+        'test': ['plone.app.testing',]
+    },
+    entry_points = {
+        'z3c.autoinclude.plugin': ['target = plone',],
+    },
+)
+# vim:set ft=python:

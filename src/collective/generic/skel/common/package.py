@@ -106,17 +106,21 @@ class Package(Template):
             self.project = infos['project']
         else:
             infos['namespace'] = ''
-            infos['nested_namespace'] = project
-            infos['project'] = 'core'
+            infos['nested_namespace'] = ''
+            infos['project'] = project
             self.project = getattr(self, 'project', infos['project'])
         ndot = '.'
+        nsdot = '.'
         if not infos['namespace']:
             ndot = ''
+        if not infos['nested_namespace']:
+            nsdot = '' 
 
 
-        self.dn = '%s%s%s.%s' % (infos['namespace'], ndot,
-                           infos['nested_namespace'] ,
-                           self.project)
+        self.dn = '%s%s%s%s%s' % (infos['namespace'], ndot,
+                                  infos['nested_namespace'] ,
+                                  nsdot,
+                                  self.project)
         for i, var in enumerate(vars[:]):
             if var.name == 'plone_version':
                 plone_v = getattr(self, 'plone_version', None)
@@ -176,16 +180,21 @@ class Package(Template):
         vars['project'] = self.project
         vars['ndot'] = '.'
         vars['nunderscore'] = '_'
+        vars['nsunderscore'] = '_'
         if not vars['namespace']:
             vars['ndot'] = ''
             vars['nunderscore'] = ''
+        vars['nsdot'] = '.'
+        if not vars['nested_namespace']:
+            vars['nsdot'] = ''
+            vars['nsunderscore'] = ''
         vars['hr'] = SHARP_LINE
         vars['generate_msg'] = REGENERATE_MSG % vars
         vars['generate_file'] = REGENERATE_FILE % vars
         vars['generate_objects'] = REGENERATE_OBJECTS % vars
-        vars['pdn'] = self.dn = '%s%s%s.%s' % (
+        vars['pdn'] = self.dn = '%s%s%s%s%s' % (
             vars['namespace'], vars['ndot'],
-            vars['nested_namespace'] ,
+            vars['nested_namespace'] , vars['nsdot'] ,
             vars['project']
         )
         vars['PdN'] = '%s%s%s' % (
@@ -193,11 +202,12 @@ class Package(Template):
             vars['nested_namespace'].capitalize() ,
             vars['project'].capitalize()
         )
-        vars['P_D_N'] = '%s%s_%s' % (
+        vars['P_D_N'] = '%s%s%s' % (
             (True==bool(vars['namespace'].upper())) and '%s_' % vars['namespace'].upper() or '',
-            vars['nested_namespace'].upper() ,
+            (True==bool(vars['nested_namespace'].upper())) and '%s_' % vars['nested_namespace'].upper() or '',
             vars['project'].upper()
         )
+
 
         if not 'opt_deps' in vars:
             vars['opt_deps'] = " ".join([

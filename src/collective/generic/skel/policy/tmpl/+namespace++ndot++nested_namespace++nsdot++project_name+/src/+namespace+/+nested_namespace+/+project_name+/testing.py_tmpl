@@ -1,0 +1,97 @@
+from Products.Five import zcml
+from Products.Five import fiveconfigure
+
+from Testing import ZopeTestCase as ztc
+import transaction
+from OFS.Folder import Folder
+
+from Products.PloneTestCase import PloneTestCase as ptc
+from collective.testcaselayer.ptc import BasePTCLayer, ptc_layer
+
+TESTED_PRODUCTS = (\
+#for item in $z2products:
+#$item
+#for package in $z2products[$item]:
+#if $package.startswith('#'):
+    #'$package.replace('#', '')',
+#else
+    '$package',
+#end if
+#end for
+#end for
+)
+
+
+class Layer(BasePTCLayer):
+    """Layer to setup the $project site"""
+    class Session(dict):
+        def set(self, key, value):
+            self[key] = value  
+
+    def afterSetUp(self):
+        """Set up the additional products required for the ${namespace}${ndot}${nested_namespace}) site ${project_name}.
+        until the setup of the Plone site testing layer.
+        """ 
+        for product in TESTED_PRODUCTS:
+            ztc.installProduct(product) 
+
+        # ------------------------------------------------------------------------------------
+        # Import all our python modules required by our packages
+        # ------------------------------------------------------------------------------------
+    #for $item in $py_modules:
+    \#$item
+    #for $package in $py_modules[$item]:
+    #if $package.startswith('#'):
+    #set $package=$package[1:]
+    #end if
+        import $package
+        self.loadZCML('configure.zcml', package=$package)   
+    #end for
+    #end for
+
+        # ------------------------------------------------------------------------------------
+        # - Load the python packages that are registered as Zope2 Products via Five
+        #   which can't happen until we have loaded the package ZCML.
+        # ------------------------------------------------------------------------------------
+
+    #for $package in $z2packages:
+        #$package
+    #for $item in $z2packages[$package]:
+    #if $item.startswith('#'):
+        \#ztc.installPackage($item.replace('#', ''))
+    #else
+        ztc.installPackage('$item')
+
+    #end if
+    #end for
+    #end for
+        ztc.installPackage('${namespace}${ndot}${nested_namespace}${nsdot}${project_name}')
+        ztc.installPackage('${namespace}${ndot}${nested_namespace}${nsdot}skin')
+        ztc.installPackage('${namespace}${ndot}${nested_namespace}${nsdot}tma') 
+
+
+        # ------------------------------------------------------------------------------------
+        # Load our own ${project_name}
+        # ------------------------------------------------------------------------------------
+        import ${namespace}${ndot}${nested_namespace}${nsdot}${project_name}
+        self.loadZCML(
+            'configure.zcml', 
+            package=${namespace}${ndot}${nested_namespace}${nsdot}${project_name}
+        )
+        self.addProfile(
+            '${namespace}${ndot}${nested_namespace}${nsdot}${project_name}:default'
+        )
+        
+        # ------------------------------------------------------------------------------------
+        # support for sessions without invalidreferences if using zeo temp storage
+        # ------------------------------------------------------------------------------------
+        self.app.REQUEST['SESSION'] = self.Session()
+        if not hasattr(self.app, 'temp_folder'):
+            tf = Folder('temp_folder')
+            self.app._setObject('temp_folder', tf)
+            transaction.commit()
+        ztc.utils.setupCoreSessions(self.app) 
+
+
+layer = Layer(bases=[ptc_layer])
+# vim:set ft=python:

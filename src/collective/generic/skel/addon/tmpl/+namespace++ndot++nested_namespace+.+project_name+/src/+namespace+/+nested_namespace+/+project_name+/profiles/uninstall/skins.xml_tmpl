@@ -1,8 +1,0 @@
-<?xml version="1.0"?>
-<object name="portal_skins" allow_any="False" cookie_persistence="False" ${default_skin_slug}>
-${skins_comment_tag}
-  <object name="${namespace}${nunderscore}${nested_namespace}_${project_name}_custom"
-    remove="True" />
-  <skin-path name="${pdn}"remove="True" />
-${skins_comment_end}
-</object> 

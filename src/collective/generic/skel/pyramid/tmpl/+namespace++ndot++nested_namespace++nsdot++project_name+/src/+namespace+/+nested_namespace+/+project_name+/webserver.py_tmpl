@@ -1,0 +1,67 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+__docformat__ = 'restructuredtext en'
+
+
+import os
+
+import pkg_resources
+
+from webob import Request, exc
+
+from pyramid.config import Configurator
+
+from ${namespace}${ndot}${nested_namespace}${nsdot}${project_name} import utils
+
+
+def wsgi_app_factory(global_config, **local_config):
+    """
+    A paste.httpfactory to wrap a pyramid WSGI based application.
+    """
+    dn = name = '${namespace}${ndot}${nested_namespace}${nsdot}${project_name}'
+    wconf = global_config.copy()
+    wconf.update(**local_config)
+    debug = False
+    if global_config.get('debug', 'False').lower() == 'true':
+        debug = True
+        wconf['pyramid.debug_authorization'] = 'true'
+        wconf['pyramid.debug_notfound'] = 'true'
+        wconf['pyramid.reload_templates'] = 'true'
+    wconf['zcmls' ] = utils.splitstrip(wconf['zcmls'])
+    if not wconf['zcmls']:
+        wconf['zcmls'] = []
+    wconf['zcmls'].insert(0, 'configure.zcml')
+    for i, zcml in enumerate(wconf['zcmls']):
+        if os.path.sep in zcml:
+            zcml = os.path.abspath(zcml)
+        else:
+            zcml = pkg_resources.resource_filename(dn, zcml)
+        wconf['zcmls'][i] = zcml
+
+    config = Configurator(settings=wconf)
+    \# activate if you want to enable global components
+    \#  globalreg = getGlobalSiteManager()
+    \#  config = Configurator(registry=globalreg)
+    \#  config.setup_registry(settings=wconf)
+    \#  config.include('pyramid_zcml')
+
+    config.hook_zca()
+    for z in wconf['zcmls']:
+        config.load_zcml(z)
+    app = config.make_wsgi_app()
+    def webbuilder_app(environ, start_response):
+        req = Request(environ)
+        try:
+            resp = req.get_response(app)
+            return resp(environ, start_response)
+        except Exception, e:
+            if not debug:
+                return exc.HTTPServerError(str(e))(environ, start_response)
+            else:
+                raise
+    return webbuilder_app
+
+
+def main():
+    return 'implement me'
+

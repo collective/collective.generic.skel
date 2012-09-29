@@ -1,0 +1,231 @@
+from Testing import ZopeTestCase as ztc
+import transaction
+from OFS.Folder import Folder
+
+import unittest2 as unittest
+
+from zope.configuration import xmlconfig
+
+from plone.app.testing import (
+    FunctionalTesting as BFunctionalTesting,
+    IntegrationTesting as BIntegrationTesting, 
+    login,
+    PLONE_FIXTURE,
+    PloneSandboxLayer,
+    setRoles,
+    SITE_OWNER_NAME,
+    TEST_USER_ID,
+    TEST_USER_ID,
+    TEST_USER_NAME,
+    TEST_USER_NAME, 
+    TEST_USER_ROLES,
+)
+from plone.app.testing.selenium_layers import (
+    SELENIUM_FUNCTIONAL_TESTING as SELENIUM_TESTING
+)
+from plone.testing import Layer, zodb, zca, z2
+
+TESTED_PRODUCTS = (\
+#for item in $z2products:
+#$item
+#for package in $z2products[$item]:
+#if $package.startswith('#'):
+    #'$package.replace('#', '')',
+#else
+    '$package',
+#end if
+#end for
+#end for
+)
+
+
+from plone.app.testing.helpers import (
+    login,
+    logout,
+)
+
+PLONE_MANAGER_NAME = 'Plone_manager'
+PLONE_MANAGER_ID = 'plonemanager'
+PLONE_MANAGER_PASSWORD = 'plonemanager'
+
+def print_contents(browser, dest='~/.browser.html'):
+    """Print the browser contents somewhere for you to see its context
+    in doctest pdb, type print_contents(browser) and that's it, open firefox
+    with file://~/browser.html."""
+    import os
+    open(os.path.expanduser(dest), 'w').write(browser.contents)
+
+class Browser(z2.Browser):
+    def print_contents(browser, dest='~/.browser.html'):
+        return print_contents(browser, dest)
+
+class ${PdN}Layer(PloneSandboxLayer):
+
+    defaultBases = (PLONE_FIXTURE, )
+    """Layer to setup the $project site"""
+    class Session(dict):
+        def set(self, key, value):
+            self[key] = value
+
+    def setUpZope(self, app, configurationContext):
+        """Set up the additional products required for the ${namespace}${ndot}${nested_namespace}) site ${project_name}.
+        until the setup of the Plone site testing layer.
+        """
+        self.app = app
+        self.browser = Browser(app)
+        # old zope2 style products
+        z2.installProduct(app, 'Products.PythonScripts')
+        for product in TESTED_PRODUCTS:
+            z2.installProduct(app, product)
+
+        # ----------------------------------------------------------------------
+        # Import all our python modules required by our packages
+        # ---------------------------------------------------------------------
+        #for $item in $py_modules:
+        \#$item
+        #for $package in $py_modules[$item]:
+        #if $package.startswith('#'):
+        #set $package=$package[1:]
+        #end if
+        #if $package.startswith('plone.app.event')
+        import plone.app.event
+        import plone.app.event.at
+        import plone.app.event.dx
+        import plone.app.event.ploneintegration
+        self.loadZCML('configure.zcml', package=plone.app.event)
+        self.loadZCML('configure.zcml', package=plone.app.event.ploneintegration)
+        self.loadZCML('configure.zcml', package=plone.app.event.dx)
+        self.loadZCML('configure.zcml', package=plone.app.event.at) 
+        #else
+        #if '[' in $package:
+        #set $package=$package.split('[')[0].strip()
+        #end if
+        import $package
+        self.loadZCML('configure.zcml', package=$package)
+        #end if
+        #end for
+        #end for
+
+        # -----------------------------------------------------------------------
+        # Load our own ${project_name}
+        # -----------------------------------------------------------------------
+        import ${pdn}
+        self.loadZCML('configure.zcml', package=${pdn})
+
+        # ------------------------------------------------------------------------
+        # - Load the python packages that are registered as Zope2 Products
+        #   which can't happen until we have loaded the package ZCML.
+        # ------------------------------------------------------------------------
+
+        #for $package in $z2packages:
+        #$package
+        #for $item in $z2packages[$package]:
+        #if $item.startswith('#'):
+        #z2.installProduct("$item.replace('#', '')")
+        #else
+        z2.installProduct(app, '$item')
+        #end if
+        #end for
+        #end for
+        z2.installProduct(app, '${pdn}')
+
+        # -------------------------------------------------------------------------
+        # support for sessions without invalidreferences if using zeo temp storage
+        # -------------------------------------------------------------------------
+        app.REQUEST['SESSION'] = self.Session()
+        if not hasattr(app, 'temp_folder'):
+            tf = Folder('temp_folder')
+            app._setObject('temp_folder', tf)
+            transaction.commit()
+        ztc.utils.setupCoreSessions(app)
+
+    def setUpPloneSite(self, portal):
+        self.portal = portal
+        # Plone stuff. Workflows, portal content. Members folder, etc.
+        self.applyProfile(portal, 'Products.CMFPlone:plone')
+        self.applyProfile(portal, 'Products.CMFPlone:plone-content') 
+        self.applyProfile(portal, '${pdn}:default')
+
+
+class LayerMixin(Layer):
+    defaultBases = (${PdN}Layer() ,)
+
+    def testTearDown(self):
+        self.loginAsPortalOwner()
+        if 'test-folder' in self['portal'].objectIds():
+            self['portal'].manage_delObjects('test-folder')
+        self['portal'].portal_membership.deleteMembers([PLONE_MANAGER_NAME])
+        self.setRoles()
+        self.login()
+
+    def testSetUp(self):
+        if not self['portal']['acl_users'].getUser(PLONE_MANAGER_NAME):
+            self.loginAsPortalOwner()
+            self.add_user(
+                self['portal'],
+                PLONE_MANAGER_ID,
+                PLONE_MANAGER_NAME,
+                PLONE_MANAGER_PASSWORD,
+                ['Manager']+TEST_USER_ROLES)
+            self.logout()
+        self.login(TEST_USER_NAME)
+        self.setRoles(['Manager'])
+        if not 'test-folder' in self['portal'].objectIds():
+            self['portal'].invokeFactory('Folder', 'test-folder')
+        self['test-folder'] = self['folder'] = self['portal']['test-folder']
+        self.setRoles(TEST_USER_ROLES)
+
+    def add_user(self, portal, id, username, password, roles=None):
+        if not roles: roles = TEST_USER_ROLES[:]
+        self.loginAsPortalOwner()
+        pas = portal['acl_users']
+        pas.source_users.addUser(id, username, password)
+        self.setRoles(roles, id)
+        self.logout()
+
+    def setRoles(self, roles=None, id=None):
+        if roles is None:
+            roles = TEST_USER_ROLES
+        if id is None:
+            id = TEST_USER_ID
+        setRoles(self['portal'], id, roles)
+
+    def loginAsPortalOwner(self):
+        self.login(SITE_OWNER_NAME)
+
+    def logout(self):
+        logout()
+
+    def login(self, id=None):
+        if not id:
+            id = TEST_USER_NAME
+        try:
+            z2.login(self['app']['acl_users'], id)
+        except:
+            z2.login(self['portal']['acl_users'], id) 
+
+class IntegrationTesting(LayerMixin, BIntegrationTesting):
+    def testSetUp(self):
+        BIntegrationTesting.testSetUp(self)
+        LayerMixin.testSetUp(self)
+
+class FunctionalTesting(LayerMixin, BFunctionalTesting):
+    def testSetUp(self):
+        BFunctionalTesting.testSetUp(self)
+        LayerMixin.testSetUp(self) 
+
+
+class SimpleLayer(Layer):
+    defaultBases = tuple()
+
+
+${P_D_N}_SIMPLE              = SimpleLayer(name='${PdN}:Simple')
+
+${P_D_N}_FIXTURE             = ${PdN}Layer()
+${P_D_N}_INTEGRATION_TESTING = IntegrationTesting(name = "${PdN}:Integration")
+${P_D_N}_FUNCTIONAL_TESTING  = FunctionalTesting( name = "${PdN}:Functional")
+${P_D_N}_SELENIUM_TESTING    = FunctionalTesting(bases = (SELENIUM_TESTING, 
+                                                          ${P_D_N}_FUNCTIONAL_TESTING,), 
+                                                 name = "${PdN}:Selenium")
+
+# vim:set ft=python:

@@ -1,0 +1,48 @@
+<?xml version="1.0"?>
+<configure
+    xmlns="http://namespaces.zope.org/zope"
+    xmlns:genericsetup="http://namespaces.zope.org/genericsetup"
+    i18n_domain="${pdn}">
+  <!-- Include direct package dependencies -->
+  <genericsetup:registerProfile
+      name="qi"
+      title="${namespace}${ndot}${nested_namespace} Policy QI"
+      directory="profiles/qi"
+      description="Turn a Plone site into the ${namespace}${ndot}${nested_namespace} QIINFO site."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+  <genericsetup:registerProfile
+      name="default"
+      title="$pdn"
+      directory="profiles/default"
+      description="Install the $pdn addon on this plone site."
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+    />
+  <genericsetup:registerProfile
+      title="$pdn uninstall" 
+      name="uninstall"
+      description="Uninstall the $pdn addon on tbis plone site."
+      directory="profiles/uninstall"
+      provides="Products.GenericSetup.interfaces.EXTENSION"
+      for="Products.CMFPlone.interfaces.IPloneSiteRoot"
+      />
+  <genericsetup:importStep
+      name="${namespace}${nunderscore}${nested_namespace}${nsunderscore}${project_name} setupVarious"
+      title="various setup for $pdn "
+      description="description"
+      handler="${pdn}.setuphandlers.setupVarious">
+    <depends name="plone-content"/>
+  </genericsetup:importStep>
+  <!-- migration steps -->
+  <genericsetup:importStep
+      name="${namespace}${nunderscore}${nested_namespace}${nsunderscore}${project_name} setupQi"
+      title="Quick Installer products dependencies setup for $pdn"
+      description="description"
+      handler="${pdn}.setuphandlers.setupQi">
+    <depends name="plone-content"/>
+  </genericsetup:importStep> 
+  <!-- -->
+  <utility factory=".app_config.HiddenProducts" name="${namespace}${nunderscore}${nested_namespace}${nsunderscore}${project_name}.hiddenproducts"/>
+  <utility factory=".app_config.HiddenProfiles" name="${namespace}${nunderscore}${nested_namespace}${nsunderscore}${project_name}.hiddenprofiles"/> 
+  <include package=".upgrades"/>
+</configure> 

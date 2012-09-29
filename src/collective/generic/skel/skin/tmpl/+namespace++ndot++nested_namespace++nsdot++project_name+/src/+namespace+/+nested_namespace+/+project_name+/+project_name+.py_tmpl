@@ -1,0 +1,6 @@
+from zope.i18nmessageid import MessageFactory
+${namespace}${nested_namespace}${project_name}MessageFactory = MessageFactory('${namespace}${ndot}${nested_namespace}${nsdot}${project_name}')
+
+def initialize(context):
+    """Initializer called when used as a Zope 2 product.""" 
+# vim:set et sts=4 ts=4 tw=80:
