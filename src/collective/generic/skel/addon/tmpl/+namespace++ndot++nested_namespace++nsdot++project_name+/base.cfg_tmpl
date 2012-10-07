@@ -8,6 +8,8 @@ parts +=
     test
     coverage
     report
+    report-html
+    report-annotate
     report-xml
 extensions =
     mr.developer
@@ -44,24 +46,35 @@ eggs =
 [coverage]
 recipe = zc.recipe.egg
 eggs = coverage
+scripts = coverage
 initialization =
-include = '--source=\${buildout:directory}/src'
-sys.argv = sys.argv[:] + ['run', include, 'bin/test', '--xml']
+    include = '--source=\${buildout:directory}/src'
+    sys.argv = sys.argv[:] + ['run', include, 'bin/test', '--all']
 
 [report]
-recipe = zc.recipe.egg
-eggs = coverage
+<=coverage
 scripts = coverage=report
 initialization =
-sys.argv = sys.argv[:] + ['html', '-i']
+    sys.argv = sys.argv[:] + ['report', '-i']
+
+[report-html]
+<=coverage
+scripts = coverage=report-html
+initialization =
+    sys.argv = sys.argv[:] + ['html', '-i']
 
 [report-xml]
-recipe = zc.recipe.egg
-eggs = coverage
+<=coverage
 scripts = coverage=report-xml
 initialization =
-sys.argv = sys.argv[:] + ['xml', '-i']
+    sys.argv = sys.argv[:] + ['xml', '-i']
 
+[report-annotate]
+<=coverage
+scripts = coverage=report-annotate
+initialization =
+    sys.argv = sys.argv[:] + ['annotate', '-i']
+ 
 [omelette]
 recipe = collective.recipe.omelette
 eggs = \${instance:eggs}
