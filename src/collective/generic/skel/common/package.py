@@ -228,8 +228,23 @@ class Package(Template):
     def post(self, command, output_dir, vars):
         Template.post(self, command, output_dir, vars)
         isolated_init = os.path.join(output_dir, 'src', '__init__.py')
-        if os.path.exists(isolated_init) and not bool(vars['namespace']):
-            os.remove(isolated_init)
+        isolated_init2 = os.path.join(
+            output_dir, 
+            '%s%s%s%s%s' % (
+                vars['namespace'],
+                vars['ndot'],
+                vars['nested_namespace'],
+                vars['nsdot'],
+                vars['project_name'],
+            ),
+            'src', '__init__.py'
+        )
+        for i in [isolated_init2, isolated_init]:
+            if os.path.exists(i) and (
+                not bool(vars['namespace'])
+                or not bool(vars['nested_namespace'])
+            ):
+                os.remove(i)
 
 """
 PLONE RELATED STUFF
