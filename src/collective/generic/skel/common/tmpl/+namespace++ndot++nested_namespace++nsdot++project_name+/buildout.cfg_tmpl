@@ -10,6 +10,7 @@ parts =
     coverage
     report
     report-html
+    report-xml
     report-annotate
 extensions =
     mr.developer
