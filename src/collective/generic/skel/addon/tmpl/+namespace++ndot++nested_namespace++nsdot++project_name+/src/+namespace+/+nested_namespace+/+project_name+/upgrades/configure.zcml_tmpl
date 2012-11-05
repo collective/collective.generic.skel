@@ -7,35 +7,36 @@
     xmlns:cmf="http://namespaces.zope.org/cmf"
     i18n_domain="${pdn}">
   <!--
-  <genericsetup:upgradeSteps
-      profile="${pdn}:default"
-      source="1000"
-      destination="1001">
+     EXAMPLES:
     <genericsetup:upgradeStep
-          title="${pdn} import CSS"
-          description=""
-          handler=".import_css" />  
+        profile="${pdn}:default"
+        source="xxx"
+        destination="yyy"
+        title="${pdn} import CSS"
+        description=""
+        handler=".import_css" />  
     <genericsetup:upgradeStep
+        profile="${pdn}:default"
+        source="xxx"
+        destination="yyy"
         title="${pdn} import JS"
         description=""
         handler=".import_js"/>
     <genericsetup:upgradeStep
+        profile="${pdn}:default"
+        source="xxx"
+        destination="yyy"
         title="${pdn} Recook resources"
         description=""
         handler=".recook_resources" />
-  </genericsetup:upgradeSteps>  
-
-  <genericsetup:upgradeSteps
-      profile="${pdn}:default"
-      source="*"
-      destination="1000">
     <genericsetup:upgradeStep
-        title="${pdn} * - 1000"
+        profile="${pdn}:default"
+        source="1000"
+        destination="1001"
+        title="${pdn} - 1001"
         description=""
-        handler=".upgrade_1000"
+        handler=".upgrade_1001"
       />
-  </genericsetup:upgradeSteps> 
-
   -->
 
   <!-- vim:set ft=xml: -->

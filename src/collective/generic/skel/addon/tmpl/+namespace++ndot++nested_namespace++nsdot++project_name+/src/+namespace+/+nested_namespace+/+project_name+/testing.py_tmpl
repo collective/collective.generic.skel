@@ -1,3 +1,4 @@
+import os
 from Testing import ZopeTestCase as ztc
 import transaction
 from OFS.Folder import Folder
@@ -8,16 +9,17 @@ from zope.configuration import xmlconfig
 
 from plone.app.testing import (
     FunctionalTesting as BFunctionalTesting,
-    IntegrationTesting as BIntegrationTesting, 
-    login,
+    IntegrationTesting as BIntegrationTesting,
     PLONE_FIXTURE,
     PloneSandboxLayer,
+    helpers,
     setRoles,
     SITE_OWNER_NAME,
+    SITE_OWNER_PASSWORD,
     TEST_USER_ID,
     TEST_USER_ID,
     TEST_USER_NAME,
-    TEST_USER_NAME, 
+    TEST_USER_NAME,
     TEST_USER_ROLES,
 )
 from plone.app.testing.selenium_layers import (
@@ -38,26 +40,10 @@ TESTED_PRODUCTS = (\
 #end for
 )
 
-
-from plone.app.testing.helpers import (
-    login,
-    logout,
-)
-
 PLONE_MANAGER_NAME = 'Plone_manager'
 PLONE_MANAGER_ID = 'plonemanager'
 PLONE_MANAGER_PASSWORD = 'plonemanager'
-
-def print_contents(browser, dest='~/.browser.html'):
-    """Print the browser contents somewhere for you to see its context
-    in doctest pdb, type print_contents(browser) and that's it, open firefox
-    with file://~/browser.html."""
-    import os
-    open(os.path.expanduser(dest), 'w').write(browser.contents)
-
-class Browser(z2.Browser):
-    def print_contents(browser, dest='~/.browser.html'):
-        return print_contents(browser, dest)
+GENTOO_FF_UA = 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.1.3) Gecko/20090912 Gentoo Shiretoko/3.5.3'
 
 class ${PdN}Layer(PloneSandboxLayer):
 
@@ -95,7 +81,7 @@ class ${PdN}Layer(PloneSandboxLayer):
         self.loadZCML('configure.zcml', package=plone.app.event)
         self.loadZCML('configure.zcml', package=plone.app.event.ploneintegration)
         self.loadZCML('configure.zcml', package=plone.app.event.dx)
-        self.loadZCML('configure.zcml', package=plone.app.event.at) 
+        self.loadZCML('configure.zcml', package=plone.app.event.at)
         #else
         #if '[' in $package:
         #set $package=$package.split('[')[0].strip()
@@ -143,12 +129,13 @@ class ${PdN}Layer(PloneSandboxLayer):
         self.portal = portal
         # Plone stuff. Workflows, portal content. Members folder, etc.
         self.applyProfile(portal, 'Products.CMFPlone:plone')
-        self.applyProfile(portal, 'Products.CMFPlone:plone-content') 
+        self.applyProfile(portal, 'Products.CMFPlone:plone-content')
         self.applyProfile(portal, '${pdn}:default')
 
+${P_D_N}_FIXTURE = ${PdN}Layer(name='${PdN}:Fixture')
 
 class LayerMixin(Layer):
-    defaultBases = (${PdN}Layer() ,)
+    defaultBases = (${P_D_N}_FIXTURE,)
 
     def testTearDown(self):
         self.loginAsPortalOwner()
@@ -157,6 +144,7 @@ class LayerMixin(Layer):
         self['portal'].portal_membership.deleteMembers([PLONE_MANAGER_NAME])
         self.setRoles()
         self.login()
+        transaction.commit()
 
     def testSetUp(self):
         if not self['portal']['acl_users'].getUser(PLONE_MANAGER_NAME):
@@ -174,6 +162,7 @@ class LayerMixin(Layer):
             self['portal'].invokeFactory('Folder', 'test-folder')
         self['test-folder'] = self['folder'] = self['portal']['test-folder']
         self.setRoles(TEST_USER_ROLES)
+        transaction.commit()
 
     def add_user(self, portal, id, username, password, roles=None):
         if not roles: roles = TEST_USER_ROLES[:]
@@ -194,7 +183,7 @@ class LayerMixin(Layer):
         self.login(SITE_OWNER_NAME)
 
     def logout(self):
-        logout()
+        helpers.logout()
 
     def login(self, id=None):
         if not id:
@@ -202,7 +191,7 @@ class LayerMixin(Layer):
         try:
             z2.login(self['app']['acl_users'], id)
         except:
-            z2.login(self['portal']['acl_users'], id) 
+            z2.login(self['portal']['acl_users'], id)
 
 class IntegrationTesting(LayerMixin, BIntegrationTesting):
     def testSetUp(self):
@@ -212,7 +201,7 @@ class IntegrationTesting(LayerMixin, BIntegrationTesting):
 class FunctionalTesting(LayerMixin, BFunctionalTesting):
     def testSetUp(self):
         BFunctionalTesting.testSetUp(self)
-        LayerMixin.testSetUp(self) 
+        LayerMixin.testSetUp(self)
 
 
 class SimpleLayer(Layer):
@@ -220,12 +209,56 @@ class SimpleLayer(Layer):
 
 
 ${P_D_N}_SIMPLE              = SimpleLayer(name='${PdN}:Simple')
-
-${P_D_N}_FIXTURE             = ${PdN}Layer()
 ${P_D_N}_INTEGRATION_TESTING = IntegrationTesting(name = "${PdN}:Integration")
 ${P_D_N}_FUNCTIONAL_TESTING  = FunctionalTesting( name = "${PdN}:Functional")
-${P_D_N}_SELENIUM_TESTING    = FunctionalTesting(bases = (SELENIUM_TESTING, 
-                                                          ${P_D_N}_FUNCTIONAL_TESTING,), 
+${P_D_N}_SELENIUM_TESTING    = FunctionalTesting(bases = (SELENIUM_TESTING,
+                                                          ${P_D_N}_FUNCTIONAL_TESTING,),
                                                  name = "${PdN}:Selenium")
+
+
+class Browser(z2.Browser): # pragma: no cover
+    """Patch the browser class to be a little more like a webbrowser."""
+
+    def __init__(self, app, url=None, headers=None):
+        if headers is None: headers = []
+        z2.Browser.__init__(self, app, url)
+        self.mech_browser.set_handle_robots(False)
+        for h in headers:
+            k, val = h
+            self.addHeader(k, val)
+        if url is not None:
+            self.open(url)
+
+    def print_contents_to_file(self, dest='~/.browser.html'):
+        fic = open(os.path.expanduser(dest), 'w')
+        fic.write(self.contents)
+        fic.flush()
+        fic.close()
+
+    @property
+    def print_contents(self):
+        """Print the browser contents somewhere for you to see its
+        context in doctest pdb, t
+        ype browser.print_contents(browser) and that's it,
+        open firefox with file://~/browser.html."""
+        self.print_contents_to_file()
+
+    @classmethod
+    def new(cls, url=None, user=None, passwd=None, headers=None, login=False):
+        """instantiate and return a testbrowser for convenience """
+        app = ${P_D_N}_FUNCTIONAL_TESTING['app']
+        portal = ${P_D_N}_FUNCTIONAL_TESTING['portal']
+        if not url:
+            url = portal.absolute_url()
+        if headers is None: headers = []
+        if user: login = True
+        if not user: user = PLONE_MANAGER_NAME
+        if not passwd: passwd = PLONE_MANAGER_PASSWORD
+        if login:
+            auth = 'Basic %s:%s' % (user, passwd)
+            headers.append(('Authorization', auth))
+        headers.append(('User-agent' , GENTOO_FF_UA))
+        browser = cls(app, url, headers=headers)
+        return browser
 
 # vim:set ft=python:

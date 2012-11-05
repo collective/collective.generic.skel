@@ -1,7 +1,7 @@
 import unittest2 as unittest
 
 from ${pdn}.testing import (
-    ${P_D_N}_SIMPLE,
+    ${P_D_N}_SIMPLE as SIMPLE,
     ${P_D_N}_FIXTURE as UNIT_TESTING,
     ${P_D_N}_INTEGRATION_TESTING as INTEGRATION_TESTING,
     ${P_D_N}_FUNCTIONAL_TESTING as FUNCTIONAL_TESTING,
@@ -65,6 +65,6 @@ class SeleniumTestCase(TestCase):
 
 
 class SimpleTestCase(unittest.TestCase):
-    layer = {P_D_N}_SIMPLE,
+    layer = SIMPLE
 
 # vim:set ft=python:

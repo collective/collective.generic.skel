@@ -36,7 +36,7 @@ def test_suite():
         for e in ['*rst', '*txt']:
             for d in [cwd, 
                       os.path.dirname(cwd)]:
-                files += glob.glob(d, e)
+                files += glob.glob(os.path.join(d, e))
     except Exception,e:
         logger.warn('No doctests for ${pdn}')
     suite = unittest.TestSuite()

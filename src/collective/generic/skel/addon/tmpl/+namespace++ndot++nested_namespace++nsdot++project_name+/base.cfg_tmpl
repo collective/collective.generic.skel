@@ -7,6 +7,7 @@ parts +=
     zopepy
     test
     coverage
+    test-scripts
     report
     report-html
     report-annotate
@@ -74,7 +75,15 @@ initialization =
 scripts = coverage=report-annotate
 initialization =
     sys.argv = sys.argv[:] + ['annotate', '-i']
- 
+
+[test-scripts]
+<=zopepy
+interpreter=zopepy.test
+env-file=test.env
+eggs=
+    \${buildout:test-eggs}
+    \${zopepy:eggs}
+
 [omelette]
 recipe = collective.recipe.omelette
 eggs = \${instance:eggs}
@@ -87,7 +96,7 @@ eggs = \${instance:eggs}
 #if $version[0].startswith('#'):
 $version[0]
 #else
-$version[0] = $version[1]
+#$version[0] = $version[1]
 #end if
 #end for
 #end for

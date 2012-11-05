@@ -12,14 +12,16 @@ from plone.testing.layer import Layer as Base
 class Layer(Base):
 
     defaultBases = tuple()
+${P_D_N}_FIXTURE = Layer()
 
 class IntegrationLayer(Layer):
     """."""
+    defaultBases = (${P_D_N}_FIXTURE,)
 
 class FunctionnalLayer(IntegrationLayer):
     """."""
+    defaultBases = (${P_D_N}_FIXTURE,)
                                   
 
-${P_D_N}_FIXTURE = Layer()
 ${P_D_N}_INTEGRATION_TESTING = IntegrationLayer()
 ${P_D_N}_FUNCTIONAL_TESTING = FunctionnalLayer()

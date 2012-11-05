@@ -5,6 +5,7 @@ package-name = ${pdn}
 develop = .
 parts =
     scripts
+    test-scripts
     omelette
     test
     coverage
@@ -98,5 +99,13 @@ recipe = collective.recipe.omelette
 eggs = \${scripts:eggs}
 extra-paths = \${scripts:extra-paths}
 #packages = ./
+
+[test-scripts]
+<=scripts
+interpreter=scripts.test
+env-file=test.env
+eggs=
+    \${buildout:test-eggs} 
+    \${scripts:eggs}
 
 [versions]

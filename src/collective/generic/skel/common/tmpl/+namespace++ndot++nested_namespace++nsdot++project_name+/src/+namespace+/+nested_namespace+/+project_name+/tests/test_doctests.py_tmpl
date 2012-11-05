@@ -32,12 +32,15 @@ optionflags = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE| doctest.REPORT_O
 
 def test_suite():
     """."""
-    logger = logging.getLogger('${pdn}')
+    logger = logging.getLogger('${pdn}.tests')
     cwd = os.path.dirname(__file__)
     files = []
     try:
-        files = glob.glob(os.path.join(cwd, '*txt'))
-        files += glob.glob(os.path.join(cwd, '*rst'))
+        files = []
+        for e in ['*rst', '*txt']:
+            for d in [cwd, 
+                      os.path.dirname(cwd)]:
+                files += glob.glob(os.path.join(d, e))
     except Exception,e:
         logger.warn('No doctests for ${pdn}')
     suite = unittest.TestSuite()
@@ -46,14 +49,14 @@ def test_suite():
         suite.addTests([
             layered(
                 doctest.DocFileSuite(
-                    s,
+                    s, 
                     globs = globs,
                     module_relative=False,
-                    optionflags=optionflags,
+                    optionflags=optionflags,         
                 ),
                 layer=FUNCTIONAL_TESTING
             ),
         ])
     return suite
-
+ 
 
