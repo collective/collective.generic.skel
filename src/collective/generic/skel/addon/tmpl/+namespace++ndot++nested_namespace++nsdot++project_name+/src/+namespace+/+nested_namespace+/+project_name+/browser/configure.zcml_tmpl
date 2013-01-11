@@ -15,9 +15,11 @@
 
   <!-- Zope 3 browser views -->
   <!--
+  <include package="plone.app.contentmenu"/> 
     <browser:page
         layer="${pdn}.interfaces.ILayer"
         for="${pdn}.interface.mycontent"
+        menu="plone_displayviews"
         name="MyView"
         class=".view.MyView"
         allowed_interface=".view.IMyView"

@@ -62,7 +62,7 @@ defaults = ['-v', '-s', '\${buildout:package-name}']
 eggs = \${buildout:test-eggs}
 extra-paths = \${scripts:extra-paths}
 
-coverage]
+[coverage]
 recipe = zc.recipe.egg
 eggs = coverage
 scripts = coverage
