@@ -6,10 +6,62 @@ from ${pdn} import app_config
 from ${pdn}.app_config import PRODUCT_DEPENDENCIES, EXTENSION_PROFILES
 
 
+logger = logging.getLogger('${pdn} / setuphandler')
+ 
+INDEXES = {
+    'FieldIndex': [
+    ],
+    'KeywordIndex' : [
+    ],
+    'ZCTextIndex' : [
+    ],
+    'DateIndex' : [
+    ],
+}
+
+METADATAS = [
+]
+
+
+
+def full_reindex(portal):
+    logger.info('Reindex content')
+    cat = getToolByName(portal, 'portal_catalog')
+    cat.refreshCatalog()
+    logger.info('Reindexed content')
+
+
+# Define custom indexes
+class ZCTextIndex_extra:
+    lexicon_id = 'plone_lexicon'
+    index_type = 'Okapi BM25 Rank'
+
+
+ZCTextIndex_extra = ZCTextIndex_extra()
+SelectedTextIndex_type = 'ZCTextIndex'
+SelectedTextIndex_extra = ZCTextIndex_extra
+
+
+def setup_catalog(portal):
+    portal_catalog = getToolByName(portal, 'portal_catalog')
+    for typ in INDEXES:
+        for idx in INDEXES[typ]:
+            e = None
+            if typ == 'ZCTextIndex':
+                e= SelectedTextIndex_extra
+            if not idx in portal_catalog.indexes():
+                logger.info('Adding index: %s' % idx)
+                portal_catalog.manage_addIndex(idx, typ, e)
+
+    for column in METADATAS:
+        if not column in portal_catalog.schema():
+            logger.info('Adding metadata: %s' % column)
+            portal_catalog.manage_addColumn(column)
+
+
 def setupVarious(context):
     """Miscellanous steps import handle.
     """
-    logger = logging.getLogger('${pdn} / setuphandler')
 
     # Ordinarily, GenericSetup handlers check for the existence of XML files.
     # Here, we are not parsing an XML file, but we use this text file as a
@@ -20,12 +72,13 @@ def setupVarious(context):
         return
 
     portal = context.getSite()
+    setup_catalog(portal)
+    full_reindex(portal)
+
 
 def setupQi(context):
     """Miscellanous steps import handle.
     """
-    logger = logging.getLogger('${pdn} / setuphandler')
-
     # Ordinarily, GenericSetup handlers check for the existence of XML files.
     # Here, we are not parsing an XML file, but we use this text file as a
     # flag to check that we actually meant for this import step to be run.

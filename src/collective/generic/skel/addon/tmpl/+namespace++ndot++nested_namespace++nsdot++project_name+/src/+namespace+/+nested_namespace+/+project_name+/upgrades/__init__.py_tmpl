@@ -106,6 +106,14 @@ def upgrade_profile(context, profile_id, steps=None):
             'upgrades': steps,
         })
     portal_setup.manage_doUpgrades(fr)
+
+def upgrade_plone(portal_setup):
+    """
+    """
+    portal = site = portal_setup.aq_parent
+    qi = site.portal_quickinstaller
+    pm = portal.portal_migration
+    report = pm.upgrade(dry_run=False)
   
 def upgrade_1000(context):
     """
