@@ -17,7 +17,8 @@ import transaction
 
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
-              
+from Products.GenericSetup.utils import _resolveDottedName
+
 PRODUCT =  '${pdn}'
 PROFILE =  '%s:default' % PRODUCT
 PROFILEID = 'profile-%s' % PROFILE
@@ -25,6 +26,67 @@ PROFILEID = 'profile-%s' % PROFILE
 def log(message, level='info'):
     logger = logging.getLogger('%s.upgrades' % PRODUCT)
     getattr(logger, level)(message)
+
+
+def commit(context):
+    transaction.commit()
+    context._p_jar.sync()
+
+def cleanup_portal_setup_registries(context,
+                                   do_import_steps=True,
+                                   do_export_steps=True,
+                                   do_toolset=True,
+                                   ):
+    toremove = ['plonepas']
+    p = portal_setup = getToolByName(context, 'portal_setup')
+    p.applyContextById(p.getBaselineContextID())
+    import_steps  = dict(
+        [(a, portal_setup.getImportStepMetadata(a))
+         for a in portal_setup.getSortedImportSteps()])
+    export_steps = dict(
+        [(a, portal_setup.getExportStepMetadata(a))
+         for a in portal_setup.listExportSteps()])
+    for (test, registry, pregistry) in [
+        [do_import_steps, import_steps, p._import_registry],
+        [do_export_steps, export_steps, p._export_registry],
+    ]:
+        if test:
+            invalids = registry.copy()
+            for a in invalids.keys():
+                try:
+                    if not invalids[a].get("invalid", False) and not a in toremove:
+                        del invalids[a]
+                except:
+                    if invalids[a] is not None:
+                        raise
+            for item in invalids:
+                log('Removing %s from %s' % (
+                    item, pregistry.__class__.__name__))
+                remove = item in pregistry._registered
+                if remove:
+                    pregistry.unregisterStep(item)
+    if do_toolset:
+        for n, l in [
+            ['toolset.required', p._toolset_registry._required],
+            ['toolset.forbidden', p._toolset_registry._forbidden],
+        ]:
+            invalids = {}
+            for item in l:
+                data = l[item]
+                if _resolveDottedName(data['class']) is None:
+                    invalids[item] = data
+            for item in invalids:
+                log(
+                    'Removing from %s: %s (%s %s)' % (
+                        n,
+                        item,
+                        invalids[item]['id'],
+                        invalids[item]['class'],
+                    )
+                )
+                del l[item]
+    commit(context)
+
 
 def quickinstall_addons(context, install=None, uninstall=None, upgrades=None):
     qi = getToolByName(context, 'portal_quickinstaller')
@@ -53,7 +115,7 @@ def quickinstall_addons(context, install=None, uninstall=None, upgrades=None):
                 log('Upgraded %s' % upgrade)
             except KeyError:
                 log('can t upgrade %s' % upgrade, 'error')
-     
+
 def recook_resources(context):
     """
     """
@@ -110,17 +172,16 @@ def upgrade_profile(context, profile_id, steps=None):
 def upgrade_plone(portal_setup):
     """
     """
-    portal = site = portal_setup.aq_parent
-    qi = site.portal_quickinstaller
-    pm = portal.portal_migration
+    portal = getToolByName(portal_setup, 'portal_url').getPortalObject()
+    pm = getToolByName(portal_setup, 'portal_migration')
     report = pm.upgrade(dry_run=False)
-  
+
 def upgrade_1000(context):
     """
     """
     site = getToolByName(context, 'portal_url').getPortalObject()
     portal_setup = site.portal_setup
-    
+
     # install Products.PloneSurvey and dependencies
     #migration_util.loadMigrationProfile(site,
     #                                    'profile-Products.PloneSurvey:default')
