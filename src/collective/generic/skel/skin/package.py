@@ -6,21 +6,23 @@ PROJECT_NAME = "skin"
 
 
 skin3_vars = [var('default_theme', 'default theme %s' % (tuple( c.p3_themes.keys()),), default='default'),]
-skin4_vars = [var('default_theme', 'default theme %s' % (tuple( c.p4_themes.keys()),), default='classic'),] 
-skin41_vars = [var('default_theme', 'default theme %s' % (tuple(c.p4_themes.keys()),), default='sunburst'),] 
-skin42_vars = [var('default_theme', 'default theme %s' % (tuple(c.p4_themes.keys()),), default='sunburst'),] 
+skin4_vars = [var('default_theme', 'default theme %s' % (tuple( c.p4_themes.keys()),), default='classic'),]
+skin41_vars = [var('default_theme', 'default theme %s' % (tuple(c.p4_themes.keys()),), default='sunburst'),]
+skin42_vars = [var('default_theme', 'default theme %s' % (tuple(c.p4_themes.keys()),), default='sunburst'),]
+skin43_vars = [var('default_theme', 'default theme %s' % (tuple(c.p4_themes.keys()),), default='sunburst'),]
+skin44_vars = [var('default_theme', 'default theme %s' % (tuple(c.p4_themes.keys()),), default='sunburst'),]
 
 def skin_chooser(self, command, output_dir, vars):
     s = vars.get('default_theme').lower().strip()
     if not s in self.themes: s = 'classic'
     vars['plone_theme'] = s
     vars['first_layer'] = 'custom'
-    vars['plone_skin'] = self.themes[s] 
+    vars['plone_skin'] = self.themes[s]
     if 'with_ploneproduct_cynin' in vars:
         if vars['with_ploneproduct_cynin']:
             vars['plone_skin'] = 'cynin'
             vars['first_layer'] = 'icons'
- 
+
 class P3Package(c.P3Package):
     """Package template"""
     project = PROJECT_NAME
@@ -58,7 +60,7 @@ class P4Package(c.P4Package):
 
     def post(self, command, output_dir, vars):
         c.P4Package.post(self, command, output_dir, vars)
- 
+
 class P41Package(c.P41Package):
     """Package template"""
     project = PROJECT_NAME
@@ -71,8 +73,8 @@ class P41Package(c.P41Package):
 
     def post(self, command, output_dir, vars):
         c.P41Package.post(self, command, output_dir, vars)
- 
- 
+
+
 class P42Package(c.P42Package):
     """Package template"""
     project = PROJECT_NAME
@@ -85,5 +87,16 @@ class P42Package(c.P42Package):
 
     def post(self, command, output_dir, vars):
         c.P42Package.post(self, command, output_dir, vars)
- 
-  
+
+class P43Package(c.P43Package):
+    """Package template"""
+    summary = "A Generic Plone43 portal skin"
+    vars = skin43_vars + c.P43Package.vars
+
+class P44Package(c.P44Package):
+    """Package template"""
+    summary = "A Generic Plone44 portal skin"
+    vars = skin44_vars + c.P44Package.vars
+
+
+

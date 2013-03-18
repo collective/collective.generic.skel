@@ -12,9 +12,13 @@ from minitage.core.common import remove_path
 vars4  = c.P4Package.vars[:]
 vars41 = c.P41Package.vars[:]
 vars42 = c.P42Package.vars[:]
+vars43 = c.P43Package.vars[:]
+vars44 = c.P44Package.vars[:]
 
 for cvars, pv in ((vars4,  skin.P4Package.vars[:]),
                   (vars41, skin.P41Package.vars[:]),
+                  (vars43, skin.P43Package.vars[:]),
+                  (vars44, skin.P44Package.vars[:]),
                   (vars42, skin.P42Package.vars[:])):
     for v in pv:
         if not v in cvars:
@@ -29,7 +33,13 @@ class P41Addon(c.P4Package):
 class P42Addon(c.P4Package):
     vars = vars42
 
-class PAddon(c.P42Package):
+class P43Addon(c.P4Package):
+    vars = vars43
+
+class P44Addon(c.P4Package):
+    vars = vars44
+
+class PAddon(c.P43Package):
     """Package template"""
     summary = "A Generic Plone Addon product"
     vars = vars42 + [
@@ -96,7 +106,7 @@ class PAddon(c.P42Package):
             vars['skins_comment_tag'] = ''
             vars['skins_comment_end'] = ''
         if not vars['pthemename']:
-            vars['pthemename'] = vars['pdn'] 
+            vars['pthemename'] = vars['pdn']
         return ret
 
     def __init__(self, *args, **kwargs):
@@ -105,5 +115,7 @@ class PAddon(c.P42Package):
             '4':  P4Addon(*args, **kwargs),
             '41': P41Addon(*args, **kwargs),
             '42': P42Addon(*args, **kwargs),
+            '43': P43Addon(*args, **kwargs),
+            '44': P44Addon(*args, **kwargs),
         }
 

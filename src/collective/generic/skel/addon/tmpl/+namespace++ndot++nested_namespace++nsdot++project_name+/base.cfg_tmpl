@@ -27,6 +27,24 @@ common-eggs =
 test-eggs =
     \${buildout:package-name} \${buildout:package-extras}
 
+[remotes]
+# Plone
+plone = git://github.com/plone
+plone_push = git@github.com:plone
+svn_plone = https://svn.plone.org/svn/plone
+#svn_plone = http://svn.plone.org/svn/plone
+
+# Collective
+collective = git://github.com/collective
+collective_push = git@github.com:collective
+svn_collective = https://svn.plone.org/svn/collective
+#svn_collective = http://svn.plone.org/svn/collective
+
+# Zope
+zope = http://svn.zope.org/repos/main
+#zope = svn+ssh://svn.zope.org/repos/main
+zopegit = git://github.com/zopefoundation
+
 [sources]
 zopeskel=svn https://svn.plone.org/svn/collective/ZopeSkel/trunk
 experimental.catalogqueryplan = svn https://svn.plone.org/svn/collective/experimental.catalogqueryplan/trunk
@@ -161,8 +179,10 @@ scripts=
     pybabel
     templer
     paster
-# never ever pin paste and other eggs
 
+
+[versions]
+# never ever pin paste and other eggs
 Paste =
 PasteDeploy =
 PasteScript =
@@ -231,4 +251,5 @@ index =
 #    name:Type             type:string stored:true
 #    name:UID              type:string stored:true required:true
 #end if
+
 

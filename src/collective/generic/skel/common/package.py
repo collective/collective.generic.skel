@@ -114,7 +114,7 @@ class Package(Template):
         if not infos['namespace']:
             ndot = ''
         if not infos['nested_namespace']:
-            nsdot = '' 
+            nsdot = ''
 
 
         self.dn = '%s%s%s%s%s' % (infos['namespace'], ndot,
@@ -229,7 +229,7 @@ class Package(Template):
         Template.post(self, command, output_dir, vars)
         isolated_init = os.path.join(output_dir, 'src', '__init__.py')
         isolated_init2 = os.path.join(
-            output_dir, 
+            output_dir,
             '%s%s%s%s%s' % (
                 vars['namespace'],
                 vars['ndot'],
@@ -253,6 +253,8 @@ from minitage.paste.projects import plone3
 from minitage.paste.projects import plone4
 from minitage.paste.projects import plone41
 from minitage.paste.projects import plone42
+from minitage.paste.projects import plone43
+from minitage.paste.projects import plone44
 from minitage.paste.projects import django
 from minitage.paste.projects import pyramid
 
@@ -269,7 +271,7 @@ borrowed_vars = [re.compile('with_ploneproduct.*'),
                  re.compile('with_database.*'),
                 ]
 
-plone_vars = Package.vars + [ 
+plone_vars = Package.vars + [
               var('with_generic', 'with_generic', default = 'n',),]
 excluded_vars = []
 p3_vars = []
@@ -277,6 +279,8 @@ p4_vars = []
 p41_vars = []
 p41_vars = []
 p42_vars = []
+p43_vars = []
+p44_vars = []
 ppackage_vars = []
 django_vars = []
 pyramid_vars = []
@@ -285,6 +289,8 @@ items = (
     (p4_vars, plone4.Template),
     (p41_vars, plone41.Template),
     (p42_vars, plone42.Template),
+    (p43_vars, plone43.Template),
+    (p44_vars, plone44.Template),
     (ppackage_vars, plone41.Template),
     (django_vars, django.Template),
     (pyramid_vars, pyramid.Template),
@@ -625,6 +631,14 @@ class P41Package(P4Package):
 class P42Package(P41Package):
     paster_template = plone42.Template
     vars = plone_vars + p42_vars
+
+class P43Package(P42Package):
+    paster_template = plone43.Template
+    vars = plone_vars + p43_vars
+
+class P44Package(P43Package):
+    paster_template = plone44.Template
+    vars = plone_vars + p44_vars
 
 class DjangoPackage(Package):
     vars = Package.vars + django_vars
