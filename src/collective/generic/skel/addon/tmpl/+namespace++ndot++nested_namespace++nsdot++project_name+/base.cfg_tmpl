@@ -1,18 +1,19 @@
 [buildout]
+extends = https://raw.github.com/collective/buildout.plonetest/master/qa.cfg
 package-extras = [test]
 package-name = ${pdn}
 develop = .
-parts +=
+parts += \${buildout:base-parts}
+base-parts =
     omelette
     zopepy
     test
-    coverage
     test-scripts
-    report
-    report-html
-    report-annotate
-    report-xml
     release
+    createzopecoverage
+    coverage-sh
+    flake8
+    python-validation-sh
 #if $with_ploneproduct_solr
     solr-download
     solr-instance
@@ -62,7 +63,6 @@ templer.plone.localcommands = git \${remotes:collective}/templer.plone.localcomm
 templer.plonecore           = svn https://svn.plone.org/svn/collective/templer.plonecore/trunk
 
 
-
 [instance]
 http-address = $address:$http_port
 eggs =
@@ -71,7 +71,7 @@ eggs =
 extra-paths =
 
 [release]
-recipe=zc.recipe.egg   
+recipe=zc.recipe.egg
 eggs = \${zopepy:eggs}
     collective.dist
     zest.releaser
@@ -103,38 +103,6 @@ defaults = ['-v', '-s', '\${buildout:package-name}']
 eggs =
     \${buildout:common-eggs}
     \${buildout:test-eggs}
-
-[coverage]
-recipe = zc.recipe.egg
-eggs = coverage
-scripts = coverage
-initialization =
-    include = '--source=\${buildout:directory}/src'
-    sys.argv = sys.argv[:] + ['run', include, 'bin/test', '--all']
-
-[report]
-<=coverage
-scripts = coverage=report
-initialization =
-    sys.argv = sys.argv[:] + ['report', '-i']
-
-[report-html]
-<=coverage
-scripts = coverage=report-html
-initialization =
-    sys.argv = sys.argv[:] + ['html', '-i']
-
-[report-xml]
-<=coverage
-scripts = coverage=report-xml
-initialization =
-    sys.argv = sys.argv[:] + ['xml', '-i']
-
-[report-annotate]
-<=coverage
-scripts = coverage=report-annotate
-initialization =
-    sys.argv = sys.argv[:] + ['annotate', '-i']
 
 [test-scripts]
 <=zopepy
@@ -251,5 +219,4 @@ index =
 #    name:Type             type:string stored:true
 #    name:UID              type:string stored:true required:true
 #end if
-
 

@@ -1,9 +1,11 @@
+minitage.*
 *.mo
+src.mrdeveloper/*
 tags
 tags.python
 plone.env
 t
-.minitage
+.minitage*
 *.egg-info
 *.egg
 *.EGG
