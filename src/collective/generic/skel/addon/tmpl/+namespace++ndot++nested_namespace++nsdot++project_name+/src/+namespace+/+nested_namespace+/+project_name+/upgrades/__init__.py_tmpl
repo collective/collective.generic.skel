@@ -18,6 +18,9 @@ import transaction
 from Products.CMFCore.utils import getToolByName
 from Products.CMFPlone.utils import _createObjectByType
 from Products.GenericSetup.utils import _resolveDottedName
+from Testing.makerequest import makerequest
+from StringIO import StringIO
+ 
 
 PRODUCT =  '${pdn}'
 PROFILE =  '%s:default' % PRODUCT
@@ -172,9 +175,17 @@ def upgrade_profile(context, profile_id, steps=None):
 def upgrade_plone(portal_setup):
     """
     """
-    portal = getToolByName(portal_setup, 'portal_url').getPortalObject()
-    pm = getToolByName(portal_setup, 'portal_migration')
+    out = StringIO()
+    portal = makerequest(
+        getToolByName(
+            portal_setup, 'portal_url'
+        ).getPortalObject(),
+        stdout=out, environ={'REQUEST_METHOD':'POST'})
+    # pm = getToolByName(portal, 'portal_migration')
+    # use direct acquisition for REQUEST to be always there
+    pm = portal.portal_migration
     report = pm.upgrade(dry_run=False)
+    return report
 
 def upgrade_1000(context):
     """

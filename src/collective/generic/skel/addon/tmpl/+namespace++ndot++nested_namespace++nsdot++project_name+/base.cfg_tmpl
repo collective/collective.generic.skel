@@ -2,6 +2,8 @@
 extends = https://raw.github.com/collective/buildout.plonetest/master/qa.cfg
 package-extras = [test]
 package-name = ${pdn}
+package-src = src/${namespace}/${nested_namespace}
+auto-checkout=
 develop = .
 parts += \${buildout:base-parts}
 base-parts =
@@ -131,6 +133,7 @@ $version[0]
 
 [tools]
 recipe=minitage.recipe.scripts
+interpreter=toolspy
 eggs=
     i18ndude
     babel
