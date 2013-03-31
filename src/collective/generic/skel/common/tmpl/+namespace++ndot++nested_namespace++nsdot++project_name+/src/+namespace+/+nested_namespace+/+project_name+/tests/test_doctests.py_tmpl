@@ -16,10 +16,8 @@ from ${pdn}.tests.base import FunctionalTestCase
 # from for import bar
 # and in your doctests, you can do:
 # >>> bar.something
-from ${pdn}.tests.globals import *
 from ${pdn}.testing import ${P_D_N}_FUNCTIONAL_TESTING as FUNCTIONAL_TESTING
 ################################################################################
-
 
 import unittest2 as unittest
 import glob
@@ -28,7 +26,8 @@ import logging
 import doctest
 from plone.testing import layered
 
-optionflags = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE| doctest.REPORT_ONLY_FIRST_FAILURE)
+optionflags = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE | doctest.REPORT_ONLY_FIRST_FAILURE)
+
 
 def test_suite():
     """."""
@@ -38,7 +37,7 @@ def test_suite():
     try:
         files = []
         for e in ['*rst', '*txt']:
-            for d in [cwd, 
+            for d in [cwd,
                       os.path.dirname(cwd)]:
                 files += glob.glob(os.path.join(d, e))
     except Exception,e:
@@ -49,14 +48,12 @@ def test_suite():
         suite.addTests([
             layered(
                 doctest.DocFileSuite(
-                    s, 
-                    globs = globs,
+                    s,
+                    globs=globs,
                     module_relative=False,
-                    optionflags=optionflags,         
+                    optionflags=optionflags,
                 ),
                 layer=FUNCTIONAL_TESTING
             ),
         ])
     return suite
- 
-

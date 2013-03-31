@@ -35,7 +35,7 @@ setup(
 #if "${namespace}${ndot}${nested_namespace}" == $pdn:
          '${pdn}',
 #end if
-    ],              
+    ],
     version=version,
     description='$description',
     long_description=long_description,
@@ -53,7 +53,7 @@ setup(
     package_dir = {'': 'src'},
     include_package_data=True,
     extras_require = {
-        'test': ['ipython', 'plone.testing']
+        'test': ['plone.testing']
     },
     install_requires=[
         'setuptools',
