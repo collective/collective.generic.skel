@@ -7,15 +7,6 @@ from ${pdn}.testing import (
     ${P_D_N}_FUNCTIONAL_TESTING as FUNCTIONAL_TESTING,
     ${P_D_N}_SELENIUM_TESTING as SELENIUM_TESTING,
 )
-from ${pdn}.tests.globals import *
-
-$hr
-"""
-
-$generate_msg
-
-"""
-$hr
 
 
 class TestCase(unittest.TestCase):

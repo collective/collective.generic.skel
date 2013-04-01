@@ -5,7 +5,6 @@ from ${pdn}.testing import (
     ${P_D_N}_INTEGRATION_TESTING as INTEGRATION_TESTING,
     ${P_D_N}_FUNCTIONAL_TESTING as FUNCTIONAL_TESTING,
 )
-from ${pdn}.tests.globals import *
 
 ################################################################################
 """
