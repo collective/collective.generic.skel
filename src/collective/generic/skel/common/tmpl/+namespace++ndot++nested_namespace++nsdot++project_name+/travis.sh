@@ -1,4 +1,6 @@
 #!/usr/bin/env bash
+git commit -am "before build trigger"
+echo >>buildout.cfg
 git commit -am "build trigger"
 git push --force origin master:travis
-# vim:set et sts=4 ts=4 tw=80:
+git reset --hard HEAD^
