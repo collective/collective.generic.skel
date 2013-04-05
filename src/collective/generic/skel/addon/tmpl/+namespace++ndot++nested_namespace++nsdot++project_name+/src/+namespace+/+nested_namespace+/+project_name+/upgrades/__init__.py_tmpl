@@ -140,11 +140,15 @@ def quickinstall_addons(context, install=None, uninstall=None, upgrades=None):
         for addon in install:
             if qi.isProductInstallable(addon):
                 qi.installProduct(addon)
+                log('Installed %s' % addon)
             else:
                 log('%s can t be installed' % addon, 'error')
 
     if uninstall is not None:
-        qi.uninstallProducts(uninstall)
+        for p in uninstall:
+            if qi.isProductInstalled(p):
+                qi.uninstallProducts([p])
+                log('Uninstalled %s' % p)
 
     if upgrades is not None:
         if upgrades in ("all", True):
