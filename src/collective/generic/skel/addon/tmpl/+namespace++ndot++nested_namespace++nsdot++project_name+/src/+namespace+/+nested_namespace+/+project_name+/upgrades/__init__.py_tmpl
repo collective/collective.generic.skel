@@ -76,6 +76,36 @@ def move_custom(context, ignores=None):
             move(custom, id,
                  '%s_%s.%s.disabled' % (MARKER, dt, id,))
 
+def remove_persistent_utilities(ctx, searchs=None):
+    context = getToolByName(ctx, 'portal_url').getPortalObject()
+    if not searchs:
+        searchs = []
+    sm = context.getSiteManager()
+    changed = False
+    adapters = sm.utilities._adapters
+    subscribers = sm.utilities._subscribers
+    provided = sm.utilities._provided
+    for k in searchs:
+        for x in adapters[0].keys():
+            if k.search(x.__module__):
+                changed = True
+                log("Deleting %s" % x)
+                del adapters[0][x]
+        for x in subscribers[0].keys():
+            if k.search(x.__module__):
+                changed = True
+                log("Deleting %s" % x)
+                del subscribers[0][x]
+        for x in provided.keys():
+            if k.search(x.__module__):
+                changed = True
+                log("Deleting %s" % x)
+                del provided[x]
+    if changed:
+        sm.utilities._adapters = adapters
+        sm.utilities._subscribers = subscribers
+        sm.utilities._provided = provided
+    commit(context)
 
 def cleanup_portal_setup_registries(context,
                                    do_import_steps=True,
@@ -111,25 +141,25 @@ def cleanup_portal_setup_registries(context,
                 if remove:
                     pregistry.unregisterStep(item)
     if do_toolset:
-        for n, l in [
-            ['toolset.required', p._toolset_registry._required],
-            ['toolset.forbidden', p._toolset_registry._forbidden],
-        ]:
+        toolset = p._toolset_registry
+        for l in ['_required', '_forbidden',]:
             invalids = {}
-            for item in l:
-                data = l[item]
+            reg = getattr(toolset, l)
+            for item in reg:
+                data = reg[item]
                 if _resolveDottedName(data['class']) is None:
                     invalids[item] = data
             for item in invalids:
                 log(
-                    'Removing from %s: %s (%s %s)' % (
-                        n,
+                    'Removing from toolset.%s: %s (%s %s)' % (
+                        l,
                         item,
                         invalids[item]['id'],
                         invalids[item]['class'],
                     )
                 )
-                del l[item]
+                del reg[item]
+                setattr(toolset, l, reg)
     commit(context)
 
 
