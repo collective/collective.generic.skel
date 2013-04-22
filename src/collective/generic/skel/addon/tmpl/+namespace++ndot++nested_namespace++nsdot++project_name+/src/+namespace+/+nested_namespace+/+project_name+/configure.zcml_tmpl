@@ -13,6 +13,9 @@
     i18n_domain="${pdn}">
   <include package="Products.Five" file="configure.zcml"/>
   <include package="Products.CMFCore" file="permissions.zcml" />
+#if $with_ploneproduct_dexterity or $with_ploneproduct_pamultilingual
+    <include package="plone.app.contentmenu" />
+#end if
   <!-- Load the ZCML configuration for the ${pdn} package.-->
 #for $package in $zcml:
 #if isinstance($package, basestring):
