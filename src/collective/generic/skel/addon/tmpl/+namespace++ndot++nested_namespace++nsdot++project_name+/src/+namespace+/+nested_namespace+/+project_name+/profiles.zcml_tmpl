@@ -19,7 +19,7 @@
       provides="Products.GenericSetup.interfaces.EXTENSION"
     />
   <genericsetup:registerProfile
-      title="$pdn uninstall" 
+      title="$pdn uninstall"
       name="uninstall"
       description="Uninstall the $pdn addon on tbis plone site."
       directory="profiles/uninstall"
@@ -40,9 +40,9 @@
       description="description"
       handler="${pdn}.setuphandlers.setupQi">
     <depends name="plone-content"/>
-  </genericsetup:importStep> 
+  </genericsetup:importStep>
   <!-- -->
   <utility factory=".app_config.HiddenProducts" name="${namespace}${nunderscore}${nested_namespace}${nsunderscore}${project_name}.hiddenproducts"/>
-  <utility factory=".app_config.HiddenProfiles" name="${namespace}${nunderscore}${nested_namespace}${nsunderscore}${project_name}.hiddenprofiles"/> 
+  <utility factory=".app_config.HiddenProfiles" name="${namespace}${nunderscore}${nested_namespace}${nsunderscore}${project_name}.hiddenprofiles"/>
   <include package=".upgrades"/>
-</configure> 
+</configure>
