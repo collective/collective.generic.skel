@@ -16,5 +16,7 @@
   <!--
     <javascript id="++resource++${pdn}/something.js"/>
     -->
+  <javascript id="++theme++${pthemename}/js/theme.js"/>
 
-</object> 
+
+</object>

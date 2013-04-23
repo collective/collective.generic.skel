@@ -22,5 +22,10 @@
   -->
   <!--
     <stylesheet id="++resource++${pdn}/something.css"/>
-    --> 
+    -->
+  <stylesheet title="" id="++theme++${pthemename}/css/960_12_col.css" />
+  <stylesheet title="" id="++theme++${pthemename}/css/project.css"
+      expression="request/HTTP_X_THEME_ENABLED | nothing" />
+  <stylesheet title="" id="columns.css"
+      expression="not:request/HTTP_X_THEME_ENABLED | nothing" />
 </object>
