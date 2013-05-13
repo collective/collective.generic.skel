@@ -5,7 +5,6 @@ package-name = ${pdn}
 package-src = src/${namespace}/${nested_namespace}
 auto-checkout=
 develop = .
-parts += \${buildout:base-parts}
 base-parts =
     omelette
     zopepy
@@ -20,6 +19,10 @@ base-parts =
     solr-download
     solr-instance
 #end if
+parts += \${buildout:base-parts}
+    tools
+    omelette
+    release
 extensions =
     mr.developer
     buildout.dumppickedversions
@@ -77,6 +80,7 @@ recipe=zc.recipe.egg
 eggs = \${zopepy:eggs}
     collective.dist
     zest.releaser
+    zest.pocompile
 scripts =
     fullrelease
     postrelease
