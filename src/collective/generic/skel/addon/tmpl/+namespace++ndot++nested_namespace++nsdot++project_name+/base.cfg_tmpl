@@ -155,7 +155,6 @@ scripts=
     templer
     paster
 
-
 [versions]
 # never ever pin paste and other eggs
 Paste =

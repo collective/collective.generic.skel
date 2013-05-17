@@ -1,20 +1,41 @@
 [buildout]
+extends=https://raw.github.com/collective/buildout.plonetest/master/qa.cfg
+extends-cache=.cache
+extensions=buildout.minitagificator mr.developer buildout.dumppickedversions
 versions=versions
 package-name = ${pdn}
+package-src = src
 package-extras=
-extensions=buildout.minitagificator mr.developer
 eggs =
     \${buildout:package-name} \${buildout:package-extras}
+    docutils
     zest.releaser
-parts = script
+base-parts=
+    script
+    release
+parts =\${buildout:base-parts}
 develop = .
-[test]
-recipe = zc.recipe.testrunner
-eggs = \${buildout:package-name} \${buildout:package-extras}
+extra-paths =
+
 [script]
 recipe=minitage.recipe.scripts
 eggs=\${buildout:eggs}
-interpreter=zopepy
-env-file=\${buildout:directory}/test.env
+interpreter=py
+env-file=\${buildout:directory}/${pdn}.env
+extra-paths = \${buildout:extra-paths}
+
+[release]
+<=script
+eggs=\${script:eggs}
+    docutils
+    collective.dist
+    zest.releaser
+    zest.pocompile
+
+[test]
+recipe = zc.recipe.testrunner
+eggs = \${buildout:package-name} \${buildout:package-extras}
+extra-paths = \${script:extra-paths}
+
 [versions]
-[sources]
+
