@@ -13,6 +13,7 @@ eggs =
 base-parts=
     script
     release
+    omelette
 parts =\${buildout:base-parts}
 develop = .
 extra-paths =
@@ -23,6 +24,11 @@ eggs=\${buildout:eggs}
 interpreter=py
 env-file=\${buildout:directory}/${pdn}.env
 extra-paths = \${buildout:extra-paths}
+
+[omelette]
+recipe = collective.recipe.omelette
+eggs = \${script:eggs}
+packages = \${script:extra-paths}
 
 [release]
 <=script
