@@ -54,6 +54,7 @@ setup(
         'setuptools',
         'z3c.autoinclude',
         'Plone',
+        'chardet',
         'plone.app.upgrade',
         #if not $with_generic:
             #set $skipped = ['binding_pil', 'ploneproduct_tinymce' 'ploneproduct_paevent']
