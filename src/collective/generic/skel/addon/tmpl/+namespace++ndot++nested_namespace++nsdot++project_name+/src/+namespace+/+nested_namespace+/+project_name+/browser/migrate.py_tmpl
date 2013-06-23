@@ -228,16 +228,41 @@ class ${PdN}_migrate(grok.View):
         self.view_maps = {}
         grok.View.__init__(self, *a, **kw)
 
+    def monkeypatch(self):
+        # commit on each suceeded step
+        from Products.GenericSetup import upgrade as gs_u
+        context = self.context
+        def doStep(self, tool):
+            ctx = getToolByName(tool, 'portal_url').getPortalObject()
+            ret = getattr(self, '_oldm_doStep')(tool)
+            upgrades.commit(ctx)
+            return ret
+        if not hasattr(gs_u.UpgradeStep, '_oldm_doStep'):
+            setattr(gs_u.UpgradeStep, '_oldm_doStep',
+                    getattr(gs_u.UpgradeStep, 'doStep'))
+            setattr(gs_u.UpgradeStep, 'doStep', doStep)
+
+    def restore_monkeypatch(self):
+        from Products.GenericSetup import upgrade as gs_u
+        if hasattr(gs_u.UpgradeStep, '_oldm_doStep'):
+            setattr(gs_u.UpgradeStep, 'doStep',
+                    getattr(gs_u.UpgradeStep, '_oldm_doStep'))
+            delattr(gs_u.UpgradeStep, '_oldm_doStep')
+
+
     def render(self):
         mt = getToolByName(self.context, 'portal_membership')
         user = mt.getAuthenticatedMember()
         if not ENABLED:return
         try:
+            self.monkeypatch()
             data = self.migrate()
         except Exception, e:
             trace = traceback.format_exc()
             log(trace, 'error')
             data = {'migrated': False, 'error': trace}
+        finally:
+            self.restore_monkeypatch()
         sdata = json.dumps(data)
         self.request.RESPONSE.setHeader("Content-Transfer-Encoding", "binary")
         self.request.RESPONSE.setHeader("Content-Length", len(sdata))
@@ -553,6 +578,7 @@ class ${PdN}_migrate(grok.View):
     @onlyonce
     def remap_views(self):
         maps = self.view_maps
+        if not maps: return
         views_i = {"FieldIndex": ['getLayout', 'default_page']}
         context = self.context
         catalog = self.context.portal_catalog
@@ -814,4 +840,4 @@ class ${PdN}_migrate(grok.View):
             'Migrating html description to text: finished')
         upgrades.commit(self.context)
 
-# vim:set et sts=4 ts=4 tw=80: 
+# vim:set et sts=4 ts=4 tw=80:
