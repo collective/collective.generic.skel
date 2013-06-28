@@ -52,7 +52,7 @@ zope = http://svn.zope.org/repos/main
 zopegit = git://github.com/zopefoundation
 
 [sources]
-zopeskel=svn https://svn.plone.org/svn/collective/ZopeSkel/trunk
+zopeskel=git \${remotes:collective}/zopeskel.git pushurl=\${remotes:collective_push}/zopeskel.git 
 experimental.catalogqueryplan = svn https://svn.plone.org/svn/collective/experimental.catalogqueryplan/trunk
 Products.MemoryProfiler = svn https://svn.plone.org/svn/collective/Products.MemoryProfiler/trunk
 Products.Gloworm = git https://github.com/kiorky/Products.Gloworm.git
