@@ -24,7 +24,7 @@ from Products.contentmigration.walker import CustomQueryWalker
 from Products.CMFDefault.upgrade.to22 import upgrade_dcmi_metadata
 
 from Products.contentmigration.migrator import BaseInlineMigrator
-#from Products.SimpleAttachment.migration import migrations as sa_migrations
+\#from Products.SimpleAttachment.migration import migrations as sa_migrations
 from Products.CMFCore.CachingPolicyManager import manage_addCachingPolicyManager
 from Products.CMFPlone.setuphandlers import addCacheHandlers
 from Products.CMFPlone.setuphandlers import addCacheForResourceRegistry
