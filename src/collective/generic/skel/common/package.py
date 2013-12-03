@@ -532,70 +532,6 @@ class MinitagePackage(Package):
         Package.pre(self, command, output_dir, vars)
         self.load_plone_vars(command, output_dir, vars)
 
-    def load_minitage_dependencies(self, command, output_dir, vars):
-        vars['pyver'] = self.pyver
-        vars['opt_deps'] = ''
-        if vars['inside_minitage']:
-            vars['mt'] = os.environ['MT']
-            vars['minilays'] = minilays = os.path.join(vars['mt'], 'minilays')
-            # databases
-            minitage_dbs = ['mysql', 'postgresql']
-            for db in minitage_dbs:
-                if vars['with_database_%s' % db] and vars['inside_minitage']:
-                    vars['opt_deps'] += ' %s' % search_latest('%s-\d\.\d*'% db, vars['minilays'])
-            # databases
-            if vars['with_binding_mapscript'] and vars['inside_minitage']:
-                vars['opt_deps'] += ' %s' % search_latest('mapserver-\d\.\d*', vars['minilays'])
-            # collective.geo
-            if 'with_ploneproduct_cgeo' in vars:
-                if vars['with_ploneproduct_cgeo'] and vars['inside_minitage']:
-                    for i in ('geos-\d\.\d*','gdal-\d\.\d*'):
-                        vars['opt_deps'] += ' %s' % search_latest(i, vars['minilays'])
-            # tesseact
-            if vars['with_binding_tesseract'] and vars['inside_minitage']:
-                for i in ('tesseract-\d','leptonica-\d'):
-                    vars['opt_deps'] += ' %s' % search_latest(i, vars['minilays'])
-            # pyqt
-            vars['pyqt'] = ''
-            if vars['with_binding_pyqt'] and vars['inside_minitage']:
-                vars['opt_deps'] += ' %s' % search_latest('swiglib-\d\.\d+', vars['minilays'])
-                for i in ('pyqt-\d\.\d+','sip-\d\.\d+'):
-                    vars['opt_deps'] += ' %s' % search_latest(i, vars['minilays'])
-                    vars['pyqt'] += '\n   %s' %  (
-                        '${buildout:directory}/../../'
-                        'eggs/%s/parts'
-                        '/site-packages-%s/site-packages-%s' % (
-                            search_latest(i, vars['minilays']),
-                            vars['pyver'],
-                            vars['pyver'],
-                        )
-                    )
-
-            # openldap
-            if vars['with_binding_ldap'] and vars['inside_minitage']:
-                cs = search_latest('cyrus-sasl-\d\.\d*', vars['minilays'])
-                vars['opt_deps'] += ' %s %s %s' % (
-                    search_latest('openldap-\d\.\d*', vars['minilays']),
-                    search_latest('openssl-1', vars['minilays']),
-                    cs
-                )
-                vars['includesdirs'] = '\n    %s'%  os.path.join(
-                    vars['mt'], 'dependencies', cs, 'parts', 'part', 'include', 'sasl'
-                )
-
-            # htmldoc
-            if vars['with_ploneproduct_awspdfbook'] and vars['inside_minitage']:
-                vars['opt_deps'] += ' %s' % search_latest('htmldoc-\d\.\d*', vars['minilays'])
-
-
-
-            for i in ['libxml2', 'libxslt', 'py-libxml2', 'py-libxslt', 'pil-1', 'libiconv']:
-                vars['opt_deps'] += ' %s' %  search_latest('%s.*' % i, vars['minilays'])
-            # be sure our special python is in priority
-            # plone system dependencies
-            vars['opt_deps'] = re.sub('\s*%s\s*' % self.python, ' ', vars['opt_deps'])
-            vars['opt_deps'] += " %s" % self.python
-
 class PlonePackage(MinitagePackage):
     plone_version = None
     paster_template = plone41.Template
@@ -611,7 +547,6 @@ class PlonePackage(MinitagePackage):
         vars['plone_version'] = self.plone_version
         vars['major'] = self.plone_major
         self.load_plone_vars(command, output_dir, vars)
-        self.load_minitage_dependencies(command, output_dir, vars)
         if not 'with_ploneproduct_fss' in vars:
             vars['with_ploneproduct_fss'] = False
 
