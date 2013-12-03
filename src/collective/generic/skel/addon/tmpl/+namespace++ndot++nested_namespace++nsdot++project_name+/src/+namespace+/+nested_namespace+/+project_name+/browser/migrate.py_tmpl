@@ -7,6 +7,9 @@ import re
 import json
 import traceback
 import hashlib
+import time
+import subprocess
+import threading
 
 from zope.interface import alsoProvides
 from zope import component, interface
@@ -21,7 +24,7 @@ from Products.contentmigration.walker import CustomQueryWalker
 from Products.CMFDefault.upgrade.to22 import upgrade_dcmi_metadata
 
 from Products.contentmigration.migrator import BaseInlineMigrator
-from Products.SimpleAttachment.migration import migrations as sa_migrations
+\#from Products.SimpleAttachment.migration import migrations as sa_migrations
 from Products.CMFCore.CachingPolicyManager import manage_addCachingPolicyManager
 from Products.CMFPlone.setuphandlers import addCacheHandlers
 from Products.CMFPlone.setuphandlers import addCacheForResourceRegistry
@@ -228,16 +231,41 @@ class ${PdN}_migrate(grok.View):
         self.view_maps = {}
         grok.View.__init__(self, *a, **kw)
 
+    def monkeypatch(self):
+        # commit on each suceeded step
+        from Products.GenericSetup import upgrade as gs_u
+        context = self.context
+        def doStep(self, tool):
+            ctx = getToolByName(tool, 'portal_url').getPortalObject()
+            ret = getattr(self, '_oldm_doStep')(tool)
+            upgrades.commit(ctx)
+            return ret
+        if not hasattr(gs_u.UpgradeStep, '_oldm_doStep'):
+            setattr(gs_u.UpgradeStep, '_oldm_doStep',
+                    getattr(gs_u.UpgradeStep, 'doStep'))
+            setattr(gs_u.UpgradeStep, 'doStep', doStep)
+
+    def restore_monkeypatch(self):
+        from Products.GenericSetup import upgrade as gs_u
+        if hasattr(gs_u.UpgradeStep, '_oldm_doStep'):
+            setattr(gs_u.UpgradeStep, 'doStep',
+                    getattr(gs_u.UpgradeStep, '_oldm_doStep'))
+            delattr(gs_u.UpgradeStep, '_oldm_doStep')
+
+
     def render(self):
         mt = getToolByName(self.context, 'portal_membership')
         user = mt.getAuthenticatedMember()
         if not ENABLED:return
         try:
+            self.monkeypatch()
             data = self.migrate()
         except Exception, e:
             trace = traceback.format_exc()
             log(trace, 'error')
             data = {'migrated': False, 'error': trace}
+        finally:
+            self.restore_monkeypatch()
         sdata = json.dumps(data)
         self.request.RESPONSE.setHeader("Content-Transfer-Encoding", "binary")
         self.request.RESPONSE.setHeader("Content-Length", len(sdata))
@@ -251,6 +279,10 @@ class ${PdN}_migrate(grok.View):
     def migrate(self):
         migration_data = {}
         context = self.context
+        # launch wvhtml controller thread to avoid dangling wv processes
+        self.controlrun = True
+        control_wv_t = threading.Thread(target=control_wv, args=(self,))
+        control_wv_t.start()
         pt = self.context.restrictedTraverse('@@plone_portal_state')
         portal_setup = getToolByName(context, 'portal_setup')
         context = self.context
@@ -301,6 +333,8 @@ class ${PdN}_migrate(grok.View):
         self.custom_hook_finished()
         migration_data['migrated'] = True
         upgrades.log('Migration done')
+        self.controlrun = False
+        control_wv_t.join(1)
         ret = dict(migration_data.items())
         ret[self.path] = dict(migration_data[self.path].items())
         return ret
@@ -553,6 +587,7 @@ class ${PdN}_migrate(grok.View):
     @onlyonce
     def remap_views(self):
         maps = self.view_maps
+        if not maps: return
         views_i = {"FieldIndex": ['getLayout', 'default_page']}
         context = self.context
         catalog = self.context.portal_catalog
@@ -728,11 +763,12 @@ class ${PdN}_migrate(grok.View):
     @onlyonce
     def migrate_simpleattachment_to_blob(self):
         """Move simple attachments to blob"""
-        upgrades.log('SimpleAttachment -> blob')
-        upgrades.log(
-            sa_migrations.migrate_to_blob_storage(self.context)
-        )
-        upgrades.commit(self.context)
+        #upgrades.log('SimpleAttachment -> blob')
+        #upgrades.log(
+        #    sa_migrations.migrate_to_blob_storage(self.context)
+        #)
+        #upgrades.commit(self.context)
+        pass
 
     @onlyonce
     def log_files1(self):
@@ -808,10 +844,37 @@ class ${PdN}_migrate(grok.View):
                     indexes.append('text')
                 # postpone the index to a later step
                 if indexes:
+
                     reindex.append((obj, indexes))
         self.migrate_reindexdescription(reindex)
         upgrades.log(
             'Migrating html description to text: finished')
         upgrades.commit(self.context)
 
-# vim:set et sts=4 ts=4 tw=80: 
+
+def control_wv(view):
+    upgrades.log("Wvhtml killer/watcher thread start")
+    onow = None
+    onow = now = datetime.datetime.now()
+    while view.controlrun:
+        now = datetime.datetime.now()
+        if now - onow > datetime.timedelta(seconds=30):
+            upgrades.log("Always running wv control thread")
+            onow = now 
+        pl = subprocess.Popen(['ps', '-aeo', 'etime,pid,command'], 
+                    stdout=subprocess.PIPE).communicate()[0]
+        for i in [a.strip() for a in pl.splitlines() if 'wv' in a.lower()]:
+            etime = i.split()[0]
+            pid = i.split()[1]
+            if ":" in etime:
+                minutes = etime.split(':')[0]
+                try:
+                    if int(minutes) > 1:
+                        ot = subprocess.Popen(['kill', '-9', '%s' % pid], 
+                            stdout=subprocess.PIPE).communicate()[0]
+                        upgrades.log("Wvhtml control: kill %s" % pid)
+                except:
+                    pass
+        time.sleep(10)
+    upgrades.log("Wvhtml killer/watcher thread end")
+# vim:set et sts=4 ts=4 tw=80:
