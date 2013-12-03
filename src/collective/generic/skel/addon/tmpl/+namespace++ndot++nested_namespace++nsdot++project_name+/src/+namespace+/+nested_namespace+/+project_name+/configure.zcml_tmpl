@@ -44,8 +44,6 @@
 #end if
 #end for
   <five:registerPackage package="." initialize=".initialize" />
-  <!-- activate to customize the dashboard-->
-  <!-- <adapter factory=".dashboard.MyPortalDefaultDashboard"/>-->
   <include package=".browser" />
   <include file="profiles.zcml" />
   <i18n:registerTranslations directory="locales" />

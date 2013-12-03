@@ -2,8 +2,8 @@ import logging
 import transaction
 from Products.CMFCore.utils import getToolByName
 
-from ${pdn} import app_config
-from ${pdn}.app_config import PRODUCT_DEPENDENCIES, EXTENSION_PROFILES
+import  ${pdn} as app_config
+from ${pdn} import PRODUCT_DEPENDENCIES, EXTENSION_PROFILES
 
 
 logger = logging.getLogger('${pdn} / setuphandler')

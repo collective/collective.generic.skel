@@ -211,18 +211,21 @@ class LayerMixin(Layer):
 
 
 class IntegrationTesting(LayerMixin, BIntegrationTesting):
+
     def testSetUp(self):
         BIntegrationTesting.testSetUp(self)
         LayerMixin.testSetUp(self)
 
 
 class FunctionalTesting(LayerMixin, BFunctionalTesting):
+
     def testSetUp(self):
         BFunctionalTesting.testSetUp(self)
         LayerMixin.testSetUp(self)
 
 
 class SimpleLayer(Layer):
+
     defaultBases = tuple()
 
 
@@ -303,9 +306,12 @@ class Request(zope.publisher.browser.TestRequest):
         self._environ[name] = value
 
 TestRequest = Request
+
+
 def make_request(url='http://nohost/@@myview',form=None, *args,  **kwargs):
     r = Request(environ = {'SERVER_URL': url, 'ACTUAL_URL': url}, form=form, *args, **kwargs)
     zope.interface.alsoProvides(r, zope.annotation.interfaces.IAttributeAnnotatable)
     return r
+
 
 # vim:set ft=python:
