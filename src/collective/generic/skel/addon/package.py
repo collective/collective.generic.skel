@@ -2,7 +2,7 @@ import copy
 import os
 import shutil
 
-from minitage.paste.projects import common
+from collective.generic.skel.buildout import common
 from collective.generic.skel.common import package as c
 import glob
 

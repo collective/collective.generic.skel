@@ -85,7 +85,7 @@ class Template(plone4.Template):
     #packaged_ztk_version = '1.0.6'
     summary = 'Template for creating a plone41 project'
     _template_dir = pkg_resources.resource_filename(
-        'collective.generic.skel', 'projects/plone3/template')
+        'collective.generic.skel', 'buildout/plone3/template')
     python = 'python-2.6'
     #default_template_package   = 'ZopeSkel'
     #default_template_epn       = 'paste.paster_create_template'

@@ -1,4 +1,3 @@
-from minitage.core.common import search_latest
 import sys
 import os
 import re
@@ -6,7 +5,7 @@ import re
 from paste.script.templates import var
 from paste.script.templates import Template
 
-from minitage.paste.projects import (
+from collective.generic.skel.buildout import (
     common,
     plone3,
     plone4,

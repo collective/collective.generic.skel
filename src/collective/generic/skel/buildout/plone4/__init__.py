@@ -85,18 +85,12 @@ class Template(plone3.Template):
     #packaged_zope2_version = '2.12.19'
     summary = 'Template for creating a plone4 project'
     _template_dir = pkg_resources.resource_filename(
-        'collective.generic.skel', 'projects/plone3/template')
+        'collective.generic.skel', 'buildout/plone3/template')
     python = 'python-2.6'
     #default_template_package   = 'ZopeSkel'
     #default_template_epn       = 'paste.paster_create_template'
     #default_template_templaten = 'plone3_buildout'
-    init_messages = (
-        '%s' % (
-            '---------------------------------------------------------\n'
-            '\tPlone 4 needs a python 2.6 to run:\n'
-            '---------------------------------------------------------\n'
-        ),
-    )
+    init_messages = tuple()
     # not nice, but allow us to import variables from another place like
     # from plone3 import qi_mappings and also avoid template copy/paste,
     # just inherit and redefine those variables in the child class.
