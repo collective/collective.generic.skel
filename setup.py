@@ -51,14 +51,14 @@ setup(
   entry_points="""
   # -*- Entry points: -*-
   [paste.paster_create_template]
-  genericskel.buildout.pyramid = collective.generic.skel.buildout.pyramid.Template
-  genericskel.buildout.django = collective.generic.skel.buildout.django.Template
-  genericskel.buildout.plone25 = collective.generic.skel.buildout.plone25.Template
-  genericskel.buildout.plone3 = collective.generic.skel.buildout.plone3.Template
-  genericskel.buildout.plone4 = collective.generic.skel.buildout.plone4.Template
-  genericskel.buildout.plone41 = collective.generic.skel.buildout.plone41.Template
-  genericskel.buildout.plone42 = collective.generic.skel.buildout.plone42.Template
-  genericskel.buildout.plone43 = collective.generic.skel.buildout.plone43.Template
+  genericskel.buildout.pyramid = collective.generic.skel.buildout.pyramid:Template
+  genericskel.buildout.django = collective.generic.skel.buildout.django:Template
+  genericskel.buildout.plone25 = collective.generic.skel.buildout.plone25:Template
+  genericskel.buildout.plone3 = collective.generic.skel.buildout.plone3:Template
+  genericskel.buildout.plone4 = collective.generic.skel.buildout.plone4:Template
+  genericskel.buildout.plone41 = collective.generic.skel.buildout.plone41:Template
+  genericskel.buildout.plone42 = collective.generic.skel.buildout.plone42:Template
+  genericskel.buildout.plone43 = collective.generic.skel.buildout.plone43:Template
   genericskel.pyramid = collective.generic.skel.pyramid.package:PyramidPackage
   genericskel.plone_addon  = collective.generic.skel.addon.package:PAddon
   genericskel.egg  = collective.generic.skel.common.package:Package
