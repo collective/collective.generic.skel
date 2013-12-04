@@ -1,0 +1,110 @@
+==============================================================
+pyramid BUILDOUT FOR $project
+==============================================================
+
+WARNING ABOUT BUILOOUT BOOTSTRAP WARNING
+--------------------------------------------
+
+        !!!    Be sure to use zc.buildout >= 1.5.0 or you ll have errors or bugs.    !!!
+
+DEVELOP MODE
+---------------
+To develop your application, run the ``buildout-dev.cfg`` buildout:
+
+  * it comes with development tools.
+  * it configures the instance to be more verbose
+  * it has only one instance and not all the hassles from production.
+
+
+PRODUCTION MODE
+---------------
+To make your application safe for production, run the ``buildout-prod.cfg`` buildout'.
+It extends this one with additionnal crontabs and backup scripts and some additionnal instances creation.
+
+
+BASE BUILDOUTS WHICH DO ONLY AGGREGATE PARTS FROM THERE & THERE
+-------------------------------------------------------------------
+::
+
+    |-- buildout-dev.cfg                     -> buildout for development
+    |-- buildout-prod.cfg                    -> buildout for production
+    |-- etc/base.cfg                -> The base buildout
+
+
+
+PROJECT SETTINGS
+~~~~~~~~~~~~~~~~~~~~~~~~
+- Think you have the most important sections of this buildout configuration in etc/${project}.cfg
+Set the project developement  specific settings there
+::
+
+    etc/project/
+    |-- ${project}.cfg       -> your project needs (packages, sources, products)
+    |-- sources.cfg          -> externals sources of your project:
+    |                           - Sources not packaged as python eggs.
+    |                           - Eggs Grabbed from svn, add here your develoment eggs.
+    |                           - Links to find distributions.
+    |-- patches.cfg          -> patches used on the project
+    |-- cluster.cfg          -> define new zope instances here & also their FileSystemStorage if any.
+    `-- versions.cfg         -> minimal version pinning for installing your project
+
+
+SYSTEM ADMINISTRATORS RELATED FILES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+    etc/init.d/                 -> various init script (eg supervisor)
+    etc/logrotate.d/            -> various logrotate configuration files
+    etc/sys/
+    |-- high-availability.cfg   -> Project production settings like supervision, loadbalancer and so on
+    |-- maintenance.cfg         -> Project maintenance settings (crons, logs)
+    `-- settings.cfg            -> various settings (crons hours, hosts, installation paths, ports, passwords)
+    `-- settings-prod.cfg       -> TO BE MANUAL CREATED IN PRODUCTION : production critical settings like passwords.
+
+
+CRONS
+~~~~~~
+::
+
+    |-- etc/cron_scripts/backup_pgsql.sh   -> backup script for pgsql
+
+
+SETTINGS
+~~~~~~~~~
+
+
+REVERSE PROXY
+--------------
+We generate two virtualhosts for a cliassical apache setup, mostly ready but feel free to copy/adapt.
+::
+    etc/apache/
+    |-- ${apache_vhost_number}-${project}.reverseproxy.conf                     -> a vhost for ruse with a standalone plone (even with haproxy in front of.)
+    |-- ${apache_vhost_number}-${project}.reverseproxy.deliverance.conf         -> a vhost for use with a plone behind a deliverance server.
+    `-- apache.cfg
+    etc/templates/apache/
+    |-- ${apache_vhost_number}-${project}.reverseproxy.conf.in                  -> Template for a vhost for ruse with a standalone plone (even with haproxy in front of.)
+    `-- ${apache_vhost_number}-${project}.reverseproxy.deliverance.conf.in      -> Template for a vhost for use with a plone behind a deliverance server.
+
+In settings.cfg you have now some settings for declaring which host is your reverse proxy backend & the vhost mounting:
+
+    * hosts:zope-front / ports:zope-front                              -> zope front backend
+    * reverseproxy:host / reverseproxy:port / reverseproxy:mount-point -> host / port / mountpoint on the reverse proxy)
+
+
+KGS FILE
+----------
+We provide a part to generate the etc/${project}-kgs.cfg file.
+This will allow you to freeze software versions known to work with your project and make reproducible environment.
+This file will be generated the first time that you run buildout.
+To un it, just run bin/buildout -vvvvvvc <CONFIG_FILE> install kgs
+To unlock the versions, cmment out the according statement ``etc/project/${project}-kgs}.cfg`` in the extends option of the ${project}.cfg gile.
+
+PRODUCTION
+-----------
+
+    You have some backups than you can enable in the buildout-prod.cfg, specially for the pgsql cron scripts and its related cron.
+    Think that the user for the postgresql cron must be authorized to connect locally without password.
+
+$instances_description.replace('# ', '')
+
+# vim:set ft=rest:

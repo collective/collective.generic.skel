@@ -22,7 +22,7 @@ README =read((os.path.dirname(__file__),'README.rst'))
 CHANGELOG  = read((os.path.dirname(__file__), 'docs', 'HISTORY.txt'))
 
 long_description = '\n'.join([README,
-                              CHANGELOG])+'\n' 
+                              CHANGELOG])+'\n'
 
 setup(
   name='collective.generic.skel',
@@ -40,34 +40,29 @@ setup(
   namespace_packages=['collective',
                       'collective.generic',
                       'collective.generic.skel',
-                      'collective.generic.skel.policy',
-                      'collective.generic.skel.tma',
+                      'collective.generic.skel.buildout',
                       'collective.generic.skel.addon',
-                      'collective.generic.skel.skin',
                       'collective.generic.skel.testing',
                      ],
   include_package_data=True,
   install_requires=['setuptools',
                     'PasteScript',
-                    'Cheetah',
-                    'minitage.paste',],
+                    'Cheetah',],
   entry_points="""
   # -*- Entry points: -*-
   [paste.paster_create_template]
-  collective.generic.django = collective.generic.skel.django.package:DjangoPackage
-  collective.generic.pyramid = collective.generic.skel.pyramid.package:PyramidPackage
-  collective.generic.plone3_policy = collective.generic.skel.policy.package:P3Package
-  collective.generic.plone4_policy = collective.generic.skel.policy.package:P4Package
-  collective.generic.plone41_policy = collective.generic.skel.policy.package:P41Package
-  collective.generic.plone3_skin  = collective.generic.skel.skin.package:P3Package
-  collective.generic.plone4_skin  = collective.generic.skel.skin.package:P4Package
-  collective.generic.plone41_skin  = collective.generic.skel.skin.package:P41Package
-  collective.generic.plone3_tma  = collective.generic.skel.tma.package:P3Package
-  collective.generic.plone4_tma  = collective.generic.skel.tma.package:P4Package
-  collective.generic.plone41_tma  = collective.generic.skel.tma.package:P41Package
-  collective.generic.plone_addon  = collective.generic.skel.addon.package:PAddon
-  collective.generic.egg  = collective.generic.skel.common.package:Package
-  collective.generic.testing    = collective.generic.skel.testing.package:Package
+  genericskel.buildout.pyramid = collective.generic.skel.buildout.pyramid.Template
+  genericskel.buildout.django = collective.generic.skel.buildout.django.Template
+  genericskel.buildout.plone25 = collective.generic.skel.buildout.plone25.Template
+  genericskel.buildout.plone3 = collective.generic.skel.buildout.plone3.Template
+  genericskel.buildout.plone4 = collective.generic.skel.buildout.plone4.Template
+  genericskel.buildout.plone41 = collective.generic.skel.buildout.plone41.Template
+  genericskel.buildout.plone42 = collective.generic.skel.buildout.plone42.Template
+  genericskel.buildout.plone43 = collective.generic.skel.buildout.plone43.Template
+  genericskel.pyramid = collective.generic.skel.pyramid.package:PyramidPackage
+  genericskel.plone_addon  = collective.generic.skel.addon.package:PAddon
+  genericskel.egg  = collective.generic.skel.common.package:Package
+  genericskel.testing    = collective.generic.skel.testing.package:Package
   """
 )
 # vim: set ts=4 sts=4 et :

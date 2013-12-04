@@ -1,0 +1,72 @@
+==============================================================
+DJANGO BUILDOUT FOR $project
+==============================================================
+
+WARNING ABOUT BUILOOUT BOOTSTRAP WARNING
+--------------------------------------------
+
+        !!!    Be sure to use zc.buildout >= 1.7.1 or you ll have errors or bugs.    !!!
+
+\$python bootstrap.py dance with a python compatible with the targeted zope installation (python 2.4/plone3 python 2.6/plone4)
+eg: cd $project && python2.4 bootstrap.py && bin/buildout -vvvvvvc <CONFIG_FILE>
+
+DEVELOP MODE
+---------------
+To develop your application, run the ``buildout-dev.cfg`` buildout:
+
+PRODUCTION MODE
+---------------
+To make your application safe for production, run the ``buildout-prod.cfg`` buildout'.
+It extends this one with additionnal crontabs and backup scripts and some additionnal instances creation.
+
+PROJECT SETTINGS
+~~~~~~~~~~~~~~~~~~~~~~~~
+- Think you have the most important sections of this buildout configuration in etc/${project}.cfg
+Set the project developement  specific settings there
+::
+
+    etc/project/
+    |-- django.cfg       -> your project needs (packages, sources, products)
+    `-- versions.cfg         -> minimal version pinning for installing your project
+
+
+SYSTEM ADMINISTRATORS RELATED FILES
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+::
+
+    etc/init.d/                 -> various init script (eg supervisor)
+    etc/logrotate.d/            -> various logrotate configuration files
+    etc/sys/
+    `-- settings.cfg            -> various settings (crons hours, hosts, installation paths, ports, passwords)
+    `-- settings-prod.cfg       -> TO BE MANUAL CREATED IN PRODUCTION : production critical settings like passwords.
+
+
+CRONS
+~~~~~~
+::
+
+    |-- etc/cron_scripts/backup_pgsql.sh   -> backup script for pgsql
+
+
+SETTINGS
+~~~~~~~~~
+
+
+REVERSE PROXY
+--------------
+We generate two virtualhosts for a cliassical apache setup, mostly ready but feel free to copy/adapt.
+::
+    etc/www/apache_vhost.conf
+    etc/templates/www/apache_vhost.conf              -> Template for a vhost for ruse with a standalone plone (even with haproxy in front of.)
+
+In settings.cfg you have now some settings for declaring which host is your reverse proxy backend & the vhost mounting:
+
+    * hosts:zope-front / ports:zope-front                              -> django front backend
+
+PRODUCTION
+-----------
+
+    You have some backups than you can enable in the buildout-prod.cfg, specially for the pgsql cron scripts and its related cron.
+    Think that the user for the postgresql cron must be authorized to connect locally without password.
+
+# vim:set ft=rest:

@@ -1,0 +1,93 @@
+<?xml version="1.0"?>
+<!--
+  GOAL OF THIS CONFIGURATION IS TO CUSTOMIZE THE genericskel.plone3buildout paster template options to fit to your needs
+  You can even override by copy/edit it on your ~/.genericskel.plone3.xml.
+  Goal is to stop to spread new templates for special use, and to configure them.
+  A subsidiary goal is to remove so useless logic in templates.
+  You can, i think, customzize the whole template via this configuration.
+  Please note that genericskel.plone3buildout is coupled with collectige.generic.skel.* templates.
+  They will use it's variables/API to construct themselves.
+-->
+<root>
+  <!--
+    PASTER OPTIONS to be added on the fly to genericskel.paste.plone3 product
+    <option name="foo" description="SOMETEXT>
+  -->
+  <template>
+  <options>
+  <option order="0000" name="reverseproxy_host"                  description="domain name which be used in the reverse proxy" default="localhost.com"/>
+  <option order="0000" name="reverseproxy_port"                  description="port of the reverse proxy" default="80"/>
+  <option order="0000" name="reverseproxy_scheme"                description="HHTP(s) scheme of the reverse proxy (http/https)" default="http"/>
+  <option order="0000" name="django_admin" description="admin Mail" default="foo@foo.com"/>
+
+</options>
+  <!--
+    LINK THERE YOUR EGGS TO BE Installed on option triggering.
+
+    Some notes:
+
+    If you choose to tell that your egg is a/are some 'zpackage', this will cause them to be registered in the genericskel.projects.plone3.z2packages.
+
+    As an incidence in the collective.generic.skel.policy template, they will be recorded
+    in the policy tests as someting to be installed with "ztc.installPackage(eggname)" or
+    "ztc.installProduct(eggname)".
+
+    <eggs>
+      <egg name="" options="" zpackage="" zproduct="" />
+    </eggs>
+
+    name: name of the product to install
+    options: comma sepated list of options that trigger the installation of this item
+    zcml: zcml to add to the buildout ([instance]), by default -configure
+    zcmlorder : zcml load order from 0 to XXXXXX, default 50000
+    zpackage/zproduct: install resp. modules as a Zope2 Package or Product during tests
+      For each of those values:
+      y -> install it with the name as product name
+      comma sepaated values != 'y' -> install the list of products
+  -->
+  <eggs>
+  </eggs>
+  <!--
+    Enter here mandatory version pinnings
+    Valid items are:
+
+    <version p="" v="" options=""/>
+
+      p: egg name
+      v: egg version
+      name: description to add as comment into the resulting buildout
+    -->
+  <versions>
+  </versions>
+  <!--
+    Enter here know good set versions stuff
+    Valid items are:
+
+    <version p="" v="" options=""/>
+
+      p: egg name
+      v: egg version
+      options: comma separated list of options to enable the pinning
+    -->
+  <checkedversions>
+  </checkedversions>
+  <!--
+    Old style plone products to checkout using the [productsdistros] part
+  -->
+  <!--
+    Sources for mr.developer
+    links to the SCM of a product, autocheckout will be enabled when option in in options.
+
+  -->
+  <sources>
+  </sources>
+    <!--
+    Some very ecliptic products doesnt fit with previous declaration, we will describe how to add the options to the underlying policy there.
+    (the packages/products that we want into the tests to be added.
+    <product name="" zpackage="" zcml="" zcmlorder="" zcml=""/>
+      name is mandatory only for zcml slugs.
+  -->
+  </template>
+  <purge/>
+</root>
+

@@ -1,0 +1,40 @@
+# Django  BUILDOUT
+[buildout]
+unzip=true
+allow-hosts = \${mirrors:allow-hosts}
+extensions = mr.developer buildout.dumppickedversions
+dump-picked-versions-file =\${buildout:directory}/etc/project/kgs.cfg
+extends=
+    project/django.cfg
+    sys/high-availability.cfg
+    sys/maintenance.cfg
+$rabbitmq_comment    sys/rabbitmq.cfg
+$mysql_comment    sys/mysql.cfg
+$mongo_comment    sys/mongodb.cfg
+    www/apache.cfg
+    project/versions.cfg
+    sys/settings.cfg
+versions = versions
+#    ubuntulibs
+#    pil
+#    py2cairo
+parts =
+    env
+    grp
+$mysql_comment    \${buildout:mysql-parts}
+$rabbitmq_comment    \${buildout:rabbitmq-parts}
+$mongo_comment    \${buildout:mongodb-parts}
+    \${buildout:supervisor-parts}
+    \${buildout:django-parts}
+    mkdirs
+    chmod
+    chown
+
+[supervisor]
+programs=
+    \${buildout:django-programs}
+#    \${buildout:mysql-programs}
+#    \${buildout:rabbitmq-programs}
+#    \${buildout:mongodb-programs}
+
+#  vim:set et ts=4 sts=4 ft=cfg:
