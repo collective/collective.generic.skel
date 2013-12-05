@@ -36,7 +36,7 @@
   #else
             #if '[' in $item:
             #set $item=$item.split('[')[0].strip()
-            #end if 
+            #end if
   <include package="$item" file="${slug}.zcml"/>
   #end if
 #end if

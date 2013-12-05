@@ -3,18 +3,19 @@
 
 import chardet
 
-def magicstring(string):
+
+def magicstring(thestr):
     """Convert any string to UTF-8 ENCODED one"""
     seek = False
-    if isinstance(string, unicode):
+    if isinstance(thestr, unicode):
         try:
-            string = string.encode('utf-8')
-        except:
+            thestr = thestr.encode('utf-8')
+        except Exception:
             seek = True
     if seek:
         try:
-            detectedenc = chardet.detect(string).get('encoding')
-        except Exception, e:
+            detectedenc = chardet.detect(thestr).get('encoding')
+        except Exception:
             detectedenc = None
         if detectedenc:
             sdetectedenc = detectedenc.lower()
@@ -29,22 +30,20 @@ def magicstring(string):
         ]
         if sdetectedenc not in ('utf-8', 'ascii'):
             try:
-                if not isinstance(string, unicode):
-                    string = string.decode(detectedenc)
-                string = string.encode(detectedenc)
+                if not isinstance(thestr, unicode):
+                    thestr = thestr.decode(detectedenc)
+                thestr = thestr.encode(detectedenc)
             except:
                 for idx, i in enumerate(found_encodings):
                     try:
-                        if not isinstance(string, unicode) and detectedenc:
-                            string = string.decode(detectedenc)
-                        string = string.encode(i)
+                        if not isinstance(thestr, unicode) and detectedenc:
+                            thestr = thestr.decode(detectedenc)
+                        thestr = thestr.encode(i)
                         break
                     except:
                         if idx == (len(found_encodings) - 1):
                             raise
-    if isinstance(string, unicode):
-        string = string.encode('utf-8')
-    string = string.decode('utf-8').encode('utf-8')
-    return string
-
- 
+    if isinstance(thestr, unicode):
+        thestr = thestr.encode('utf-8')
+    thestr = thestr.decode('utf-8').encode('utf-8')
+    return thestr

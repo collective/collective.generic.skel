@@ -14,7 +14,7 @@
         destination="yyy"
         title="${pdn} import CSS"
         description=""
-        handler=".import_css" />  
+        handler=".import_css" />
     <genericsetup:upgradeStep
         profile="${pdn}:default"
         source="xxx"

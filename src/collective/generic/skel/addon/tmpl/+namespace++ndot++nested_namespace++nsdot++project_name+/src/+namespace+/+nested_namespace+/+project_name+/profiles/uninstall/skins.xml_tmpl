@@ -5,4 +5,4 @@ ${skins_comment_tag}
     remove="True" />
   <skin-path name="${pdn}" remove="True" />
 ${skins_comment_end}
-</object> 
+</object>

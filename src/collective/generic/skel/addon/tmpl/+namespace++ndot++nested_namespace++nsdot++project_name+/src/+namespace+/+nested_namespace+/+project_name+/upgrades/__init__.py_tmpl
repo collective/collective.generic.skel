@@ -2,31 +2,26 @@
 
 import datetime
 import re
-import os, sys
 import logging
 
-try:
-    from Products.CMFPlone.migrations import migration_util
-except:
-    #plone4
-    from plone.app.upgrade import utils as migration_util
+\#try:
+\#    from Products.CMFPlone.migrations import migration_util
+\#except:
+\#    #plone4
+\#    from plone.app.upgrade import utils as migration_util
 
 from Products.CMFCore.utils import getToolByName
-from Products.ATContentTypes.interface.image import IATImage
-from Products.ATContentTypes.content.image import ATImage
 import transaction
 
 
-from Products.CMFCore.utils import getToolByName
-from Products.CMFPlone.utils import _createObjectByType
 from Products.GenericSetup.utils import _resolveDottedName
 from Testing.makerequest import makerequest
 from StringIO import StringIO
 
 
 re_flags = re.U | re.M | re.S | re.X
-PRODUCT =  '${pdn}'
-PROFILE =  '%s:default' % PRODUCT
+PRODUCT = '${pdn}'
+PROFILE = '%s:default' % PRODUCT
 PROFILEID = 'profile-%s' % PROFILE
 
 
@@ -40,13 +35,13 @@ def commit(context):
     context._p_jar.sync()
 
 
-def move(context, oldid , newid):
-    path = '/'.join(context.getPhysicalPath())
+def move(context, oldid, newid):
     purl = getToolByName(context, 'portal_url')
     pobj = purl.getPortalObject()
-    log('Renaming %s to %s in %s (%s)' % (
-        oldid, newid,
-        '/'.join(context.getPhysicalPath()), pobj.getId())
+    log(
+        'Renaming %s to %s in %s (%s)' % (
+            oldid, newid,
+            '/'.join(context.getPhysicalPath()), pobj.getId())
     )
     context.manage_renameObject(oldid, newid)
 
@@ -55,10 +50,10 @@ def move_custom(context, ignores=None):
     log('Moving away custom content in portalskin')
     if not ignores:
         ignores = [
-            '\.(jpeg|jpg|JPG|JPEG|png|PNG|GIF|gif|old)$']
+            '\.(jpeg|jpg|JPG|JPEG|png|PNG|GIF|gif|old)$'
+        ]
     dt = datetime.datetime.now().strftime('%Y%m%d_%H%M%S')
     plone = getToolByName(context, 'portal_url').getPortalObject()
-    s = plone.getId()
     custom = plone['portal_skins']['custom']
     ids = custom.objectIds()
     MARKER = '%s-RENAMED' % PRODUCT.replace('.', '')
@@ -76,7 +71,9 @@ def move_custom(context, ignores=None):
             move(custom, id,
                  '%s_%s.%s.disabled' % (MARKER, dt, id,))
 
-def remove_persistent_utilities(ctx, searchs=None):
+
+def remove_persistent_utilities(ctx,
+                                searchs=None):
     context = getToolByName(ctx, 'portal_url').getPortalObject()
     if not searchs:
         searchs = []
@@ -107,15 +104,15 @@ def remove_persistent_utilities(ctx, searchs=None):
         sm.utilities._provided = provided
     commit(context)
 
+
 def cleanup_portal_setup_registries(context,
-                                   do_import_steps=True,
-                                   do_export_steps=True,
-                                   do_toolset=True,
-                                   ):
+                                    do_import_steps=True,
+                                    do_export_steps=True,
+                                    do_toolset=True):
     toremove = ['plonepas']
     p = portal_setup = getToolByName(context, 'portal_setup')
     p.applyContextById(p.getBaselineContextID())
-    import_steps  = dict(
+    import_steps = dict(
         [(a, portal_setup.getImportStepMetadata(a))
          for a in portal_setup.getSortedImportSteps()])
     export_steps = dict(
@@ -129,7 +126,10 @@ def cleanup_portal_setup_registries(context,
             invalids = registry.copy()
             for a in invalids.keys():
                 try:
-                    if not invalids[a].get("invalid", False) and not a in toremove:
+                    if (
+                        not invalids[a].get("invalid", False)
+                        and not a in toremove
+                    ):
                         del invalids[a]
                 except:
                     if invalids[a] is not None:
@@ -142,7 +142,7 @@ def cleanup_portal_setup_registries(context,
                     pregistry.unregisterStep(item)
     if do_toolset:
         toolset = p._toolset_registry
-        for l in ['_required', '_forbidden',]:
+        for l in ['_required', '_forbidden']:
             invalids = {}
             reg = getattr(toolset, l)
             for item in reg:
@@ -163,7 +163,10 @@ def cleanup_portal_setup_registries(context,
     commit(context)
 
 
-def quickinstall_addons(context, install=None, uninstall=None, upgrades=None):
+def quickinstall_addons(context,
+                        install=None,
+                        uninstall=None,
+                        upgrades=None):
     qi = getToolByName(context, 'portal_quickinstaller')
 
     if install is not None:
@@ -210,31 +213,34 @@ def recook_resources(context):
 def import_js(context):
     """
     """
-    site = getToolByName(context, 'portal_url').getPortalObject()
     portal_setup = getToolByName(context, 'portal_setup')
-    portal_setup.runImportStepFromProfile(PROFILEID, 'jsregistry', run_dependencies=False)
+    portal_setup.runImportStepFromProfile(
+        PROFILEID, 'jsregistry', run_dependencies=False)
     log('Imported js')
 
 
 def import_css(context):
     """
     """
-    site = getToolByName(context, 'portal_url').getPortalObject()
     portal_setup = getToolByName(context, 'portal_setup')
-    portal_setup.runImportStepFromProfile(PROFILEID, 'cssregistry', run_dependencies=False)
+    portal_setup.runImportStepFromProfile(
+        PROFILEID, 'cssregistry', run_dependencies=False)
     log('Imported css')
 
 
 def upgrade_profile(context, profile_id, steps=None):
     """
-    >>> upgrade_profile(context, 'foo:default')
     """
     portal_setup = getToolByName(context.aq_parent, 'portal_setup')
     gsteps = portal_setup.listUpgrades(profile_id)
+
     class fakeresponse(object):
-        def redirect(self, *a, **kw): pass
+        def redirect(self, *a, **kw):
+            pass
+
     class fakerequest(object):
         RESPONSE = fakeresponse()
+
         def __init__(self):
             self.form = {}
             self.get = self.form.get
@@ -261,7 +267,8 @@ def upgrade_plone(portal_setup):
         getToolByName(
             portal_setup, 'portal_url'
         ).getPortalObject(),
-        stdout=out, environ={'REQUEST_METHOD':'POST'})
+        stdout=out,
+        environ={'REQUEST_METHOD': 'POST'})
     # pm = getToolByName(portal, 'portal_migration')
     # use direct acquisition for REQUEST to be always there
     pm = portal.portal_migration
@@ -272,14 +279,18 @@ def upgrade_plone(portal_setup):
 def upgrade_1000(context):
     """
     """
-    site = getToolByName(context, 'portal_url').getPortalObject()
-    portal_setup = site.portal_setup
+    # site = getToolByName(context, 'portal_url').getPortalObject()
+    #portal_setup = site.portal_setup
 
     # install Products.PloneSurvey and dependencies
-    #migration_util.loadMigrationProfile(site,
-    #                                    'profile-Products.PloneSurvey:default')
-    #portal_setup.runImportStepFromProfile('profile-${pdn}:default', 'jsregistry', run_dependencies=False)
-    #portal_setup.runImportStepFromProfile('profile-${pdn}:default', 'cssregistry', run_dependencies=False)
-    #portal_setup.runImportStepFromProfile('profile-${pdn}:default', 'portlets', run_dependencies=False)
-    #portal_setup.runImportStepFromProfile('profile-${pdn}:default', 'propertiestool', run_dependencies=False)
+    #migration_util.loadMigrationProfile(
+    # site, 'profile-Products.PloneSurvey:default')
+    #portal_setup.runImportStepFromProfile(
+    #    'profile-${pdn}:default', 'jsregistry', run_dependencies=False)
+    #portal_setup.runImportStepFromProfile(
+    #   'profile-${pdn}:default', 'cssregistry', run_dependencies=False)
+    #portal_setup.runImportStepFromProfile(
+    #   'profile-${pdn}:default', 'portlets', run_dependencies=False)
+    #portal_setup.runImportStepFromProfile(
+    #   'profile-${pdn}:default', 'propertiestool', run_dependencies=False)
     log('v1000 applied')

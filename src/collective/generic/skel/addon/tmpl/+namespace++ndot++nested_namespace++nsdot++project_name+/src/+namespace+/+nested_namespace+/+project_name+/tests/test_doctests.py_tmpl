@@ -15,6 +15,7 @@ from plone.testing import layered
 
 optionflags = (doctest.ELLIPSIS | doctest.NORMALIZE_WHITESPACE)
 
+
 def test_suite():
     """."""
     logger = logging.getLogger('${pdn}.tests')
@@ -23,10 +24,9 @@ def test_suite():
     try:
         files = []
         for e in ['*rst', '*txt']:
-            for d in [cwd, 
-                      os.path.dirname(cwd)]:
+            for d in [cwd, os.path.dirname(cwd)]:
                 files += glob.glob(os.path.join(d, e))
-    except Exception,e:
+    except Exception:
         logger.warn('No doctests for ${pdn}')
     suite = unittest.TestSuite()
     globs = globals()
@@ -34,14 +34,14 @@ def test_suite():
         suite.addTests([
             layered(
                 doctest.DocFileSuite(
-                    s, 
-                    globs = globs,
+                    s,
+                    globs=globs,
                     module_relative=False,
-                    optionflags=optionflags,         
+                    optionflags=optionflags,
                 ),
                 layer=FUNCTIONAL_TESTING
             ),
         ])
     return suite
-    
+
 # vim:set ft=python:

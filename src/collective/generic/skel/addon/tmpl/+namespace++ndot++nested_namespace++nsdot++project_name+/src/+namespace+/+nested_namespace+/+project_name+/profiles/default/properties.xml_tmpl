@@ -2,7 +2,7 @@
 <site>
 ${policy_tag}
   <property name="title">${namespace}${ndot}${nested_namespace}</property>
-  <property name="description">Welcome to the ${namespace}${ndot}${nested_namespace} website</property> 
+  <property name="description">Welcome to the ${namespace}${ndot}${nested_namespace} website</property>
   <property name="email_from_address"
       type="string">testeur@makina-corpus.com</property>
   <property name="email_from_name"

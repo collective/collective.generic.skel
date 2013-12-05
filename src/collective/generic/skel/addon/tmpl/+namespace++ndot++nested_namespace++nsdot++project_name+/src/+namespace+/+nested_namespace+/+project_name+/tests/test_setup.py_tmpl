@@ -6,7 +6,6 @@ import unittest2 as unittest
 
 from base import IntegrationTestCase
 
-from Products.CMFCore.utils import getToolByName
 
 class TestSetup(IntegrationTestCase):
     """Check Policy."""
@@ -14,11 +13,11 @@ class TestSetup(IntegrationTestCase):
     def test_Noop(self):
         self.assertEquals(True, True)
 
+
 def test_suite():
     """."""
     suite = unittest.TestSuite()
     suite.addTests(
         unittest.defaultTestLoader.loadTestsFromName(
             __name__))
-    return suite  
-
+    return suite

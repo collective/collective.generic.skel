@@ -12,6 +12,8 @@ base-parts =
     test-scripts
     release
     createzopecoverage
+    code-analysis
+    node
     coverage-sh
     flake8
     python-validation-sh
@@ -33,6 +35,7 @@ common-eggs =
 test-eggs =
     \${buildout:package-name} \${buildout:package-extras}
 
+
 [remotes]
 # Plone
 plone = git://github.com/plone
@@ -52,21 +55,18 @@ zope = http://svn.zope.org/repos/main
 zopegit = git://github.com/zopefoundation
 
 [sources]
-zopeskel=git \${remotes:collective}/zopeskel.git pushurl=\${remotes:collective_push}/zopeskel.git 
-experimental.catalogqueryplan = svn https://svn.plone.org/svn/collective/experimental.catalogqueryplan/trunk
-Products.MemoryProfiler = svn https://svn.plone.org/svn/collective/Products.MemoryProfiler/trunk
-Products.Gloworm = git https://github.com/kiorky/Products.Gloworm.git
-templer.core                = git \${remotes:collective}/templer.core.git pushurl=\${remotes:collective_push}/templer.core.git
-templer.buildout            = git \${remotes:collective}/templer.buildout.git pushurl=\${remotes:collective_push}/templer.buildout.git
-templer.zope                = git \${remotes:collective}/templer.zope.git pushurl=\${remotes:collective_push}/templer.zope.git
-templer.plone               = git \${remotes:collective}/templer.plone.git pushurl=\${remotes:collective_push}/templer.plone.git
-templer.dexterity           = git \${remotes:collective}/templer.dexterity.git pushurl=\${remotes:collective_push}/templer.dexterity.git
-templer.plonebuildout       = git \${remotes:collective}/templer.plonebuildout.git pushurl=\${remotes:collective_push}/templer.plonebuildout.git
-templer.silva               = git \${remotes:collective}/templer.silva.git pushurl=\${remotes:collective_push}/templer.silva.git
-templer.localcommands       = git \${remotes:collective}/templer.localcommands.git pushurl=\${remotes:collective_push}/templer.localcommands.git
-templer.plone.localcommands = git \${remotes:collective}/templer.plone.localcommands.git pushurl=\${remotes:collective_push}/templer.plone.localcommands.git
-templer.plonecore           = svn https://svn.plone.org/svn/collective/templer.plonecore/trunk
 
+[versions]
+# never ever pin paste and other eggs
+Paste =
+PasteDeploy =
+PasteScript =
+ZopeSkel =
+distribute =
+#if $with_ploneproduct_solr
+collective.recipe.solrinstance = 3.6
+gocept.download = 0.9.5 
+#end if
 
 [instance]
 http-address = $address:$http_port
@@ -123,18 +123,6 @@ recipe = collective.recipe.omelette
 eggs = \${instance:eggs}
 #packages = ./
 
-[versions]
-#for section in $p4_versions:
-\# $section
-#for version in $p4_versions[section]:
-#if $version[0].startswith('#'):
-$version[0]
-#else
-#$version[0] = $version[1]
-#end if
-#end for
-#end for
-
 [tools]
 recipe=minitage.recipe.scripts
 interpreter=toolspy
@@ -142,32 +130,13 @@ eggs=
     i18ndude
     babel
     sphinx
-    zopeskel
-    toutpt.zopeskel
-    templer.dexterity
-    templer.buildout
-    templer.plone
-    templer.plone.localcommands
-    templer.zope
 scripts=
     i18ndude
     pybabel
     templer
     paster
 
-[versions]
-# never ever pin paste and other eggs
-Paste =
-PasteDeploy =
-PasteScript =
-ZopeSkel =
-distribute =
-
 #if $with_ploneproduct_solr
-[versions]
-collective.recipe.solrinstance = 3.6
-gocept.download = 0.9.5
-
 [solr-download]
 recipe = gocept.download
 strip-top-level-dir = true
@@ -226,3 +195,4 @@ index =
 #    name:UID              type:string stored:true required:true
 #end if
 
+\# vim: set ft=cfg:

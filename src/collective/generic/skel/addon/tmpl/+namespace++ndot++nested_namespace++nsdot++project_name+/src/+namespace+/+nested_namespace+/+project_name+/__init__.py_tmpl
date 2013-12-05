@@ -1,19 +1,21 @@
 from zope.interface import implements
-from Products.CMFQuickInstallerTool.interfaces import INonInstallable as INonInstallableProducts
-from Products.CMFPlone.interfaces import INonInstallable as INonInstallableProfiles
+from Products.CMFQuickInstallerTool.interfaces import (
+    INonInstallable as INonInstallableProducts
+)
+from Products.CMFPlone.interfaces import (
+    INonInstallable as INonInstallableProfiles
+)
 import logging
 from zope.i18nmessageid import MessageFactory
 
-MessageFactory = ${namespace}${nested_namespace}${project_name}MessageFactory = MessageFactory('${namespace}${ndot}${nested_namespace}${nsdot}${project_name}') 
+MessageFactory = ${namespace}${nested_namespace}${project_name}MessageFactory = MessageFactory('${namespace}${ndot}${nested_namespace}${nsdot}${project_name}')
 logger = logging.getLogger('${pdn}')
 EXTENSION_PROFILES = ('${pdn}:default',)
 SKIN = '${namespace}${ndot}${nested_namespace}${nsdot}skin'
-HIDDEN_PRODUCTS = [u'plone.app.openid', u'NuPlone',
-]
-HIDDEN_PROFILES = [u'plone.app.openid', u'NuPlone',
-]
+HIDDEN_PRODUCTS = [u'plone.app.openid', u'NuPlone']
+HIDDEN_PROFILES = [u'plone.app.openid', u'NuPlone']
 
-PRODUCT_DEPENDENCIES = (\
+PRODUCT_DEPENDENCIES = (
 #for var in $qi:
 #$var
 #for product in $qi[$var]:
@@ -39,11 +41,11 @@ class HiddenProfiles(object):
     implements(INonInstallableProfiles)
 
     def getNonInstallableProfiles(self):
-        return [ u'plone.app.openid', u'NuPlone', ]
+        return [u'plone.app.openid', u'NuPlone']
 
 
 def initialize(context):
-    """Initializer called when used as a Zope 2 product.""" 
+    """Initializer called when used as a Zope 2 product."""
 
 
 GLOBALS = globals()

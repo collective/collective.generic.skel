@@ -1,25 +1,28 @@
-import unittest2 as unittest
+\#import unittest2 as unittest
 import os
 import transaction
-import ConfigParser
-import re
+\#import ConfigParser
+\#import re
 import sys
-from copy import deepcopy
-from pprint import pprint
+\#from copy import deepcopy
+\#from pprint import pprint
 
 from Testing import ZopeTestCase as ztc
 from OFS.Folder import Folder
-from zope.component import adapts, getMultiAdapter, getAdapter, getAdapters
-from zope import interface, schema
-from zope.interface import implementedBy, providedBy
-from zope.interface.verify import verifyObject
+\#from zope.component import adapts, getMultiAdapter, getAdapter, getAdapters
+\#from zope import interface, schema
+\#from zope.interface import implementedBy, providedBy
+\#from zope.interface.verify import verifyObject
 from zope.traversing.adapters import DefaultTraversable
-from zope.configuration import xmlconfig
+\#from zope.configuration import xmlconfig
 import zope
-from Acquisition import aq_inner, aq_parent, aq_self
-from Products.CMFCore.utils import getToolByName
-from Products.statusmessages.interfaces import IStatusMessage
-from plone.testing import Layer, zodb, zca, z2
+\#from Acquisition import aq_inner, aq_parent, aq_self
+\#from Products.CMFCore.utils import getToolByName
+\#from Products.statusmessages.interfaces import IStatusMessage
+from plone.testing import Layer
+\#from plone.testing import zodb
+\#from plone.testing import zca
+from plone.testing import z2
 from plone.app.testing import (
     FunctionalTesting as BFunctionalTesting,
     IntegrationTesting as BIntegrationTesting,
@@ -28,10 +31,8 @@ from plone.app.testing import (
     helpers,
     setRoles,
     SITE_OWNER_NAME,
-    SITE_OWNER_PASSWORD,
+    \#SITE_OWNER_PASSWORD,
     TEST_USER_ID,
-    TEST_USER_ID,
-    TEST_USER_NAME,
     TEST_USER_NAME,
     TEST_USER_ROLES,
 )
@@ -39,7 +40,7 @@ from plone.app.testing.selenium_layers import (
     SELENIUM_FUNCTIONAL_TESTING as SELENIUM_TESTING
 )
 
-TESTED_PRODUCTS = (\
+TESTED_PRODUCTS = (
 #for item in $z2products:
 #$item
 #for package in $z2products[$item]:
@@ -169,7 +170,7 @@ class LayerMixin(Layer):
                 PLONE_MANAGER_ID,
                 PLONE_MANAGER_NAME,
                 PLONE_MANAGER_PASSWORD,
-                ['Manager']+TEST_USER_ROLES)
+                ['Manager'] + TEST_USER_ROLES)
             self.logout()
         self.login(TEST_USER_NAME)
         self.setRoles(['Manager'])
@@ -178,10 +179,11 @@ class LayerMixin(Layer):
         self['test-folder'] = self['folder'] = self['portal']['test-folder']
         self.setRoles(TEST_USER_ROLES)
         transaction.commit()
-        selfs['globs'] = globals()
+        self['globs'] = globals()
 
     def add_user(self, portal, id, username, password, roles=None):
-        if not roles: roles = TEST_USER_ROLES[:]
+        if not roles:
+            roles = TEST_USER_ROLES[:]
         self.loginAsPortalOwner()
         pas = portal['acl_users']
         pas.source_users.addUser(id, username, password)
@@ -229,19 +231,20 @@ class SimpleLayer(Layer):
     defaultBases = tuple()
 
 
-${P_D_N}_SIMPLE              = SimpleLayer(name='${PdN}:Simple')
-${P_D_N}_INTEGRATION_TESTING = IntegrationTesting(name = "${PdN}:Integration")
-${P_D_N}_FUNCTIONAL_TESTING  = FunctionalTesting( name = "${PdN}:Functional")
-${P_D_N}_SELENIUM_TESTING    = FunctionalTesting(bases = (SELENIUM_TESTING,
-                                                          ${P_D_N}_FUNCTIONAL_TESTING,),
-                                                 name = "${PdN}:Selenium")
+${P_D_N}_SIMPLE = SimpleLayer(name='${PdN}:Simple')
+${P_D_N}_INTEGRATION_TESTING = IntegrationTesting(name="${PdN}:Integration")
+${P_D_N}_FUNCTIONAL_TESTING = FunctionalTesting(name="${PdN}:Functional")
+${P_D_N}_SELENIUM_TESTING = FunctionalTesting(
+    bases=(SELENIUM_TESTING, ${P_D_N}_FUNCTIONAL_TESTING,),
+    name="${PdN}:Selenium")
 
 
-class Browser(z2.Browser): # pragma: no cover
+class Browser(z2.Browser):  # pragma: no cover
     """Patch the browser class to be a little more like a webbrowser."""
 
     def __init__(self, app, url=None, headers=None):
-        if headers is None: headers = []
+        if headers is None:
+            headers = []
         z2.Browser.__init__(self, app, url)
         self.mech_browser.set_handle_robots(False)
         for h in headers:
@@ -271,14 +274,18 @@ class Browser(z2.Browser): # pragma: no cover
         portal = ${P_D_N}_FUNCTIONAL_TESTING['portal']
         if not url:
             url = portal.absolute_url()
-        if headers is None: headers = []
-        if user: login = True
-        if not user: user = PLONE_MANAGER_NAME
-        if not passwd: passwd = PLONE_MANAGER_PASSWORD
+        if headers is None:
+            headers = []
+        if user:
+            login = True
+        if not user:
+            user = PLONE_MANAGER_NAME
+        if not passwd:
+            passwd = PLONE_MANAGER_PASSWORD
         if login:
             auth = 'Basic %s:%s' % (user, passwd)
             headers.append(('Authorization', auth))
-        headers.append(('User-agent' , GENTOO_FF_UA))
+        headers.append(('User-agent', GENTOO_FF_UA))
         browser = cls(app, url, headers=headers)
         return browser
 
@@ -287,8 +294,8 @@ zope.component.provideAdapter(DefaultTraversable, [None])
 cwd = os.path.dirname(__file__)
 
 
-def get_interfaces(o):
-    return [o for o in o.__provides__.interfaces()]
+def get_interfaces(obj):
+    return [o for o in obj.__provides__.interfaces()]
 
 
 def errprint(msg):
@@ -308,8 +315,8 @@ class Request(zope.publisher.browser.TestRequest):
 TestRequest = Request
 
 
-def make_request(url='http://nohost/@@myview',form=None, *args,  **kwargs):
-    r = Request(environ = {'SERVER_URL': url, 'ACTUAL_URL': url}, form=form, *args, **kwargs)
+def make_request(url='http://nohost/@@myview', form=None, *args, **kwargs):
+    r = Request(environ={'SERVER_URL': url, 'ACTUAL_URL': url}, form=form, *args, **kwargs)
     zope.interface.alsoProvides(r, zope.annotation.interfaces.IAttributeAnnotatable)
     return r
 

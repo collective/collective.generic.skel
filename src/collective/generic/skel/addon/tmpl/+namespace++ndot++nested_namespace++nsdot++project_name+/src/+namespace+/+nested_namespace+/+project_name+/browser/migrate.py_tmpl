@@ -12,11 +12,10 @@ import subprocess
 import threading
 
 from zope.interface import alsoProvides
-from zope import component, interface
+from zope import interface
 from zope.annotation.interfaces import IAnnotations
-from zope.component import getAdapter, getMultiAdapter, queryMultiAdapter, getUtility
 
-from Acquisition import aq_parent
+\#from Acquisition import aq_parent
 from persistent.mapping import PersistentMapping
 
 from Products.CMFCore.utils import getToolByName
@@ -31,7 +30,7 @@ from Products.CMFPlone.setuphandlers import addCacheForResourceRegistry
 
 
 from plone.app.upgrade.v40 import alphas
-from plone.registry.interfaces import IRegistry
+\#from plone.registry.interfaces import IRegistry
 from plone.indexer.interfaces import IIndexableObject
 from plone.app.folder.migration import BTreeMigrationView as Bv
 
@@ -70,20 +69,20 @@ class BlobMigrator(BaseInlineMigrator):
     src_meta_type = 'File'
     dst_portal_type = 'File'
     dst_meta_type = 'File'
-    fields_map = { 'file': None, }
+    fields_map = {'file': None}
     reindex_indexes = tuple()
 
     def migrate_data(self):
-        ppath = '/'.join( self.obj.getPhysicalPath())
+        ppath = '/'.join(self.obj.getPhysicalPath())
         filename = ''
         for f in self.fields_map.keys():
             _marker = []
             oldfield = self.obj.schema[f]
             field = self.obj.getPrimaryField()
             try:
-                if ( # already migrated
-                    'blob'
-                    in
+                # already migrated
+                if (
+                    'blob' in
                     oldfield.storage.get(
                         oldfield.__name__, self.obj
                     ).__class__.__name__.lower()
@@ -107,10 +106,10 @@ class BlobMigrator(BaseInlineMigrator):
                     and not isinstance(data, basestring)
                 ):
                     raise Exception('Invalid blob')
-            except Exception, ex:
+            except Exception:
                 upgrades.log(
                     'Migration to blob failed for %s:\n'
-                    '%s' % (ppath , traceback.format_exc()))
+                    '%s' % (ppath, traceback.format_exc()))
                 data = _marker
             #upgrades.log(
             #        '%s %s;%s;%s' %(
@@ -142,7 +141,7 @@ class BlobMigrator(BaseInlineMigrator):
             self.obj.setTitle(title)
             self.obj.title = title
             # regarder si ts les idx existent
-            self.obj.reindexObject(['Title', 'sortable_title',])
+            self.obj.reindexObject(['Title', 'sortable_title'])
             self.obj.setDescription(
                 self.obj.getDescription()
                 or self.obj.Description())
@@ -155,7 +154,7 @@ class BlobMigrator(BaseInlineMigrator):
     def last_migrate_reindex(self):
         try:
             self.obj.reindexObject(list(self.reindex_indexes))
-        except Exception, ex:
+        except Exception:
             upgrades.log(
                 '%s failed reindex during blob migration:\n'
                 '%s' % (
@@ -189,17 +188,17 @@ def migration_infos(context):
 
 def onlyonce(callback):
     step = callback.func_name
+
     def wrap(self, *args, **kwargs):
         context = self.context
-        ret = None
         path = '/'.join(context.getPhysicalPath())
         try:
             if not is_migrated(context, step):
-                ret = callback(self, *args, **kwargs)
+                callback(self, *args, **kwargs)
             else:
                 upgrades.log('%s already done for %s' % (step, path))
             mark_migrated(context, step)
-        except Exception, e:
+        except Exception:
             raise
     return wrap
 
@@ -234,7 +233,8 @@ class ${PdN}_migrate(grok.View):
     def monkeypatch(self):
         # commit on each suceeded step
         from Products.GenericSetup import upgrade as gs_u
-        context = self.context
+        #context = self.context
+
         def doStep(self, tool):
             ctx = getToolByName(tool, 'portal_url').getPortalObject()
             ret = getattr(self, '_oldm_doStep')(tool)
@@ -252,15 +252,14 @@ class ${PdN}_migrate(grok.View):
                     getattr(gs_u.UpgradeStep, '_oldm_doStep'))
             delattr(gs_u.UpgradeStep, '_oldm_doStep')
 
-
     def render(self):
-        mt = getToolByName(self.context, 'portal_membership')
-        user = mt.getAuthenticatedMember()
-        if not ENABLED:return
+        #mt = getToolByName(self.context, 'portal_membership')
+        if not ENABLED:
+            return
         try:
             self.monkeypatch()
             data = self.migrate()
-        except Exception, e:
+        except Exception:
             trace = traceback.format_exc()
             log(trace, 'error')
             data = {'migrated': False, 'error': trace}
@@ -269,11 +268,13 @@ class ${PdN}_migrate(grok.View):
         sdata = json.dumps(data)
         self.request.RESPONSE.setHeader("Content-Transfer-Encoding", "binary")
         self.request.RESPONSE.setHeader("Content-Length", len(sdata))
-        self.request.RESPONSE.setHeader("Expires", "0");
-        self.request.RESPONSE.setHeader("Cache-Control", "no-cache, must-revalidate")
+        self.request.RESPONSE.setHeader("Expires", "0")
+        self.request.RESPONSE.setHeader(
+            "Cache-Control", "no-cache, must-revalidate")
         self.request.RESPONSE.setHeader("Pragma", "no-cache")
-        self.request.RESPONSE.setHeader('Content-Type','application/json')
-        self.request.RESPONSE.addHeader('Content-Disposition',"attachment; filename=file.json")
+        self.request.RESPONSE.setHeader('Content-Type', 'application/json')
+        self.request.RESPONSE.addHeader(
+            'Content-Disposition', "attachment; filename=file.json")
         self.request.RESPONSE.write(sdata)
 
     def migrate(self):
@@ -284,19 +285,19 @@ class ${PdN}_migrate(grok.View):
         control_wv_t = threading.Thread(target=control_wv, args=(self,))
         control_wv_t.start()
         pt = self.context.restrictedTraverse('@@plone_portal_state')
-        portal_setup = getToolByName(context, 'portal_setup')
+        #portal_setup = getToolByName(context, 'portal_setup')
         context = self.context
         portal = pt.portal()
-        root = pt.navigation_root()
+        #root = pt.navigation_root()
         annotations = IAnnotations(portal)
         if not PRODUCT in annotations:
             annotations[PRODUCT] = PersistentMapping()
         migration_data = annotations[PRODUCT]
         migration_data.setdefault('migrated', False)
-        qi = portal.portal_quickinstaller
+        #qi = portal.portal_quickinstaller
         self.custom_hook_migrationbegin()
         self.migrate_btrees()
-        not_deleted = []
+        #not_deleted = []
         # notneeded: self.delete_manual_broken(not_deleted)
         # notneeded: self.delete_broken(not_deleted)
         upgrades.cleanup_portal_setup_registries(context)
@@ -375,8 +376,10 @@ class ${PdN}_migrate(grok.View):
             try:
                 p = i.getPath()
                 obj = i.getObject()
-                if repr(obj).startswith(
-                    '<persistent broken '):
+                if (
+                    repr(obj).startswith(
+                        '<persistent broken ')
+                ):
                     brokens[p] = (i, obj)
                 else:
                     objects[p] = (i, obj)
@@ -403,8 +406,10 @@ class ${PdN}_migrate(grok.View):
             #self.path + '/CacheSetup_OFSCache',
         ]
         for path in knowns:
-            if (not self.delete_path(path)
-                and (not path in not_deleted)):
+            if (
+                not self.delete_path(path)
+                and (not path in not_deleted)
+            ):
                 not_deleted.append(path)
         return not_deleted
 
@@ -420,8 +425,10 @@ class ${PdN}_migrate(grok.View):
         while notstop:
             objects, brokens = self.get_allobjs()
             for path in brokens:
-                if (not self.delete_path(path)
-                    and (not path in not_deleted)):
+                if (
+                    not self.delete_path(path)
+                    and (not path in not_deleted)
+                ):
                     not_deleted.append(path)
             objects2, broken2 = self.get_allobjs()
             if not len(broken2) < len(brokens):
@@ -442,8 +449,6 @@ class ${PdN}_migrate(grok.View):
     @onlyonce
     def reimplement(self):
         catalog = getToolByName(self.context, 'portal_catalog')
-        uid_catalog = getToolByName(self.context, 'uid_catalog')
-        ref_catalog = getToolByName(self.context, 'reference_catalog')
         count = 0
         for i in catalog.search({}):
             o = i.getObject()
@@ -455,7 +460,6 @@ class ${PdN}_migrate(grok.View):
 
     @onlyonce
     def to_blob(self):
-        qi = getToolByName(self.context, 'portal_quickinstaller')
         portal_setup = getToolByName(self.context, 'portal_setup')
         upgrade_dcmi_metadata(portal_setup)
         portal_setup.runAllImportStepsFromProfile('profile-plone.app.registry:default')
@@ -484,7 +488,6 @@ class ${PdN}_migrate(grok.View):
 
     @onlyonce
     def migrate_object_provides(self):
-        context = self.context
         catalog = self.context.portal_catalog
         upgrades.log('Migrating object_provides')
         catalog.manage_reindexIndex(['object_provides'])
@@ -499,7 +502,7 @@ class ${PdN}_migrate(grok.View):
         qi = getToolByName(context, 'portal_quickinstaller')
         if qi.isProductInstalled('kupu'):
             upgrades.quickinstall_addons(
-                context, uninstall = ['kupu',],)
+                context, uninstall=['kupu'])
         if 'kupu_library_tool' in context.objectIds():
             self.delete_path(self.path + "/kupu_library_tool")
         self.remove_cachefu()
@@ -519,8 +522,10 @@ class ${PdN}_migrate(grok.View):
         upgrades.commit(self.context)
         not_deleted = []
         for path in knowns:
-            if (not self.delete_path(path)
-                and (not path in not_deleted)):
+            if (
+                not self.delete_path(path)
+                and (not path in not_deleted)
+            ):
                 not_deleted.append(path)
         manage_addCachingPolicyManager(self.context)
         addCacheHandlers(self.context)
@@ -559,7 +564,7 @@ class ${PdN}_migrate(grok.View):
         """Wipe out the portal_skins/custom CMF layer content"""
         upgrades.move_custom(
             self.context,
-            ignores= [
+            ignores=[
                 'logo_intra.jpg',
                 'global_logo',
                 'portlet_',
@@ -572,7 +577,7 @@ class ${PdN}_migrate(grok.View):
     @onlyonce
     def remove_ttw(self):
         context = self.context
-        ttw = getToolByName(context,'portal_view_customizations')
+        ttw = getToolByName(context, 'portal_view_customizations')
         [ttw.manage_delObjects(a) for a in ttw.objectIds()]
         upgrades.commit(context)
 
@@ -587,7 +592,8 @@ class ${PdN}_migrate(grok.View):
     @onlyonce
     def remap_views(self):
         maps = self.view_maps
-        if not maps: return
+        if not maps:
+            return
         views_i = {"FieldIndex": ['getLayout', 'default_page']}
         context = self.context
         catalog = self.context.portal_catalog
@@ -616,14 +622,14 @@ class ${PdN}_migrate(grok.View):
                         log('Cant change layout: %s (%s)' % (
                             brain.getPath(), e))
                         continue
-            vl = catalog.uniqueValuesFor('getLayout')
+            catalog.uniqueValuesFor('getLayout')
             upgrades.commit(context)
         finally:
             setup_catalog(
                 self.context,
                 indexes=[], metadatas=[],
-                remove_indexes = views_i["FieldIndex"],
-                remove_metadatas = views_i["FieldIndex"],
+                remove_indexes=views_i["FieldIndex"],
+                remove_metadatas=views_i["FieldIndex"],
             )
         upgrades.commit(context)
 
@@ -632,7 +638,8 @@ class ${PdN}_migrate(grok.View):
         """Mark products as correctly installed by the quickinstaller"""
         upgrades.log('postupgrade')
         context = self.context
-        upgrades.quickinstall_addons(self.context, self.products, [], upgrades=self.upproducts)
+        upgrades.quickinstall_addons(
+            self.context, self.products, [], upgrades=self.upproducts)
         upgrades.commit(context)
 
     @onlyonce
@@ -653,17 +660,18 @@ class ${PdN}_migrate(grok.View):
                 # let the objects be wrapped now by plone.indexer
                 if IIndexableObject.providedBy(obj):
                     interface.noLongerProvides(obj, IIndexableObject)
-                catalog.reindexObject(obj, [
-                    "allowedRolesAndUsers", "object_provides", "sortable_title",
-                    "getObjPositionInParent", "getObjSize", "is_folderish",
-                    "syndication_enabled", "is_default_page", "getIcon",
-                    ])
+                    catalog.reindexObject(obj, [
+                        "allowedRolesAndUsers", "object_provides", "sortable_title",
+                        "getObjPositionInParent", "getObjSize", "is_folderish",
+                        "syndication_enabled", "is_default_page", "getIcon"]
+                    )
             except Exception, e:
                 upgrades.log('pb cataloging %s; %s' % (itm.getPath(), e))
             if i % 10 == 0:
-                upgrades.log('Recatalog: %s on %s (%s %s)' % (i, lb, (i/(1.0*lb)*100), '%'))
+                upgrades.log('Recatalog: %s on %s (%s %s)' % (
+                    i, lb, (i / (1.0 * lb) * 100), '%'))
                 upgrades.commit(context)
-        brs = catalog.searchResults(path='/')
+        catalog.searchResults(path='/')
         upgrades.commit(context)
 
     @onlyonce
@@ -674,8 +682,6 @@ class ${PdN}_migrate(grok.View):
 ##########################################################################
 ####### CUSTOM HOOKS TO ADAPT TO YOUR PROJECT
 ##########################################################################
-
-
     def custom_hook_migrationbegin(self):
         pass
 
@@ -725,7 +731,7 @@ class ${PdN}_migrate(grok.View):
             'gallery': 'galleria_view',
             'folder_summary_news_view': (
                 'folder_summary_view'),
-            'homepage_news':'folder_summary_view',
+            'homepage_news': 'folder_summary_view',
         })
 
     def update_products_sets(self):
@@ -747,12 +753,9 @@ class ${PdN}_migrate(grok.View):
         ])
         self.upproducts.extend(['ContentWellPortlets'])
 
-
 ##########################################################################
 ####### CUSTOM METHODS
 ##########################################################################
-
-
     @onlyonce
     def migrate_file${PdN}_to_blob(self):
         upgrades.log('Migrating File${PdN} to blob')
@@ -784,7 +787,8 @@ class ${PdN}_migrate(grok.View):
         lsize = 0
         for ptype in ptypes:
             for i in self.context.portal_catalog.search(
-                {'portal_type': ptype}):
+                {'portal_type': ptype}
+            ):
                 obj = i.getObject()
                 ppath = '/'.join(obj.getPhysicalPath())
                 field = 'file' in ptype.lower() and 'file' or 'image'
@@ -810,7 +814,6 @@ class ${PdN}_migrate(grok.View):
 
     @onlyonce
     def migrate_description(self):
-        context = self.context
         catalog = self.context.portal_catalog
         portal_transforms = getToolByName(self.context,
                                           'portal_transforms')
@@ -860,9 +863,10 @@ def control_wv(view):
         now = datetime.datetime.now()
         if now - onow > datetime.timedelta(seconds=30):
             upgrades.log("Always running wv control thread")
-            onow = now 
-        pl = subprocess.Popen(['ps', '-aeo', 'etime,pid,command'], 
-                    stdout=subprocess.PIPE).communicate()[0]
+            onow = now
+            pl = subprocess.Popen(
+                ['ps', '-aeo', 'etime,pid,command'],
+                stdout=subprocess.PIPE).communicate()[0]
         for i in [a.strip() for a in pl.splitlines() if 'wv' in a.lower()]:
             etime = i.split()[0]
             pid = i.split()[1]
@@ -870,7 +874,8 @@ def control_wv(view):
                 minutes = etime.split(':')[0]
                 try:
                     if int(minutes) > 1:
-                        ot = subprocess.Popen(['kill', '-9', '%s' % pid], 
+                        subprocess.Popen(
+                            ['kilL', '-9', '%s' % pid],
                             stdout=subprocess.PIPE).communicate()[0]
                         upgrades.log("Wvhtml control: kill %s" % pid)
                 except:
