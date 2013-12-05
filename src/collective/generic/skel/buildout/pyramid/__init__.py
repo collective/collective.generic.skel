@@ -81,10 +81,10 @@ base_pyramid_eggs = ['pyramid',
                      'CherryPy', 'gunicorn']
 
 
-class Template(common.Template):
+class Package(common.Package):
 
     summary = (
-        'Template for creating a '
+        'Package for creating a '
         'basic pyramid project')
     _template_dir = pkg_resources.resource_filename(
         'collective.generic.skel', 'projects/pyramid/template')
@@ -111,7 +111,7 @@ class Template(common.Template):
     def pre(self, command, output_dir, vars):
         """register catogory, and roll in common,"""
         vars['category'] = 'pyramid'
-        common.Template.pre(self, command, output_dir, vars)
+        common.Package.pre(self, command, output_dir, vars)
         if not os.path.exists(self.output_dir):
             self.makedirs(self.output_dir)
         vars['sane_name'] = common.SPECIALCHARS.sub('', vars['project'])
@@ -216,7 +216,7 @@ class Template(common.Template):
         vars['sreverseproxy_aliases'] = vars['reverseproxy_aliases'].split(',')
 
     def read_vars(self, command=None):
-        vars = common.Template.read_vars(self, command)
+        vars = common.Package.read_vars(self, command)
         if command:
             if not command.options.quiet:
                 for msg in getattr(self, 'init_messages', []):
@@ -233,7 +233,7 @@ class Template(common.Template):
                 vars[i].default = sane_name
         return vars
 
-Template.vars = common.Template.vars + [
+Package.vars = common.Package.vars + [
     var('pyramid_version', 'Pyramid version', default='1.2.1',),
     var('address', 'Address to listen on', default='localhost',),
     var('license', 'License', default='BSD',),
@@ -285,6 +285,6 @@ Template.vars = common.Template.vars + [
         default='n',),
     var('buildbot_cron',
         'Buildbot cron to schedule builds', default='0 3 * * *',),
-] + Template.addons_vars + dev_vars
+] + Package.addons_vars + dev_vars
 
 # vim:set et sts=4 ts=4 tw=80:

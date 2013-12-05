@@ -93,7 +93,7 @@ base_django_eggs = ['celery',
                     'WebError']
 
 
-class Template(common.Template):
+class Package(common.Package):
 
     summary = ('Template for creating a '
                'basic django project')
@@ -120,14 +120,14 @@ class Template(common.Template):
     plone_sources = plone_sources
 
     def post(self, command, output_dir, vars):
-        common.Template.post(self, command, output_dir, vars)
+        common.Package.post(self, command, output_dir, vars)
         os.rename(os.path.join(vars['path'], 'gitignore'),
                   os.path.join(vars['path'], '.gitignore'))
 
     def pre(self, command, output_dir, vars):
         """register catogory, and roll in common,"""
         vars['category'] = 'django'
-        common.Template.pre(self, command, output_dir, vars)
+        common.Package.pre(self, command, output_dir, vars)
         if not os.path.exists(self.output_dir):
             self.makedirs(self.output_dir)
         vars['sane_name'] = common.SPECIALCHARS.sub('', vars['project'])
@@ -182,7 +182,7 @@ class Template(common.Template):
                 vars['%s_comment' % i] = '#'
 
     def read_vars(self, command=None):
-        vars = common.Template.read_vars(self, command)
+        vars = common.Package.read_vars(self, command)
         if command:
             if not command.options.quiet:
                 for msg in getattr(self, 'init_messages', []):
@@ -200,7 +200,7 @@ class Template(common.Template):
 
         return vars
 
-Template.vars = common.Template.vars + [
+Package.vars = common.Package.vars + [
     var('django_version', 'Django version', default='1.5'),
     var('license', 'License', default='BSD',),
     var('http_port', 'Port to listen to', default='8081'),
@@ -215,6 +215,6 @@ Template.vars = common.Template.vars + [
     var('plone_scripts',
         'comma separeted list of scripts to '
         'generate from installed eggs', default='',),
-] + Template.addons_vars + dev_vars
+] + Package.addons_vars + dev_vars
 
 # vim:set et sts=4 ts=4 tw=80:

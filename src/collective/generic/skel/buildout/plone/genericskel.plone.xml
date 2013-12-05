@@ -1,0 +1,563 @@
+<?xml version="1.0"?>
+<!--
+  GOAL OF THIS CONFIGURATION IS TO CUSTOMIZE THE genericskel.plone3 paster template options to fit to your needs
+  You can even override by copy/edit it on your ~/.genericskel.plone3.cfg.
+  Goal is to stop to spread new templates for special use, and to configure them.
+  A subsidiary goal is to remove so useless logic in templates.
+  You can, i think, customzize the whole template via this configuration.
+  Please note that genericskel.plone3 is coupled with collectige.generic.skel.* templates.
+  They will use it's variables/API to construct themselves.
+-->
+<root>
+  <!--
+    PASTER OPTIONS to be added on the fly to genericskel.paste.plone3 product
+    <option name="foo" description="SOMETEXT>
+  -->
+  <template>
+  <options>
+  <option name="reverseproxy_host"                        order="0000"   description="domain name which be used in the reverse proxy" default="www.localhost.com"/>
+  <option name="reverseproxy_edit_host"                   order="0000"   description="domain name which be used in the reverse proxy for the non cached host" default="edit.localhost.com"/>
+  <option name="reverseproxy_port"                        order="0000"   description="port of the reverse proxy" default="80"/>
+  <option name="reverseproxy_scheme"                      order="0000"   description="HHTP(s) scheme of the reverse proxy (http/https)" default="http"/>
+  <option name="with_binding_bsoup"                       order="0000"   description="BeautifulSoup,see http://pypi.python.org/pypi/BeautifulSoup/ y/n"/>
+  <option name="with_binding_json"                        order="0000"   description="Json python various bindings (demjson, simplejson) y/n"/>
+  <option name="with_binding_ldap"                        order="0000"   description="LDAP bindings y/n"/>
+  <option name="with_binding_lxml"                        order="0000"   description="lxml y/n" default="n"/>
+  <option name="with_binding_mapscript"                   order="10000"  description="mapserver python bindings, see http://pypi.python.org/pypi/mapscript y/n"   default="n"/>
+  <option name="with_binding_pdf"                         order="0000"   description="PDF Python various bindings including pypdf Y/n"/>
+  <option name="with_binding_pil"                         order="0000"   description="Python imaging (dangerous to disable) y/n" default="y"/>
+  <option name="with_binding_pyqt"                        order="0000"   description="Python Qt y/n" default="n"/>
+  <option name="with_binding_sugar"                       order="0000"   description="Python SugarCrm bindings y/n" default="n"/>
+  <option name="with_binding_tesseract"                   order="0000"   description="Tesseract OCR support, y/n" default="n"/>
+  <option name="with_binding_xlwt"                        order="0000"   description="xlwt,see http://pypi.python.org/pypi/xlwt/ y/n"/>
+  <option name="with_database_mysql"                      order="0000"   description="Mysql python bindings y/n"/>
+  <option name="with_database_oracle"                     order="0000"   description="Oracle python bindings y/n"/>
+  <option name="with_database_postgresql"                 order="0000"   description="Postgresql python bindings y/n"/>
+  <option name="with_database_sa"                         order="0000"   description="SQLAlchemy, see http://www.sqlalchemy.org y/n"/>
+  <option name="with_experimental"                        order="0000"   description="Plone experimental improvments y/n" default="n"/>
+  <option name="with_ploneproduct_solr"                   order="0000"   description="Solr y/n"/>
+  <option name="with_tool_bpython"                        order="0000"   description="bpython, see http://www.bpython-interpreter.org/ y/n" default="y"/>
+  <option name="with_tool_cgeneric"                       order="10030"  description="include a bundle of collective.generic development tools y/n"       default="n"/>
+  <option name="with_tool_i18ndude"                       order="0000"   description="i18n http://pypi.python.org/pypi/i18ndude y/n" default="y"/>
+  <option name="with_tool_ipython"                        order="0000"   description="ipython, see http://ipython.scipy.org/ y/n" default="y"/>
+  <option name="with_tool_zopeskel"                       order="0000"   description="ZopeSkel http://pypi.python.org/pypi/ZopeSkel y/n" default="y"/>
+  <option name="with_ploneproduct_addremovewidget"        order="1000"   description="AddRemoveWidget , see http://pypi.python.org/pypi/Products.AddRemoveWidget y/n"/>
+  <option name="with_ploneproduct_addthis"                order="01007"  description="collective.addthis, see http://pypi.python.org/pypi/collective.addthis y/n" default="n"/>
+  <option name="with_ploneproduct_agridfield"             order="1000"   description="archetypes.gridfield, see http://pypi.python.org/pypi/archetypes.gridfield y/n"/>
+  <option name="with_ploneproduct_atbackref"              order="1000"   description="ATBAckRef, see http://pypi.python.org/pypi/Products.ATBackRef y/n"/>
+  <option name="with_ploneproduct_atextensions"           order="1000"   description="ATExtention, see http://pypi.python.org/pypi/Products.ATExtensions y/n" default="n" />
+  <option name="with_ploneproduct_atschemaeditor"         order="1000"   description="ATSchemaEditorNG, see http://svn.plone.org/svn/collective/Products.ATSchemaEditorNG y/n"/>
+  <option name="with_ploneproduct_atvmanager"             order="1000"   description="ATVocabularyManager, see http://pypi.python.org/pypi/Products.ATVocabularyManager y/n"/>
+  <option name="with_ploneproduct_atworkgroup"            order="1000"   description="ATWorkgroup, see http://plone.org/products/mxm-workgroup/ y/n"/>
+  <option name="with_ploneproduct_autocomplete"           order="1000"   description="Autocomplete Widget, see http://pypi.python.org/pypi/plone.formwidget.autocomplete y/n"/>
+  <option name="with_ploneproduct_awspdfbook"             order="1000"   description="aws.pdfbook, see http://pypi.python.org/pypi/aws.pdfbook y/n"/>
+  <option name="with_ploneproduct_captcha"                order="00000"  description="captcha/recapcha, see http://pypi.python.org/pypi/collective.recaptcha  -- http://pypi.python.org/pypi/collective.captcha  y/n" default="n"/>
+  <option name="with_ploneproduct_ccron"                  order="0000"   description="collective.cron, see http://pypi.python.org/pypi/collective.cron y/n" default="n"/>
+  <option name="with_ploneproduct_cdewplayer"             order="01009"  description="dewplayer, see http://pypi.python.org/pypi/collective.dewplayer y/n"                                             default="n"/>
+  <option name="with_ploneproduct_cdewslider"             order="01010"  description="dewslider, see http://pypi.python.org/pypi/collective.dewslider y/n"                                             default="n"/>
+  <option name="with_ploneproduct_cfunkbot"               order="00000"  description="funkbot, see http://pypi.python.org/pypi/collective.funkbot y/n"                                                 default="n"/>
+  <option name="with_ploneproduct_cgallery"               order="00000"  description="collective.gallery, see http://pypi.python.org/pypi/collective.gallery y/n"                                                 default="n"/>
+  <option name="with_ploneproduct_cga"                    order="00000"  description="collective.googleanalytics, see http://pypi.python.org/pypi/collective.googleanalytics y/n"                                               default="n"/>
+  <option name="with_ploneproduct_cgeo"                   order="00000"  description="collective.geo (svn trunk), see http://plone.org/products/collective.geo y/n"                                               default="n"/>
+  <option name="with_ploneproduct_ci"                     order="1000"   description="collective.indexing, see http://pypi.python.org/pypi/collective.indexing y/n" default="n"/>
+  <option name="with_ploneproduct_cjqui"                  order="01118"  description="Jquery UI, see http://pypi.python.org/pypi/collective.js.jqueryui y/n"                                        default="n"/>
+  <option name="with_ploneproduct_cjsleaflet"             order="01007"  description="collective.js.leaflet, see http://pypi.python.org/pypi/collective.js.leaflet y/n" default="n"/>
+  <option name="with_ploneproduct_ckeditor"               order="01007"  description="collective.ckeditor, see http://pypi.python.org/pypi/collective.ckeditor y/n" default="n"/>
+  <option name="with_ploneproduct_clcumulus"              order="01007"  description="LocalCumus, see http://pypi.python.org/pypi/collective.portlet.localcumulus y/n" default="n"/>
+  <option name="with_ploneproduct_clouseau"               order="00000"  description="Clouseau, see http://plone.org/products/clouseau y/n"                                               default="n"/>
+  <option name="with_ploneproduct_cmailtolrole"           order="01007"  description="collective.contentrules.mailtolocalrole, see http://pypi.python.org/pypi/collective.contentrules.mailtolocalrole  y/n" default="n"/>
+  <option name="with_ploneproduct_cmfbibliographyat"      order="01007"  description="Products.CMFBibliographyAT, see http://plone.org/products/cmfbibliographyat y/n" default="n"/>
+  <option name="with_ploneproduct_collage"                order="1000"   description="Collage, see http://pypi.python.org/pypi/Products.Collage/ y/n"/>
+  <option name="with_ploneproduct_configviews"            order="01007"  description="collective.configviews, see http://pypi.python.org/pypi/collective.configviews y/n" default="n"/>
+  <option name="with_ploneproduct_contentlicensing"       order="1000"   description="Content Licensing, see http://pypi.python.org/pypi/collective.contentlicensing y/n"/>
+  <option name="with_ploneproduct_contentwellportlet"     order="1000"   description="Content well porlets, see http://pypi.python.org/pypi/Products.ContentWellPortlets y/n" default="n"/>
+  <option name="with_ploneproduct_contentwellportlet"     order="1000"   description="Content well porlets, see http://pypi.python.org/pypi/Products.ContentWellPortlets y/n" default="n"/>
+  <option name="with_ploneproduct_cpembed"                order="01007"  description="collective.portlet.embed, see http://pypi.python.org/pypi/collective.portlet.embed y/n" default="n"/>
+  <option name="with_ploneproduct_cplocalcumulus"         order="00000"  description="collective.portlet.localcumulus, see http://pypi.python.org/pypi/collective.portlet.localcumulus y/n"                 default="n"/>
+  <option name="with_ploneproduct_cportlettabber"         order="1000"   description="collective.portlettabber, see http://plone.org/products/collective.portlettabber y/n"/>
+  <option name="with_ploneproduct_cpwkf"                  order="1000"   description="CMFPlacefulWorkflow, see http://plone.org/products/cmfplacefulworkflow/ y/n"/>
+  <option name="with_ploneproduct_crelateditems"          order="00000"  description="collective.portlet.relateditems, see http://pypi.python.org/pypi/collective.portlet.relateditems y/n" default="n"/>
+  <option name="with_ploneproduct_cremovekss"             order="00000"  description="remove kss, see http://pypi.python.org/pypi/collective.remove.kss y/n"                                           default="n"/>
+  <option name="with_ploneproduct_cremovekupu"            order="00000"  description="remove kupu, see http://pypi.python.org/pypi/collective.remove.kupu y/n"                                         default="n"/>
+  <option name="with_ploneproduct_cremoverules"           order="00000"  description="remove.rules, see http://pypi.python.org/pypi/collective.remove.rules y/n"                                       default="n"/>
+  <option name="with_ploneproduct_csvreplica"             order="00000"  description="CSV Replicata, see http://pypi.python.org/pypi/Products.csvreplicata (makina users, do not untick) y/n"               default="n"/>
+  <option name="with_ploneproduct_cz3cformgrok"           order="01011"  description="Plone + z3cform light grok integration, see http://pypi.python.org/pypi/collective.z3cform.grok y/n"          default="n"/>
+  <option name="with_ploneproduct_cz3cformnorobots"       order="01012"  description="collective.z3cform.norobots, see http://pypi.python.org/pypi/collective.z3cform.norobots y/n"                    default="n"/>
+  <option name="with_ploneproduct_datatables"             order="01007"  description="collective.js.datatables, see http://pypi.python.org/pypi/collective.js.datatables y/n" default="n"/>
+  <option name="with_ploneproduct_dexterity"              order="0000"   description="Dexterity, see http://plone.org/products/dexterity y/n" default="y"/>
+  <option name="with_ploneproduct_docview"                order="01007"  description="collective.documentviewer, see http://pypi.python.org/pypi/collective.documentviewer y/n" default="n"/>
+  <option name="with_ploneproduct_dtviews"                order="01007"  description="collective.datatablesviews, see http://pypi.python.org/pypi/collective.datatablesviews y/n" default="n"/>
+  <option name="with_ploneproduct_eaggressivepagespeedup" order="00000"  description="experimental.aggressiveopaquespeedup, see http://pypi.python.org/pypi/experimental.aggressiveopaquespeedup y/n"  default="n"/>
+  <option name="with_ploneproduct_eeadaviz"               order="01007"  description="eea.daviz, see http://pypi.python.org/pypi/eea.daviz y/n" default="n"/>
+  <option name="with_ploneproduct_eeafn"                  order="01007"  description="eea.facetednaviguation, see http://pypi.python.org/pypi/eea.facetednavigation y/n" default="n"/>
+  <option name="with_ploneproduct_eeatags"                order="01007"  description="eea.tags, see http://pypi.python.org/pypi/eea.tags y/n" default="n"/>
+  <option name="with_ploneproduct_enewsletter"            order="01007"  description="EasyNewsletter, see http://plone.org/products/easynewsletter y/n" default="n"/>
+  <option name="with_ploneproduct_eslider"                order="01007"  description="collective.easyslider, see http://pypi.python.org/pypi/collective.easyslider y/n" default="n"/>
+  <option name="with_ploneproduct_etherpad"               order="01007"  description="collective.etherpad, see http://pypi.python.org/pypi/collective.etherpad y/n" default="n"/>
+  <option name="with_ploneproduct_facultystaff"           order="1000"   description="FalcultyStaff, see http://plone.org/products/faculty-staff-directory y/n"/>
+  <option name="with_ploneproduct_fivegrok"               order="1014"   description="five.grok integration, see http://pypi.python.org/pypi/five.grok (dangerous to disable) y/n" default="n"/>
+  <option name="with_ploneproduct_flowplayer"             order="1000"   description="FlowPlayer, see http://plone.org/products/collective-flowplayer/ y/n"/>
+  <option name="with_ploneproduct_galleria"               order="01007"  description="collective.galleria, see http://pypi.python.org/pypi/collective.galleria y/n" default="n"/>
+  <option name="with_ploneproduct_inplacetopicview"       order="00000"  description="inplacetopicview, see http://pypi.python.org/pypi/collective.inplacetopicview y/n"                               default="n"/>
+  <option name="with_ploneproduct_iterate"                order="1000"   description="Plone Iterate, see http://pypi.python.org/pypi/plone.app.iterate y/n" default="n"/>
+  <option name="with_ploneproduct_jschosen"               order="01007"  description="collective.js.chosen, see http://pypi.python.org/pypi/collective.js.chosen y/n" default="n"/>
+  <option name="with_ploneproduct_jsgalleryview"          order="00000"  description="collective.js.galleryview, see http://pypi.python.org/pypi/collective.js.galleryview y/n"                        default="n"/>
+  <option name="with_ploneproduct_jss3slider"             order="00000"  description="collective.js.s3slider, see http://pypi.python.org/pypi/collective.js.s3slider y/n"                              default="n"/>
+  <option name="with_ploneproduct_ldap"                   order="1000"   description="Plone LDAP, see http://plone.org/products/ploneldap/ y/n"/>
+  <option name="with_ploneproduct_lingua"                 order="1000"   description="LinguaPlone, see http://plone.org/products/linguaplone y/n"/>
+  <option name="with_ploneproduct_maps"                   order="1000"   description="Maps, see http://plone.org/products/maps/ y/n"/>
+  <option name="with_ploneproduct_masonry"                order="01007"  description="collective.masonry, see http://pypi.python.org/pypi/collective.masonry y/n" default="n"/>
+  <option name="with_ploneproduct_masterselect"           order="1000"   description="MasterSelect Widget, see http://pypi.python.org/pypi/Products.MasterSelectWidget y/n"/>
+  <option name="with_ploneproduct_membrane"               order="1005"   description="membrane, see http://pypi.python.org/pypi/membrane y/n"/>
+  <option name="with_ploneproduct_nmdlinkasvideo"         order="00000"  description="nmd.plonelinkasvideoembed, see http://pypi.python.org/pypi/nmd.plonelinkasvideoembed y/n"                        default="n"/>
+  <option name="with_ploneproduct_oembed"                 order="01007"  description="collective.oembed, see http://pypi.python.org/pypi/collective.oembed y/n" default="n"/>
+  <option name="with_ploneproduct_paasync"                order="0000"   description="Plone.app.async, see http://pypi.python.org/pypi/plone.app.async/ y/n" default="n"/>
+  <option name="with_ploneproduct_pacaching"              order="01007"  description="plone.app.caching, see http://pypi.python.org/pypi/plone.app.caching y/n" default="y"/>
+  <option name="with_ploneproduct_paevent"                order="0000"   description="plone.app.event, see http://pypi.python.org/pypi/plone.app.event y/n" default="n"/>
+  <option name="with_ploneproduct_pamultilingual"         order="01007"  description="plone.app.multilingual, see http://pypi.python.org/pypi/plone.app.multilingual y/n" default="n"/>
+  <option name="with_ploneproduct_paregistry"             order="01007"  description="plone.app.registry, see http://pypi.python.org/pypi/plone.app.registry y/n" default="y"/>
+  <option name="with_ploneproduct_patheming"              order="01007"  description="plone.app.theming, see http://pypi.python.org/pypi/plone.app.theming y/n" default="n"/>
+  <option name="with_ploneproduct_patransmo"              order="1016"   description="transmogrifier, see http://pypi.python.org/pypi/plone.app.transmogrifier y/n" default="n"/>
+  <option name="with_ploneproduct_plomino"                order="01008"  description="Plomino, see http://plone.org/products/plomino y/n"                                                                   default="n"/>
+  <option name="with_ploneproduct_plominotinymce"         order="01007"  description="Plomino.tinymce, see http://pypi.python.org/pypi/plomino.tinymce/ y/n"                                        default="n"/>
+  <option name="with_ploneproduct_plonearticle"           order="1000"   description="Plone Article, see http://plone.org/products/plonearticle/ y/n"/>
+  <option name="with_ploneproduct_ploneboardnotify"       order="1002"   description="Ploneboard Notify, see http://pypi.python.org/pypi/Products.PloneboardNotify y/n"/>
+  <option name="with_ploneproduct_ploneboard"             order="1003"   description="Plone Board, see http://plone.org/products/ploneboard/ y/n"/>
+  <option name="with_ploneproduct_ploneformgen"           order="1000"   description="PloneFormGen, see http://plone.org/products/ploneformgen y/n"/>
+  <option name="with_ploneproduct_plonejqtools"           order="1119"   description="Jquery Tools, see http://pypi.python.org/pypi/plone.app.jquerytools y/n" default="n"/>
+  <option name="with_ploneproduct_plonesurvey"            order="1000"   description="PloneSurvey, see http://plone.org/products/plone-survey/releases/1.3.0 y/n"/>
+  <option name="with_ploneproduct_poi"                    order="01009"  description="Poi, see http://plone.org/products/poi y/n"                                             default="n"/>
+  <option name="with_ploneproduct_pratings"               order="00000"  description="plone.contentratings, see http://plone.org/products/plone-contentratings y/n" default="n"/>
+  <option name="with_ploneproduct_pz3cform"               order="1013"   description="Plone z3c.form, see http://pypi.python.org/pypi/plone.z3cform y/n" default="n"/>
+  <option name="with_ploneproduct_qcaptcha"               order="00000"  description="quintagroup.plonecaptcha, see  y/n" default="n"/>
+  <option name="with_ploneproduct_qcumulus"               order="01007"  description="quintagroup cumulus portlet, see http://quintagroup.com/services/plone-development/products/quintagroup.portlet.cumulus y/n" default="n"/>
+  <option name="with_ploneproduct_qiptagcloud"            order="00000"  description="qi.portlet.TagClouds, see http://pypi.python.org/pypi/qi.portlet.TagClouds y/n"/>
+  <option name="with_ploneproduct_quaestrio"              order="00000"  description="Quaestrio, see http://pypi.python.org/pypi/Products.Quaestrio y/n"                                               default="n"/>
+  <option name="with_ploneproduct_quills"                 order="1000"   description="Quills, see http://pypi.python.org/pypi/Products.Quills/ y/n"/>
+  <option name="with_ploneproduct_qupload"                order="01007"  description="collective.quickupload, see http://pypi.python.org/pypi/collective.quickupload  y/n" default="n"/>
+  <option name="with_ploneproduct_remember"               order="1006"   description="remember, see http://pypi.python.org/pypi/Products.remember y/n"/>
+  <option name="with_ploneproduct_rtool"                  order="01007"  description="ReDirectionTool, see http://plone.org/products/easynewsletter y/n" default="n"/>
+  <option name="with_ploneproduct_schemaextender"         order="1000"   description="Archetypes schema extender, see http://pypi.python.org/pypi/archetypes.schemaextender y/n" default="n"/>
+  <option name="with_ploneproduct_schematuning"           order="1000"   description="Schematuning patch, see http://pypi.python.org/pypi/archetypes.schematuning/ y/n"/>
+  <option name="with_ploneproduct_seo"                    order="01007"  description="collective.seo, see http://pypi.python.org/pypi/collective.seo y/n" default="n"/>
+  <option name="with_ploneproduct_sfcalendar"             order="00000"  description="SolgemaFullCalendar, see http://pypi.python.org/pypi/Solgema.fullcalendar y/n"/>
+  <option name="with_ploneproduct_smartprintng"           order="1000"   description="SmartPrintNG, see http://pypi.python.org/pypi/Products.SmartPrintNG y/n"/>
+  <option name="with_ploneproduct_subskins"               order="0000"   description="subskins, see http://pypi.python.org/pypi/medialog.subskins y/n" default="n"/>
+  <option name="with_ploneproduct_tal_portlet"            order="1000"   description="Tal Portlet, see http://pypi.python.org/pypi/collective.portlet.tal y/n"/>
+  <option name="with_ploneproduct_truegallery"            order="1000"   description="PloneTrueGallery, see http://plone.org/products/plone-true-gallery/ y/n"/>
+  <option name="with_ploneproduct_wc_dd_menu"             order="1000"   description="WebCouturier Dropdown Menu, see http://plone.org/products/webcouturier-dropdownmenu y/n"/>
+  <option name="with_ploneproduct_z3crelationfield"       order="1000"   description="z3c.relationfield, see http://pypi.python.org/pypi/z3c.relationfield y/n"/>
+</options>
+  <!--
+    LINK THERE YOUR EGGS TO BE Installed on option triggering.
+
+    Some notes:
+
+    If you choose to tell that your egg is a/are some 'zpackage', this will cause them to be registered in the genericskel.projects.plone3.z2packages.
+
+    As an incidence in the collective.generic.skel.policy template, they will be recorded
+    in the policy tests as someting to be installed with "ztc.installPackage(eggname)" or
+    "ztc.installProduct(eggname)".
+
+    <eggs>
+      <egg name="" options="" zpackage="" zproduct="" />
+    </eggs>
+
+    name: name of the product to install
+    options: comma sepated list of options that trigger the installation of this item
+    zcml: zcml to add to the buildout ([instance]), by default -configure
+    zcmlorder : zcml load order from 0 to XXXXXX, default 50000
+    zpackage/zproduct: install resp. modules as a Zope2 Package or Product during tests
+      For each of those values:
+      y -> install it with the name as product name
+      comma sepaated values != 'y' -> install the list of products
+  -->
+  <eggs>
+    <egg name="archetypes.gridfield"                 options="with_ploneproduct_agridfield" zcml="configure"/>
+    <egg name="archetypes.schemaextender"      options="with_ploneproduct_schemaextender,with_ploneproduct_facultystaff" zcml="configure" />
+    <egg name="archetypes.schematuning"        options="with_ploneproduct_schematuning" />
+    <egg name="aws.pdfbook"                    options="with_ploneproduct_awspdfbook" zcml="configure" />
+    <egg name="bda.ldap"                      options="with_binding_ldap,with_ploneproduct_ldap"/>
+    <egg name="bibliograph.core"           options="with_ploneproduct_cmfbibliographyat"          zcml="configure"/>
+    <egg name="bibliograph.parsing"         options="with_ploneproduct_cmfbibliographyat"          zcml="configure"/>
+    <egg name="bibliograph.rendering"       options="with_ploneproduct_cmfbibliographyat"          zcml="configure"/>
+    <egg name="bpython"              options="with_tool_bpython"           scripts="bpython" default="y" />
+    <egg name="collective.addthis"    options="with_ploneproduct_addthis"       zcml="configure"/>
+    <egg name='collective.captcha'           zcml="configure"   options="with_ploneproduct_captcha"/>
+    <egg name="collective.ckeditor"  options="with_ploneproduct_ckeditor" zcml="configure" zpackage="y"/>
+    <egg name='collective.configviews'        zcml="configure"   options="with_ploneproduct_configviews"/>
+    <egg name="collective.contentlicensing"    options="with_ploneproduct_contentlicensing" zpackage="y" zcml="configure"/>
+    <egg name="collective.contentrules.mailtolocalrole"        options="with_ploneproduct_cmailtolrole" zpackage="y" zcml="configure"       />
+    <egg name="collective.cron"     options="with_ploneproduct_ccron" zcml="configure" />
+    <egg name='collective.datatablesviews'    zcml="configure"   options="with_ploneproduct_dtviews"/>
+    <egg name="collective.dewplayer"                 options="with_ploneproduct_cdewplayer"             zpackage="y" zcml="configure"/>
+    <egg name="collective.dewslider"                 options="with_ploneproduct_cdewslider"                          zcml="configure"/>
+    <egg name="collective.dexteritytextindexer"   options="with_ploneproduct_dexterity"                  />
+    <egg name='collective.documentviewer'        zcml="configure"   options="with_ploneproduct_docview"/>
+    <egg name="collective.easyslider"     options="with_ploneproduct_eslider"       zcml="configure"/>
+    <egg name='collective.etherpad'           zcml="configure"   options="with_ploneproduct_etherpad"/>
+    <egg name="collective.flowplayer"          options="with_ploneproduct_flowplayer"   zcml="configure"/>
+    <egg name="collective.funkbot"                   options="with_ploneproduct_cfunkbot"                                            />
+    <egg name="collective.galleria"   options="with_ploneproduct_galleria"      zcml="configure"/>
+    <egg name="collective.gallery"                   options="with_ploneproduct_cgallery"                            zcml="configure"/>
+    <egg name="collective.generic.devmode"    options="with_tool_cgeneric" scripts="cg.devmode" />
+    <egg name="plone.app.theming"          options="with_ploneproduct_patheming" zpackage="y" zcml="configure" />
+    <egg name="plone.app.themingplugins"   options="with_ploneproduct_patheming" zpackage="y" zcml="configure" />
+    <egg name="collective.generic.skel"       options="with_tool_cgeneric"  />
+    <egg name="collective.generic.webbuilder" options="with_tool_cgeneric" scripts="cgwb"/>
+    <egg name="collective.geo.contentlocations"  options="with_ploneproduct_cgeo"  zcml="configure"/>
+    <egg name="collective.geo.geographer"        options="with_ploneproduct_cgeo"  zcml="configure"/>
+    <egg name="collective.geo.geopoint"          options="with_ploneproduct_cgeo"  zcml="configure"/>
+    <egg name="collective.geo.kml"               options="with_ploneproduct_cgeo"  zcml="configure"/>
+    <egg name="collective.geo.mapcontent"        options="with_ploneproduct_cgeo"  zcml="configure"/>
+    <egg name="collective.geo.mapwidget"         options="with_ploneproduct_cgeo"  zcml="configure"/>
+    <egg name="collective.geo.openlayers"        options="with_ploneproduct_cgeo"  zcml="configure"/>
+    <egg name="collective.geo.settings"          options="with_ploneproduct_cgeo"  zcml="configure"/>
+    <egg name="collective.googleanalytics"     options="with_ploneproduct_cga"              zpackage="y" zcml="configure"/>
+    <egg name="collective.indexing"            options="with_ploneproduct_ci,with_ploneproduct_solr"   zpackage="y" zcml="configure"/>
+    <egg name="collective.inplacetopicview"          options="with_ploneproduct_inplacetopicview"                    zcml="configure"/>
+    <egg name="collective.js.chosen"  options="with_ploneproduct_jschosen" zcml="configure" zpackage="y"/>
+    <egg name="collective.js.datatables"          options="with_ploneproduct_datatables"   zcml="configure"/>
+    <egg name="collective.js.galleryview"            options="with_ploneproduct_jsgalleryview"                       zcml="configure"/>
+    <egg name="collective.js.jqueryui"               options="with_ploneproduct_cjqui"  zpackage="y" zcml="configure"/>
+    <egg name="collective.js.leaflet"            options="with_ploneproduct_cjsleaflet"  zpackage="y" zcml="configure"/>
+    <egg name="collective.js.s3slider"               options="with_ploneproduct_jss3slider"                          zcml="configure"/>
+    <egg name="collective.masonry"    options="with_ploneproduct_masonry"       zcml="configure"/>
+    <egg name="collective.oembed"          options="with_ploneproduct_oembed"   zcml="configure"/>
+    <egg name="collective.plonetruegallery"    options="with_ploneproduct_truegallery"      zpackage="y" zcml="configure"/>
+    <egg name="collective.portlet.embed"     options="with_ploneproduct_cpembed"       zcml="configure"/>
+    <egg name="collective.portlet.localcumulus" options="with_ploneproduct_clcumulus" zpackage="y" zcml="configure"       />
+    <egg name="collective.portlet.localcumulus"      options="with_ploneproduct_cplocalcumulus"       zpackage="y"   zcml="configure"/>
+    <egg name="collective.portlet.oembed"  options="with_ploneproduct_oembed"   zcml="configure"/>
+    <egg name="collective.portlet.relateditems"  options="with_ploneproduct_crelateditems"          zcml="configure"/>
+    <egg name="collective.portlettabber"             options="with_ploneproduct_cportlettabber" zpackage="y" zcml="configure" />
+    <egg name="collective.portlet.tal"         options="with_ploneproduct_tal_portlet"      zpackage="y" zcml="configure"/>
+    <egg name="collective.quickupload"           options="with_ploneproduct_qupload"   zpackage="y" zcml="configure"/>
+    <egg name='collective.recaptcha'         zcml="configure"   options="with_ploneproduct_captcha"/>
+    <egg name="collective.remove.kss"                options="with_ploneproduct_cremovekss"                          zcml="configure"/>
+    <egg name="collective.remove.kupu"               options="with_ploneproduct_cremovekupu"                         zcml="configure"/>
+    <egg name="collective.remove.rules"              options="with_ploneproduct_cremoverules"                        zcml="configure"/>
+    <egg name="collective.seo"        options="with_ploneproduct_seo"           zcml="configure"/>
+    <egg name="collective.solr"            options="with_ploneproduct_solr"               zpackage="y" zcml="configure"/>
+    <egg name="collective.transmogrifier"      options="with_ploneproduct_patransmo"        zcml="configure,meta" order="720" zcmlorder="720"/>
+    <egg name="collective.z3cform.colorpicker"   options="with_ploneproduct_cgeo"  />
+    <egg name="collective.z3cform.grok"              options="with_ploneproduct_cz3cformgrok"      zcml="configure"/>
+    <egg name="collective.z3cform.norobots"          options="with_ploneproduct_cz3cformnorobots"                    zcml="configure"/>
+    <egg name="cx_Oracle"                     options="with_database_oracle"/>
+    <egg name="demjson"                       options="with_binding_json"/>
+    <egg name='eea.daviz[full]'        options="with_ploneproduct_eeadaviz" zcml="configure,overrides,full"/>
+    <egg name='eea.facetednavigation'              options="with_ploneproduct_eeafn" zcml="configure,meta,overrides"/>
+    <egg name='eea.relations'              options="with_ploneproduct_eeadaviz" />
+    <egg name='eea.tags'              options="with_ploneproduct_eeatags" zcml="configure"/>
+    <egg name="egenix-mx-base"                options="with_database_postgresql"/>
+    <egg name="elementtree"                   options="with_ploneproduct_smartprintng"   />
+    <egg name="experimental.aggressiveopaquespeedup" options="with_ploneproduct_eaggressivepagespeedup"              zcml="configure"/>
+    <egg name="five.grok"                      options="with_ploneproduct_fivegrok,with_ploneproduct_pz3cform,with_ploneproduct_cz3cformgrok"      zcml="configure" order="100" zcmlorder="101"/>
+    <egg name="flickrapi"                     options="with_ploneproduct_truegallery"/>
+    <egg name="gdata"                         options="with_ploneproduct_truegallery"/>
+    <egg name="imsvdex"                       options="with_ploneproduct_atvmanager"   />
+    <egg name="ipython"                       options="with_tool_ipython"                 scripts="ipython" />
+    <egg name="lxml"                          options="with_ploneproduct_smartprintng,with_binding_lxml"   />
+    <egg name="mapscript"                     options="with_binding_mapscript"/>
+    <egg name="medialog.subskins"  options="with_ploneproduct_subskins" zcml="configure" zpackage="y"/>
+    <egg name="MySQL_python"                  options="with_database_mysql"               />
+    <egg name="nmd.plonelinkasvideoembed"            options="with_ploneproduct_nmdlinkasvideo"                      zcml="configure"/>
+    <egg name="PasteScript"                   options="with_tool_zopeskel" scripts="paster"/>
+    <egg name="Pillow"                        options="with_binding_pil" />
+    <egg name="plomino.tinymce"                      options="with_ploneproduct_plominotinymce" zcml="configure"/>
+    <egg name="plone.app.async"       options="with_ploneproduct_paasync"/>
+    <egg name="plone.app.caching"     options="with_ploneproduct_pacaching" zcml="configure" />
+    <egg name="plone.app.dexterity"  options="with_ploneproduct_dexterity" zcml="meta,configure"/>
+    <egg name="plone.app.event [archetypes,dexterity]"     options="with_ploneproduct_paevent" zcml="configure" />
+    <egg name="plone.app.iterate"              options="with_ploneproduct_iterate"          zpackage="y" zcml="configure"/>
+    <egg name="plone.app.jquerytools"          options="with_ploneproduct_plonejqtools"       zcml="configure"/>
+    <egg name="plone.app.ldap"                 options="with_ploneproduct_ldap"             zproduct="y" zcml="configure"/>
+    <egg name="plone.app.multilingual [dexterity,archetypes]"     options="with_ploneproduct_pamultilingual" zcml="configure" />
+    <egg name="plone.app.referenceablebehavior"   options="with_ploneproduct_dexterity"                  />
+    <egg name="plone.app.transmogrifier"       options="with_ploneproduct_patransmo"        zcml="configure"    />
+    <egg name="plone.app.z3cform"              options="with_ploneproduct_pz3cform,with_ploneproduct_cz3cformgrok"  zcml="configure" order="110" zcmlorder="110"/>
+    <egg name="plone.contentratings"             options="with_ploneproduct_pratings"   zpackage="y"  zcml="configure"/>
+    <egg name="plone.directives.dexterity"        options="with_ploneproduct_dexterity"                  />
+    <egg name="plone.directives.form"             options="with_ploneproduct_dexterity"                  />
+    <egg name="plone.directives.form"          options="with_ploneproduct_pz3cform"                                 zcml="configure,meta"/>
+    <egg name="plone.formwidget.autocomplete"  options="with_ploneproduct_autocomplete" zpackage="y" zcml="configure" />
+    <egg name='plone.formwidget.captcha'      zcml="configure"   options="with_ploneproduct_captcha"/>
+    <egg name='plone.formwidget.recaptcha'         zcml="configure"   options="with_ploneproduct_captcha"/>
+    <egg name="plone.multilingualbehavior"     options="with_ploneproduct_pamultilingual" zcml="configure" />
+    <egg name="plone.z3cform"                  options="with_ploneproduct_pz3cform,with_ploneproduct_cz3cformgrok"        zcml="configure"/>
+    <egg name="Products.AddRemoveWidget"       options="with_ploneproduct_addremovewidget" zpackage="y" zcml="configure" />
+    <egg name="Products.ATBackRef"             options="with_ploneproduct_atbackref"        zproduct="y" zcml="configure"/>
+    <egg name="Products.ATExtensions"                options="with_ploneproduct_atextensions"                        zcml="configure"/>
+    <egg name="Products.ATSchemaEditorNG"      options="with_ploneproduct_atschemaeditor" zpackage="y" zcml="configure" />
+    <egg name="Products.ATVocabularyManager"   options="with_ploneproduct_atvmanager" zpackage="y" zcml="configure" />
+    <egg name="Products.ATWorkgroup"           options="with_ploneproduct_atworkgroup"/>
+    <egg name="Products.Clouseau"              options="with_ploneproduct_clouseau" zcml="configure" zpackage="y"/>
+    <egg name="Products.CMFBibliographyAT"  options="with_ploneproduct_cmfbibliographyat"          zcml="configure"/>
+    <egg name="Products.CMFPlacefulWorkflow"   options="with_ploneproduct_cpwkf,with_ploneproduct_ploneboard"            zproduct="y" zcml="configure" />
+    <egg name="Products.CMFPlomino"               options="with_ploneproduct_plomino"/>
+    <egg name="Products.Collage"               options="with_ploneproduct_collage"          zproduct="y" zcml="configure"/>
+    <egg name="Products.ContentWellPortlets"   options="with_ploneproduct_contentwellportlet" zproduct="y" zcml="configure"/>
+    <egg name="Products.csvreplicata"          options="with_ploneproduct_csvreplica"       zproduct="y" zcml="configure"/>
+    <egg name="Products.EasyNewsletter"        options="with_ploneproduct_enewsletter" zpackage="y" zcml="configure"       />
+    <egg name="Products.FacultyStaffDirectory" options="with_ploneproduct_facultystaff"     zproduct="FacultyStaffDirectory,ATReferenceBrowserWidget,Relations,Archetypes,MimetypesRegistry,PortalTransforms,membrane" zcml="configure"/>
+    <egg name="Products.LDAPMultiPlugins"      options="with_ploneproduct_ldap"             zproduct="y"/>
+    <egg name="Products.LDAPUserFolder"        options="with_ploneproduct_ldap"             zproduct="y"/>
+    <egg name="Products.LinguaPlone"           options="with_ploneproduct_lingua"           zproduct="y" zcml="configure"/>
+    <egg name="Products.MasterSelectWidget"    options="with_ploneproduct_masterselect" zpackage="y" zcml="configure" />
+    <egg name="Products.membrane"              options="with_ploneproduct_membrane"         zproduct="y" zcml="configure"/>
+    <egg name="Products.PloneArticle"          options="with_ploneproduct_plonearticle"     zproduct="y" zcml="configure"/>
+    <egg name="Products.PloneboardNotify"      options="with_ploneproduct_ploneboardnotify" zcml="configure" />
+    <egg name="Products.Ploneboard"            options="with_ploneproduct_ploneboard"       zproduct="y" zcml="configure"/>
+    <egg name="Products.PloneFormGen"          options="with_ploneproduct_ploneformgen"     zproduct="y" zcml="configure"/>
+    <egg name="Products.PloneLDAP"             options="with_ploneproduct_ldap"             zproduct="y" zcml="configure"/>
+    <egg name="Products.PloneSurvey"           options="with_ploneproduct_plonesurvey"      zproduct="y" zcml="configure"/>
+    <egg name="Products.Poi"                  options="with_ploneproduct_poi"               zproduct="y" zcml="configure"/>
+    <egg name="Products.Quaestrio"                   options="with_ploneproduct_quaestrio" zpackage="y" zcml="configure" />
+    <egg name="Products.Quills"                options="with_ploneproduct_quills"           zpackage="y" zcml="configure"/>
+    <egg name="Products.RedirectionTool"       options="with_ploneproduct_rtool" zpackage="y" zcml="configure"       />
+    <egg name="Products.remember"              options="with_ploneproduct_remember"         zcml="configure"/>
+    <egg name="Products.SimpleAttachment"      options="with_ploneproduct_ploneboard"       zproduct="y" zcml="configure"/>
+    <egg name="Products.SmartPrintNG"          options="with_ploneproduct_smartprintng"     zcml="configure,meta" />
+    <egg name="psycopg2"                      options="with_database_postgresql"/>
+    <egg name="pypdf"                         options="with_binding_pdf"                />
+    <egg name="pysugarNG"                     options="with_binding_sugar"/>
+    <egg name="python-ldap"                   options="with_binding_ldap,with_ploneproduct_ldap"/>
+    <egg name="qi.portlet.TagClouds"          options="with_ploneproduct_qiptagcloud" zpackage="y" zcml="configure" />
+    <egg name="quills.remoteblogging"         options="with_ploneproduct_quills"/>
+    <egg name="quintagroup.plonecaptcha"        options="with_ploneproduct_qcaptcha" zpackage="y" zcml="configure"       />
+    <egg name="quintagroup.portlet.cumulus"      options="with_ploneproduct_qcumulus"  zpackage="y" zcml="configure"       />
+    <egg name="simplejson"                    options="with_binding_json"/>
+    <egg name="Solgema.fullcalendar"          options="with_ploneproduct_sfcalendar" zpackage="y" zcml="configure" />
+    <egg name="sqlalchemy"                    options="with_database_sa"                  />
+    <egg name="transmogrify.filesystem"        options="with_ploneproduct_patransmo"        zcml="configure" />
+    <egg name="webcouturier.dropdownmenu"      options="with_ploneproduct_wc_dd_menu"       zpackage="y" zcml="configure"/>
+    <egg name="xlwt"                          options="with_binding_xlwt"                />
+    <egg name="z3c.relationfield"              options="with_ploneproduct_z3crelationfield" zcml="configure" />
+    <egg name="z3c.unconfigure"      options="with_ploneproduct_paevent"  />
+    <egg name="zc.z3monitor"       options="with_ploneproduct_paasync"/>
+    <egg name="zope.app.keyreference"  options="with_ploneproduct_paasync"/>
+    <egg name="ZopeSkel"                      options="with_tool_zopeskel"                />
+    <egg name="zopyx.convert"                 options="with_ploneproduct_smartprintng" scripts="xslfo-convert"  />
+    <!-- zope products -->
+  </eggs>
+  <!--
+    As you know you are configurating a plone3 environment, and hell, you will have to register your products throught the quickinstaller at a time.
+    What about having a list of what to register when you choose an option?
+    So, it is evident that the following list map an option with a value to be registred throuht the quickinstaller.
+
+    A subsidiary note is that with collective.generic.webbuilder, the policy generated will have its app_config.py generated with those var preselections
+
+    A valid mapping is:
+    <product name="product" option="option"/>
+      name=Name in the quickinstaller to install
+      option=Name of the paster option to use to trigger the installation
+    -->
+  <qi>
+
+    <product name="AddRemoveWidget"                options="with_ploneproduct_addremovewidget"/>
+    <product name="ATBackRef"                      options="with_ploneproduct_atbackref"        />
+    <product name="ATExtensions"                   options="with_ploneproduct_atextensions"     />
+    <product name="ATVocabularyManager"            options="with_ploneproduct_atvmanager"     />
+    <product name="CMFPlacefulWorkflow"            options="with_ploneproduct_cpwkf,with_ploneproduct_ploneboard" />
+    <product name="CMFPlomino"                     options="with_ploneproduct_plomino"          />
+    <product name="Collage"                        options="with_ploneproduct_collage"          />
+    <product name="collective.js.jquery"           options="with_ploneproduct_cjqui,with_ploneproduct_sfcalendar"           />
+    <product name="ContentWellPortlets"            options="with_ploneproduct_contentwellportlet"/>
+    <product name="csvreplicata"                   options="with_ploneproduct_csvreplica"       />
+    <product name="plone.app.dexterity"          options="with_ploneproduct_dexterity"   order="900" />
+    <product name="medialog.subskins"            options="with_ploneproduct_subskins"   order="900" />
+    <product name="DataGridField"                  options="with_ploneproduct_agridfield"       />
+    <product name="fatsyndication"                 options="with_ploneproduct_quills"           />
+    <product name="LinguaPlone"                    options="with_ploneproduct_lingua"           />
+    <product name="Maps"                           options="with_ploneproduct_maps"             />
+    <product name="MasterSelectWidget"             options="with_ploneproduct_masterselect"/>
+    <product name="membrane"                       options="with_ploneproduct_membrane"/>
+    <product name="Products.PloneboardNotify"      options="with_ploneproduct_ploneboardnotify"/>
+    <product name="plone.app.jquerytools"          options="with_ploneproduct_plonejqtools"     />
+    <product name="PloneArticle"                   options="with_ploneproduct_plonearticle"     />
+    <product name="Ploneboard"                     options="with_ploneproduct_ploneboard"       />
+    <product name="PloneFormGen"                   options="with_ploneproduct_ploneformgen"     />
+    <product name="PloneSurvey"                    options="with_ploneproduct_plonesurvey "     />
+    <product name="Quills"                         options="with_ploneproduct_quills"           />
+    <product name="quintagroup.portlet.cumulus"    options="with_ploneproduct_cplocalcumulus"/>
+    <product name="Relations"                      options="with_ploneproduct_membrane,with_ploneproduct_facultystaff"/>
+    <product name="remember"                       options="with_ploneproduct_remember"/>
+    <product name="SimpleAttachment"               options="with_ploneproduct_ploneboard"       />
+    <product name="Products.SmartPrintNG"          options="with_ploneproduct_smartprintng"/>
+    <product name="PloneboardNotify"               options="with_ploneproduct_ploneboardnotify"/>
+    <product name="Poi"                       options="with_ploneproduct_poi"/>
+    <product name="Products.Poi"               options="with_ploneproduct_poi"/>
+    <product name="Products.Clouseau"         options="with_ploneproduct_clouseau"/>
+    <product name="Clouseau"                  options="with_ploneproduct_clouseau"/>
+
+    <product name="ATWorkgroup"           hidden="false"  options="with_ploneproduct_atworkgroup"/>
+    <product name="FacultyStaffDirectory" hidden="false"  options="with_ploneproduct_facultystaff"/>
+    <product name="ATSchemaEditorNG"      hidden="false"  options="with_ploneproduct_atschemaeditor"/>
+  </qi>
+
+  <!--
+    Add here your generic setup profiles to add to your plone site policy
+  -->
+  <gs>
+    <!-- Their Extension/Install;py create the tool and other things not handled via GS ...  -->
+    <!-- collective.geo -->
+    <product name="Products.Maps"                  options="with_ploneproduct_maps"  />
+    <product name="archetypes.gridfield"           options="with_ploneproduct_agridfield" />
+    <product name='archetypes.multilingual'   options="with_ploneproduct_pamultilingual" order="900"/>
+    <product name="aws.pdfbook"                    options="with_ploneproduct_awspdfbook"   />
+    <product name='collective.addthis'   options="with_ploneproduct_addthis" order="900"/>
+    <product name='collective.ckeditor'   options="with_ploneproduct_ckeditor" order="900"/>
+    <product name='collective.configviews'   options="with_ploneproduct_configviews" order="900"/>
+    <product name="collective.contentlicensing"    options="with_ploneproduct_contentlicensing" />
+    <product name="collective.cron"        options="with_ploneproduct_ccron"  order="300"/>
+    <product name='collective.datatablesviews'   options="with_ploneproduct_dtviews" order="900"/>
+    <product name='collective.documentviewer'   options="with_ploneproduct_docview" order="900"/>
+    <product name='collective.easyslider'   options="with_ploneproduct_eslider" order="900"/>
+    <product name='plone.app.theming'   options="with_ploneproduct_patheming" order="900"/>
+    <product name='collective.etherpad'   options="with_ploneproduct_etherpad" order="900"/>
+    <product name="collective.flowplayer"          options="with_ploneproduct_flowplayer"  />
+    <product name='collective.galleria'   options="with_ploneproduct_galleria" order="900"/>
+    <product name="collective.geo.contentlocations"  options="with_ploneproduct_cgeo"  order="300"/>
+    <product name="collective.geo.geographer"        options="with_ploneproduct_cgeo"  order="294"/>
+    <product name="collective.geo.kml"               options="with_ploneproduct_cgeo"  order="300"/>
+    <product name="collective.geo.mapcontent"        options="with_ploneproduct_cgeo"  order="300"/>
+    <product name="collective.geo.mapwidget"         options="with_ploneproduct_cgeo"  order="300"/>
+    <product name="collective.geo.openlayers"        options="with_ploneproduct_cgeo"  order="300"/>
+    <product name="collective.geo.settings"          options="with_ploneproduct_cgeo"  order="295"/>
+    <product name="collective.googleanalytics"     options="with_ploneproduct_cga"          />
+    <product name='collective.js.chosen'   options="with_ploneproduct_jschosen" order="900"/>
+    <product name="collective.js.datatables"             options="with_ploneproduct_datatables" order="1"/>
+    <product name='collective.js.leaflet'   options="with_ploneproduct_cjsleaflet" order="900"/>
+    <product name='collective.masonry'   options="with_ploneproduct_masonry" order="900"/>
+    <product name='collective.oembed'          options="with_ploneproduct_oembed" order="900"/>
+    <product name="collective.plonetruegallery"    options="with_ploneproduct_truegallery"      />
+    <product name='collective.portlet.embed'   options="with_ploneproduct_cpembed" order="900"/>
+    <product name="collective.portlet.localcumulus"  options="with_ploneproduct_clcumulus"     order="900" />
+    <product name='collective.portlet.oembed'  options="with_ploneproduct_oembed" order="900"/>
+    <product name="collective.portlet.relateditems" options="with_ploneproduct_crelateditems"   order="900" />
+    <product name="collective.portlet.tal"         options="with_ploneproduct_tal_portlet"      />
+    <product name="collective.quickupload"          options="with_ploneproduct_qupload"         order="900" />
+    <product name='collective.seo'   options="with_ploneproduct_seo" order="900"/>
+    <product name="collective.solr"            options="with_ploneproduct_solr"               />
+    <product name='eea.daviz'   options="with_ploneproduct_eeadaviz" order="900"/>
+    <product name='eea.facetednavigation'   options="with_ploneproduct_eeafn" order="900"/>
+    <product name='eea.tags'   options="with_ploneproduct_eeatags" order="900"/>
+    <product name="Maps"                  options="with_ploneproduct_maps"             />
+    <product name="medialog.subskins"            options="with_ploneproduct_subskins"   order="900" />
+    <product name="membrane"              options="with_ploneproduct_membrane"        order="600" />
+    <product name='plone.app.caching'   options="with_ploneproduct_pacaching" order="900"/>
+    <product name="plone.app.dexterity"          options="with_ploneproduct_dexterity"   order="900" />
+    <product name='plone.app.event.ploneintegration'   options="with_ploneproduct_paevent" order="900"/>
+    <product name="plone.app.iterate"              options="with_ploneproduct_iterate"      profile="plone.app.iterate"/>
+    <product name="plone.app.ldap"                 options="with_ploneproduct_ldap" profile="ldap" order="100"/>
+    <product name='plone.app.multilingual'   options="with_ploneproduct_pamultilingual" order="900"/>
+    <product name="plone.app.z3cform"              options="with_ploneproduct_pz3cform,with_ploneproduct_cz3cformgrok"  />
+    <product name="plone.contentratings"            options="with_ploneproduct_pratings"        order="900" />
+    <product name="plone.formwidget.autocomplete"  options="with_ploneproduct_autocomplete"/>
+    <product name='plone.formwidget.captcha'   options="with_ploneproduct_captcha" order="900"/>
+    <product name='plone.formwidget.recaptcha'   options="with_ploneproduct_captcha" order="900"/>
+    <product name='plone.multilingualbehavior'   options="with_ploneproduct_pamultilingual" order="900"/>
+    <product name="Products.AddRemoveWidget"       options="with_ploneproduct_addremovewidget"/>
+    <product name="Products.ATBackRef"             options="with_ploneproduct_atbackref"      />
+    <product name="Products.ATVocabularyManager"   options="with_ploneproduct_atvmanager"/>
+    <product name="Products.Clouseau"        options="with_ploneproduct_clouseau"  order="300"/>
+    <product name='Products.CMFBibliographyAT'   options="with_ploneproduct_cmfbibliographyat" order="900"/>
+    <product name="Products.CMFPlacefulWorkflow"   options="with_ploneproduct_cpwkf,with_ploneproduct_ploneboard" profile="CMFPlacefulWorkflow" comment="before ploneboard at least" order="100"/>
+    <product name="Products.Collage"               options="with_ploneproduct_collage"          />
+    <product name="Products.ContentWellPortlets"   options="with_ploneproduct_contentwellportlet"/>
+    <product name="Products.csvreplicata"          options="with_ploneproduct_csvreplica"       />
+    <product name="Products.EasyNewsletter"         options="with_ploneproduct_enewsletter"     order="900" />
+    <product name="Products.FacultyStaffDirectory" options="with_ploneproduct_facultystaff"   order="1000" profile="default" />
+    <product name="Products.FacultyStaffDirectory" options="with_ploneproduct_facultystaff"   order="1001" profile="plone3-actions-fix" />
+    <product name="Products.fatsyndication"        options="with_ploneproduct_quills" order="100"/>
+    <product name="Products.LinguaPlone"           options="with_ploneproduct_lingua"         profile="LinguaPlone"  />
+    <product name="Products.MasterSelectWidget"    options="with_ploneproduct_masterselect" />
+    <product name="Products.PloneArticle"          options="with_ploneproduct_plonearticle"     />
+    <product name="Products.PloneboardNotify"      options="with_ploneproduct_ploneboardnotify" />
+    <product name="Products.Ploneboard"            options="with_ploneproduct_ploneboard"   profile="ploneboard" comment="after cpw" order="110"/>
+    <product name="Products.PloneFormGen"          options="with_ploneproduct_ploneformgen"     />
+    <product name="Products.PloneSurvey"           options="with_ploneproduct_plonesurvey"      />
+    <product name="Products.Poi"        options="with_ploneproduct_poi"  order="300"/>
+    <product name="Products.Quills"                options="with_ploneproduct_quills" order="110"/>
+    <product name="Products.RedirectionTool"        options="with_ploneproduct_rtool"     order="900" />
+    <product name="Products.SimpleAttachment"      options="with_ploneproduct_ploneboard"   profile="SimpleAttachment"/>
+    <product name="Products.SmartPrintNG"          options="with_ploneproduct_smartprintng"   order="900" profile="default" />
+    <product name="qi.portlet.TagClouds"          options="with_ploneproduct_qiptagcloud"   order="900" profile="default" />
+    <product name="quills.app"                     options="with_ploneproduct_quills"     order="100"      />
+    <product name="quintagroup.plone.captcha"      options="with_ploneproduct_qcaptcha"       order="900" />
+    <product name="quintagroup.portlet.cumulus"     options="with_ploneproduct_qcumulus"        order="900" />
+    <product name="remember"                       options="with_ploneproduct_remember"         />
+    <product name="Solgema.fullcalendar"          options="with_ploneproduct_sfcalendar"   order="900" profile="default" />
+    <product name="webcouturier.dropdownmenu"      options="with_ploneproduct_wc_dd_menu"       />
+    <!-- SPECIAL CASE HANDLED DIRECTLY IN collective.generic.skel
+    <product name="plone.app.jquerytools"          options="with_ploneproduct_plonejqtools" order="80"/>
+    <product name="collective.js.jqueryui"               options="with_ploneproduct_cjqui" />
+    -->
+    <!-- makina-->/>
+    <product name="collective.dewplayer"                 options="with_ploneproduct_cdewplayer" />
+    <product name="collective.gallery"                   options="with_ploneproduct_cgallery"   />
+    <product name="collective.inplacetopicview"          options="with_ploneproduct_inplacetopicview"/>
+    <product name="collective.js.s3slider"               options="with_ploneproduct_jss3slider" />
+    <product name="collective.portlet.localcumulus"      options="with_ploneproduct_cplocalcumulus"/>
+    <product name="collective.remove.kss"                options="with_ploneproduct_cremovekss"   order="300" />
+    <product name="collective.remove.kupu"               options="with_ploneproduct_cremovekupu"  order="400" />
+    <product name="collective.remove.rules"              options="with_ploneproduct_cremoverules" order="500" />
+    <product name="collective.z3cform.norobots"          options="with_ploneproduct_cz3cformnorobots"  />
+    <product name="nmd.plonelinkasvideoembed"            options="with_ploneproduct_nmdlinkasvideo"          />
+    <product name="Products.CMFPlomino"                  options="with_ploneproduct_plomino"/>
+    <product name="plomino.tinymce"                      options="with_ploneproduct_plominotinymce" />
+    <product name="Products.ATExtensions"                options="with_ploneproduct_atextensions"  order="200"   />
+    <product name="Products.Quaestrio"                   options="with_ploneproduct_quaestrio"/>
+  </gs>
+  <!--
+    Enter here mandatory version pinnings
+    Valid items are:
+
+    <version p="" v="" options=""/>
+
+      p: egg name
+      v: egg version
+      name: description to add as comment into the resulting buildout
+    -->
+  <versions>
+  </versions>
+<!--
+    Enter here know good set versions stuff
+    Valid items are:
+
+    <version p="" v="" options=""/>
+
+      p: egg name
+      v: egg version
+      options: comma separated list of options to enable the pinning
+    -->
+  <checkedversions>
+  </checkedversions>
+  <!--
+    Old style plone products to checkout using the [productsdistros] part
+  -->
+  <productdistros>
+    <!-- PLone Maps -->
+    <!--<productdistro url="http://plone.org/products/maps/releases/1.1/maps-1-1.tgz" options="with_ploneproduct_maps"/>-->
+  </productdistros>
+  <!--
+    Sources for mr.developer
+    links to the SCM of a product, autocheckout will be enabled when option in in options.
+
+  -->
+  <sources>
+    <!-- makina -->
+  </sources>
+    <!--
+    Some very ecliptic products doesnt fit with previous declaration, we will describe how to add the options to the underlying policy there.
+    (the packages/products that we want into the tests to be added.
+    <product name="" zpackage="" zcml="" zcmlorder="" zcml=""/>
+      name is mandatory only for zcml slugs.
+  -->
+  <miscproducts>
+    <product name="Products.CMFPlomino" zproduct="CMFPlomino"  zcml="configure" options="with_ploneproduct_plomino"/>
+  </miscproducts>
+  </template>
+  <purge/>
+</root>
+

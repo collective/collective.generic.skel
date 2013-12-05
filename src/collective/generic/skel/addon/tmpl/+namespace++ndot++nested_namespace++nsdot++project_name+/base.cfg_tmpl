@@ -2,7 +2,11 @@
 extends = https://raw.github.com/collective/buildout.plonetest/master/qa.cfg
 package-extras = [test]
 package-name = ${pdn}
+#if $namespace or $nested_namespace
 package-src = src/${namespace}/${nested_namespace}
+#else
+package-src = src/${project_name}
+#end if
 auto-checkout=
 develop = .
 base-parts =

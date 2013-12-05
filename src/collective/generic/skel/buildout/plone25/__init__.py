@@ -32,9 +32,9 @@ from collective.generic.skel.buildout import common
 var = common.var
 
 
-class Template(common.Template):
+class Package(common.Package):
 
-    summary = ('Template for creating a '
+    summary = ('Package for creating a '
                'basic plone25 project')
 
     python = 'python-2.4'
@@ -42,9 +42,9 @@ class Template(common.Template):
     def pre(self, command, output_dir, vars):
         """register catogory, and roll in common,"""
         vars['category'] = 'zope'
-        common.Template.pre(self, command, output_dir, vars)
+        common.Package.pre(self, command, output_dir, vars)
 
-Template.vars = common.Template.vars + [
+Package.vars = common.Package.vars + [
     var('address',
         'Address to listen on',
         default='localhost',),

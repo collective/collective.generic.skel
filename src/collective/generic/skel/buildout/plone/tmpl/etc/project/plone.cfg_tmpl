@@ -1,0 +1,562 @@
+$hr
+# Project specific settings
+$hr
+
+#if $with_no_zcml
+#set $zcmlcomment='#'
+#else
+#set $zcmlcomment=''
+#end if
+#if $with_supervisor_instance1
+#set $si1='true'
+#else:
+#set $si1='false'
+#end if
+#if $with_supervisor_instance2
+#set $si2='true'
+#else:
+#set $si2='false'
+#end if
+#if $with_supervisor_instance3
+#set $si3='true'
+#else:
+#set $si3='false'
+#end if
+#if $with_supervisor_instance4
+#set $si4='true'
+#else:
+#set $si4='false'
+#end if
+#if $with_zeo_socket:
+#set zeoa = '${buildout:directory}/var/zeocl.sock'
+#set zeoh = '#${hosts:zeo}:${ports:zeo}'
+#else
+#set zeoa= '${hosts:zeo}:${ports:zeo}'
+#end if
+
+[v]
+#if $with_supervisor
+project-programs = #slurp
+    10 zeo \${locations:zeoserver}/bin/runzeo \${locations:zeoserver} true \${v:sys-user}
+#if $with_ploneproduct_paasync
+    20 instance-worker (autostart=\${v:autostart_instancewk}) \${buildout:directory}/bin/instance-worker [console] true \${v:sys-user}
+#end if
+    21 $first_instance (autostart=\${v:autostart_${first_instance}}) \${buildout:directory}/parts/${first_instance}/bin/runzope true \${v:sys-user}
+#if $with_supervisor_instance2
+    22 instance2 (autostart=\${v:autostart_instance2}) \${buildout:directory}/parts/instance2/bin/runzope true \${v:sys-user}
+#end if
+#if $with_supervisor_instance3
+    23 instance3 (autostart=\${v:autostart_instance3}) \${buildout:directory}/parts/instance3/bin/runzope true \${v:sys-user}
+#end if
+#if $with_supervisor_instance4
+    24 instance4 (autostart=\${v:autostart_instance4}) \${buildout:directory}/parts/instance4/bin/runzope true \${v:sys-user}
+#end if
+#end if
+filesystem-parts =
+    touch
+    chmod
+    chown
+    mkdirs
+project-parts =
+    env
+    grp
+    productdistros
+    zeoserver
+    instance-plain
+    instance
+#if $with_supervisor_instance1
+    instance1
+#end if
+#if $with_supervisor_instance2
+    instance2
+#end if
+#if $with_supervisor_instance3
+    instance3
+#end if
+#if $with_supervisor_instance4
+    instance4
+#end if
+#if $with_ploneproduct_paasync
+    instance-worker
+#end if
+    zopepy
+    backup
+    omelette
+    code-analysis
+    createcoverage
+    flake8
+    zptlint
+    coverage-sh
+    ${sane_name}.test
+
+[buildout]
+versions=versions
+sources = sources
+# project packages
+eggs =
+    Pillow
+zcml =
+# extra directories oto add to the python path
+extra-paths =
+auto-checkout =
+# $autocheckout.sort()
+#for $item in $autocheckout:
+    $item
+#end for
+# see http://pypi.python.org/pypi/mr.developer for documentation
+
+# auto tracked developement products
+[sources]
+
+[versions]
+# never ever pin paste and other base eggs
+Paste =
+PasteDeploy =
+PasteScript =
+docutils =
+# do not fix latest templates
+ZopeSkel =
+# do not fix for latest Cheetah sake
+Markdown =
+
+# MISC
+nodejs = 0.10.0
+libxml2 = 2.9.1
+libxslt = 1.1.28
+
+[remotes]
+# Plone
+plone = git://github.com/plone
+plone_push = git@github.com:plone
+svn_plone = https://svn.plone.org/svn/plone
+#svn_plone = http://svn.plone.org/svn/plone
+
+# Collective
+collective = git://github.com/collective
+collective_push = git@github.com:collective
+svn_collective = https://svn.plone.org/svn/collective
+#svn_collective = http://svn.plone.org/svn/collective
+
+[locations]
+zope2=\${buildout:parts-directory}/zope2
+#if $with_supervisor_instance1
+instance1=\${buildout:parts-directory}/instance1
+#end if
+#if $with_supervisor_instance2
+instance2=\${buildout:parts-directory}/instance2
+#end if
+#if $with_supervisor_instance3
+instance3=\${buildout:parts-directory}/instance3
+#end if
+#if $with_supervisor_instance4
+instance4=\${buildout:parts-directory}/instance4
+#end if
+instance=\${buildout:parts-directory}/instance
+productdistros=\${buildout:parts-directory}/productdistros
+zeoserver=\${buildout:parts-directory}/zeoserver
+
+[zeoserver]
+recipe = plone.recipe.zeoserver
+#if $with_zeo_socket:
+# zeo-address = $zeoh
+#end if
+blob-storage = \${locations:blob-storage}
+zeo-address = $zeoa
+socket-name = \${buildout:directory}/var/zeo.zdsock
+zeo-conf-additional =
+#if $with_ploneproduct_paasync
+    <filestorage 2>
+        path \${buildout:directory}/var/filestorage/Async.fs
+    </filestorage>
+#end if
+
+eggs = ZopeUndo
+    ZODB3
+    plone.app.blob
+#if $with_ploneproduct_paasync
+    \${instance:eggs}
+#end if
+
+[instance]
+recipe = plone.recipe.zope2instance
+verbose-security=\${v:verbose-security}
+zeo-client-cache-size = \${v:zeo-client-cache-size}
+zeo-client = on
+zeo-address = \${zeoserver:zeo-address}
+temporary-storage =
+    <zeoclient>
+    server \${zeoserver:zeo-address}
+        storage temp
+        name zeostorage
+        var \${buildout:directory}/var
+    </zeoclient>
+    mount-point /temp_folder
+    container-class Products.TemporaryFolder.TemporaryContainer
+
+blob-storage = \${zeoserver:blob-storage}
+shared-blob = on
+http-address = \${hosts:instance}:\${ports:instance}
+user = \${v:admin-user}:\${v:admin-password}
+session-timeout-minutes = \${v:session-timeout-minutes}
+event-log-level = \${v:event-log-level}
+z2-log-level = \${v:z2-log-level}
+#webdav-address = \${hosts:webdav}:\${ports:webdav}
+zodb-cache-size = 50000
+zeo-client-cache-size = 5MB
+
+# attacking zopepy:eggs make instance be built after zopepy
+# in any case thx to the buildout automatic parts sort.
+extra-paths = \${buildout:extra-paths}
+eggs = \${buildout:eggs}
+# security hotfixes
+#    Products.PloneHotfix20110720
+#for $product in $additional_eggs:
+#if product.startswith('#'):
+$product
+#else:
+    ${product}
+#end if
+#end for
+
+products =
+    \${buildout:directory}/products
+    \${locations:productdistros}
+
+zcml =
+    \${buildout:zcml}
+
+#if $with_ploneproduct_paasync
+\# plone.app.async instance if any
+zcml-additional =
+    <include package="plone.app.async" file="multi_db_instance.zcml" />
+#end if
+environment-vars =
+    zope_i18n_compile_mo_files = true
+    TMPDIR = \${locations:tmp}
+#if $with_ploneproduct_paasync
+    ZC_ASYNC_UUID \${buildout:directory}/var/instance-uuid.txt
+zope-conf-additional =
+    <zodb_db async>
+        cache-size \${instance:zodb-cache-size}
+        <zeoclient>
+            server \${zeoserver:zeo-address}
+            storage 2
+            name asyncstorage
+            blob-dir \${zeoserver:blob-storage}
+            shared-blob-dir on
+            var \${buildout:parts-directory}/instance/var
+            cache-size \${instance:zeo-client-cache-size}
+        </zeoclient>
+        mount-point /zasync
+    </zodb_db>
+#end if
+
+#if $with_ploneproduct_paasync
+\# plone.app.async instance if any
+[instance-worker]
+<= instance
+webdav-address =
+http-address = \${hosts:instance-worker}:\${ports:instance-worker}
+zcml-additional =
+    <include package="plone.app.async" file="multi_db_worker.zcml"/>
+environment-vars =
+    zope_i18n_compile_mo_files = true
+    ZC_ASYNC_UUID \${buildout:directory}/var/worker-uuid.txt
+zope-conf-additional =
+    <zodb_db async>
+        cache-size \${instance-worker:zodb-cache-size}
+        <zeoclient>
+            server \${zeoserver:zeo-address}
+            storage 2
+            name asyncstorage
+            blob-dir \${zeoserver:blob-storage}
+            shared-blob-dir on
+            var \${buildout:parts-directory}/worker/var
+            cache-size \${instance-worker:zeo-client-cache-size}
+        </zeoclient>
+        mount-point /zasync
+    </zodb_db>
+    <product-config zc.z3monitor>
+        port \${ports:workermonitor}
+    </product-config>
+zserver-threads = 2
+zeo-address = \${zeoserver:zeo-address}
+blob-storage = \${zeoserver:blob-storage}
+
+#end if
+#if $with_supervisor_instance1
+[instance1]
+<= instance
+http-address = \${hosts:instance1}:\${ports:instance1}
+
+#end if
+#if $with_supervisor_instance2
+[instance2]
+<= instance
+http-address = \${hosts:instance2}:\${ports:instance2}
+
+#end if
+#if $with_supervisor_instance3
+[instance3]
+<= instance
+http-address = \${hosts:instance3}:\${ports:instance3}
+
+#end if
+#if $with_supervisor_instance4
+[instance4]
+<= instance
+
+#end if
+# Use this section to download additional old-style products.
+# List any number of URLs for product tarballs under URLs (separate
+# with whitespace, or break over several lines, with subsequent lines
+# indented). If any archives contain several products inside a top-level
+# directory, list the archive file name (i.e. the last part of the URL,
+# normally with a .tar.gz suffix or similar) under 'nested-packages'.
+# If any archives extract to a product directory with a version suffix, list
+# the archive name under 'version-suffix-packages'.
+[productdistros]
+# For more information on this step and configuration options see:
+# http://pypi.python.org/pypi/plone.recipe.distros
+recipe = plone.recipe.distros
+urls=\${groups:products-urls}
+version-suffix-packages = \${groups:version-suffix-packages}
+nested-packages = \${groups:nested-packages}
+
+[instance-plain]
+<= instance
+zeo-client = off
+zeo-address =
+temporary-storage =
+
+# eggs & scripts installation
+[zopepy]
+recipe = zc.recipe.egg
+interpreter = zopepy
+eggs =
+# release helpers
+    zest.releaser
+    jarn.mkrelease
+    z3c.checkversions [buildout]
+    \${instance:eggs}
+# Scripts generated filtering
+scripts =
+#z3c.checkversions
+    checkversions
+#jarn.mkrelease
+    mkrelease
+#zest.releaser
+    project_diff
+    project_eggs
+    project_md5
+    project_release
+    package_svn_prepare
+    release_eggs
+    zopepy
+#zope2
+    repozo
+    zeoctl
+    zeopack
+    zeopasswd #slurp
+#for $product in $plone_scripts:
+#if product.startswith('#'):
+${product}
+#else:
+    ${product}
+#end if
+#end for
+extra-paths =
+    \${instance:extra-paths}
+
+# zope.testing testrunner support
+[testenv]
+INSTANCE_HOME = \${locations:instance}
+CONFIG_FILE = \${locations:instance}/etc/zope.conf
+
+# See http://pypi.python.org/pypi/zc.recipe.testrunner/
+[${sane_name}.test]
+recipe = zc.recipe.testrunner
+eggs =
+    plone.app.upgrade
+    Plone
+    ${project} [test]
+    \${instance:eggs}
+extra-paths = \${instance:extra-paths}
+defaults = ['--exit-with-status', '--auto-color', '--auto-progress', '-s', '${project}']
+environment = testenv
+extra-paths = \${zopepy:extra-paths}
+
+[omelette]
+recipe = collective.recipe.omelette
+eggs = \${instance:eggs}
+products = \${instance:products}
+packages = ./
+           \${instance:extra-paths}
+
+# Command below is important
+[mkdirs]
+recipe = plone.recipe.command
+update-command = \${mkdirs:command}
+command =
+    mkdir -pv \${locations:blob-storage};
+    mkdir -pv \${locations:blob-backup};
+    mkdir -pv \${locations:blob-storage};
+    mkdir -pv \${locations:blob-backup};
+    mkdir -pv \${locations:tmp};
+    mkdir -pv \${buildout:directory}/var/log/apache;
+    mkdir -pv \${buildout:directory}/var/log/nginx;
+    mkdir -pv \${buildout:directory}/var/backups;\
+    mkdir -pv \${buildout:directory}/var/snapshotbackups
+
+[chmod]
+# This recipe is used to set permissions -- and ownership for root mode installs
+recipe = plone.recipe.command
+update-command = \${chmod:command}
+command =
+    chmod 600 .installed.cfg etc/sys/settings*;
+    find \${buildout:directory}/var -type d -exec chmod 700 {} \;
+    chmod 744 \${buildout:directory}/bin/*;
+    chmod -R 740 \${buildout:directory}/parts/;
+    chmod -v 750 \${buildout:directory}/cron_scripts/*.sh;
+
+[chown]
+# This recipe is used to set permissions -- and ownership for root mode installs
+recipe = plone.recipe.command
+update-command = \${chown:command}
+command =
+    chown -R \${v:sys-user}:\${v:sys-group} \${buildout:directory}/var;
+    find \${buildout:eggs-directory} -type d -name LC_MESSAGES -exec chown -R \${v:sys-user}:\${v:sys-group} {} \;
+    find \${buildout:eggs-directory}/Products.kupu* -type d -name i18n -exec chown -R \${v:sys-user}:\${v:sys-group} {} \;
+    find \${buildout:parts-directory} -name runzope -exec chown \${v:sys-user}:\${v:sys-group} {} \;
+
+[backup]
+recipe = collective.recipe.backup
+blobbackuplocation = \${locations:blob-backup}/backups
+blobsnapshotlocation = \${locations:blob-backup}/snapshots
+keep = \${crons:nb_fullbackups_to_keep}
+keep_blob_days = \${crons:nb_backups_to_keep}
+
+[touch]
+recipe = plone.recipe.command
+update-command = \${touch:command}
+command =
+    touch \${buildout:directory}/var/log/instance1.log;
+    touch \${buildout:directory}/var/log/instance.log;
+    touch \${buildout:directory}/var/log/instance2.log;
+    touch \${buildout:directory}/var/log/instance3.log;
+    touch \${buildout:directory}/var/log/instance4.log;
+    touch \${buildout:directory}/var/log/main.log;
+    touch \${buildout:directory}/var/log/transform.log;
+
+[env]
+recipe = collective.recipe.environment
+PS1 =
+TERMCAP =
+SSH_CLIENT =
+SSH_TTY =
+SSH_CONNECTION =
+LANG =
+SHELL =
+
+[grp]
+recipe = collective.recipe.grp
+
+[lxml]
+recipe = z3c.recipe.staticlxml
+egg = lxml
+build-libxslt = true
+build-libxml2 = true
+libxslt-url = http://gentoo.tiscali.nl/distfiles/libxslt-\${versions:libxslt}.tar.gz
+libxml2-url = http://gentoo.tiscali.nl/distfiles/libxml2-\${versions:libxml2}.tar.gz
+
+[groups]
+# OLD ZOPE2 PRODUCTS SUPPORT
+products-urls = #slurp
+#for $product in $plone_products:
+#if product.startswith('#'):
+${product}
+#else:
+    ${product}
+#end if
+#end for
+
+version-suffix-packages = #slurp
+#for $product in $plone_vsp:
+#if product.startswith('#'):
+${product}
+#else:
+    ${product}
+#end if
+#end for
+
+nested-packages = #slurp
+#for $product in $plone_np:
+#if product.startswith('#'):
+${product}
+#else:
+    ${product}
+#end if
+#end for
+
+[nodejs]
+recipe = gp.recipe.node
+npms = csslint jshint coffee-script less
+scripts = csslint jshint coffee lessc npm
+url = http://nodejs.org/dist/v\${versions:nodejs}/node-v\${versions:nodejs}.tar.gz
+
+############# QA
+[buildout]
+package-min-coverage = \${v:package-min-coverage}
+
+[code-analysis]
+recipe = plone.recipe.codeanalysis
+directory = src/${sane_name}
+pre-commit-hook = \${v:pre-commit-hook}
+flake8 = True
+flake8-ignore = \${v:flake8-ignore}
+flake8-max-complexity=\${v:flake8-max-complexity}
+return-status-codes = True
+
+[createcoverage]
+recipe = zc.recipe.egg
+eggs = createcoverage
+
+[flake8]
+# XXX: use of this part is deprecated; use plone.recipe.codeanalysis instead
+recipe = zc.recipe.egg
+eggs = flake8
+
+[coverage-sh]
+recipe = collective.recipe.template
+output = \${buildout:directory}/bin/coverage.sh
+mode = 755
+input = inline:
+    #! /bin/sh
+    # checks for report created with createcoverage and evaluate the result
+    DEFAULT=\${buildout:package-min-coverage}
+    REPORT="htmlcov/index.html"
+    if [ "\$#" -eq 1 ] && [ \$1 -ge 0 ] && [ \$1 -le 100 ]; then
+        MINIMUM=\$1
+    else
+        echo "Invalid value for minimum coverage; using default: \$DEFAULT%"
+        MINIMUM=\$DEFAULT
+    fi
+    if [ ! -f "\$REPORT" ]; then
+        bin/createcoverage run bin/${sane_name}.test
+    fi
+    # find first percentage value in file (module test coverage) and return it
+    COVERAGE=`grep "[0-9]\{1,3\}[%]" \$REPORT -m 1 -o | grep "[0-9]\{1,3\}" -o`
+    if [ \$COVERAGE -lt \$MINIMUM ]; then
+        echo "Insufficient test coverage: \$COVERAGE% (minimum acceptable is \$MINIMUM%)"
+        exit 1
+    else
+        echo "Current test coverage: \$COVERAGE%"
+        exit 0
+    fi
+
+[zptlint]
+# XXX: use of this part is deprecated; use plone.recipe.codeanalysis instead
+recipe = zc.recipe.egg
+eggs = zptlint
+
+\# vim:set ft=cfg:

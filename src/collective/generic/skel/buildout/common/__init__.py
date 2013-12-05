@@ -117,34 +117,35 @@ def boolify(d, boolean_values=None):
                 else:
                     d[var] = False
 
+metadata_vars = [
+    var('scm_type',
+        'checkout facility'
+        ' (git|bzr|hg|svn|static)\n'
+        'static can be used for both '
+        'http, ftp and file:// uris: ',
+        default='git',),
+    var('uri',
+        'Url of the project to checkout',
+        default='git@gitorious-git.makina-corpus.net/',),
+    var('homepage',
+        'Homepage url of your project ',
+        default='http://foo.net',),
+    var('author',
+        'Author signature',
+        default='%s <%s@localhost>' % (running_user, running_user),),
+    var('author_email',
+        'Author email',
+        default='%s@localhost' % (running_user),)
+]
 
-class Template(templates.Template):
+class Package(templates.Template):
     """Common template"""
     summary = 'OVERRIDE ME'
-    _template_dir = 'template'
+    _template_dir = 'tmpl'
     use_cheetah = True
     read_vars_from_templates = True
     special_output_dir = False
-    vars = [
-        var('scm_type',
-            'Minibuild checkout facility'
-            ' (git|bzr|hg|svn|static)\n'
-            'static can be used for both '
-            'http, ftp and file:// uris: ',
-            default='git',),
-        var('uri',
-            'Url of the project to checkout',
-            default='git@gitorious-git.makina-corpus.net/',),
-        var('homepage',
-            'Homepage url of your project ',
-            default='http://foo.net',),
-        var('author',
-            'Author signature',
-            default='%s <%s@localhost>' % (running_user, running_user),),
-        var('author_email',
-            'Author email',
-            default='%s@localhost' % (running_user),)
-    ]
+    vars = metadata_vars[:]
 
     def boolify(self, d, keys=None):
         return boolify(d, keys)
@@ -165,6 +166,10 @@ class Template(templates.Template):
             raise Exception('%s is not a directory' % output_dir)
         self.write_files(command, self.output_dir, vars)
         self.post(command, output_dir, vars)
+        if not command.options.quiet:
+            print "-" * 79
+            print "The template has been generated in %s" % self.output_dir
+            print "-" * 79
 
     def pre(self, command, output_dir, vars):
         self.boolify(vars)
