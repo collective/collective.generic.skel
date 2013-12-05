@@ -14,19 +14,19 @@ name = 'collective.generic.skel'
 slug = 'genericskel'
 EP = {
     'paste.paster_create_template': [
-        '{}.buildout.pyramid = {}.buildout.pyramid:Package'.format(
-            slug, name),
-        '{}.buildout.django  = {}.buildout.django:Package'.format(
-            slug, name),
-        '{}.buildout.plone   = {}.buildout.plone:Package'.format(
-            slug, name),
-        '{}.pyramid          = {}.pyramid.package:Package'.format(
-            slug, name),
-        '{}.plone_addon      = {}.addon.package:Package'.format(
-            slug, name),
-        '{}.egg              = {}.common.package:Package'.format(
-            slug, name),
-        '{}.testing          = {}.testing.package:Package'.format(
+        '{0}.buildout.pyramid = {1}.buildout.pyramid:Package'.format(
+             slug, name),
+        '{0}.buildout.django  = {1}.buildout.django:Package'.format(
+             slug, name),
+        '{0}.buildout.plone   = {1}.buildout.plone:Package'.format(
+             slug, name),
+        '{0}.pyramid          = {1}.pyramid.package:Package'.format(
+             slug, name),
+        '{0}.plone_addon      = {1}.addon.package:Package'.format(
+             slug, name),
+        '{0}.egg              = {1}.common.package:Package'.format(
+             slug, name),
+        '{0}.testing          = {1}.testing.package:Package'.format(
             slug, name),
     ]}
 
