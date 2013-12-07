@@ -41,15 +41,15 @@ project-programs = #slurp
 #if $with_ploneproduct_paasync
     20 instance-worker (autostart=\${v:autostart_instancewk}) \${buildout:directory}/bin/instance-worker [console] true \${v:sys-user}
 #end if
-    21 $first_instance (autostart=\${v:autostart_${first_instance}}) \${buildout:directory}/parts/${first_instance}/bin/runzope true \${v:sys-user}
+    21 $first_instance (autostart=\${v:autostart_${first_instance}}) \${buildout:directory}/bin/${first_instance} [console] true \${v:sys-user}
 #if $with_supervisor_instance2
-    22 instance2 (autostart=\${v:autostart_instance2}) \${buildout:directory}/parts/instance2/bin/runzope true \${v:sys-user}
+    22 instance2 (autostart=\${v:autostart_instance2}) \${buildout:directory}/bin/instance2 [console] true \${v:sys-user}
 #end if
 #if $with_supervisor_instance3
-    23 instance3 (autostart=\${v:autostart_instance3}) \${buildout:directory}/parts/instance3/bin/runzope true \${v:sys-user}
+    23 instance3 (autostart=\${v:autostart_instance3}) \${buildout:directory}/bin/instance3 [console] true \${v:sys-user}
 #end if
 #if $with_supervisor_instance4
-    24 instance4 (autostart=\${v:autostart_instance4}) \${buildout:directory}/parts/instance4/bin/runzope true \${v:sys-user}
+    24 instance4 (autostart=\${v:autostart_instance4}) \${buildout:directory}/bin/instance4 [console] true \${v:sys-user}
 #end if
 #end if
 filesystem-parts =
