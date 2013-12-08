@@ -1,0 +1,24 @@
+[run]
+branch = True
+source =
+#if $namespace and not $nested_namespace:
+    src/$namespace
+#elif $nested_namespace:
+    src/$namespace
+#else
+    src/${pdn}
+#end if
+omit=
+#if $namespace and not $nested_namespace:
+    src/$namespace/tests/*.py
+    src/$namespace/tests/**/*.py
+    src/$namespace/testing.py
+#elif $nested_namespace:
+    src/$namespace/$nested_namespace/tests/**/*.py
+    src/$namespace/$nested_namespace/tests/*.py
+    src/$namespace/$nested_namespace/testing.py
+#else
+    src/$pdn/tests/**/*.py
+    src/$pdn/tests/*.py
+    src/$pdn/testing.py
+#end if

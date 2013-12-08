@@ -1,64 +1,30 @@
 \##############################################################################
 \# pyramid  BUILDOUT
 \##############################################################################
-
-#if $with_haproxy
-#set $hapcomment=''
-#else:
-#set $hapcomment='#'
-#end if
-#if $with_supervisor_instance1
-#set $si1=''
-#else:
-#set $si1='#'
-#end if
-#if $with_supervisor_instance2
-#set $si2=''
-#else:
-#set $si2='#'
-#end if
-#if $with_supervisor_instance3
-#set $si3=''
-#else:
-#set $si3='#'
-#end if
-#if $with_supervisor_instance4
-#set $si4=''
-#else:
-#set $si4='#'
-#end if
-
-
 [buildout]
-extensions = mr.developer buildout.dumppickedversions jarn.setuptoolsfixer
-dump-picked-versions-file =\${buildout:directory}/etc/project/${project}-kgs.cfg
-
+extensions = mr.developer buildout-versions jarn.setuptoolsfixer
+buildout_versions_file = \${buildout:directory}/etc/project/generated-kgs.cfg
 extends=
-# set here your project specific settings
-    project/${project}.cfg
-    project/cluster.cfg
-# set here your projet version pins
-    project/sources.cfg
+    project/pyramid.cfg
     project/versions.cfg
-#    project/${project}-kgs.cfg
-    project/patches.cfg
+#if $with_supervisor
+    sys/supervisor.cfg
+#end if
+    sys/maintenance.cfg
+    sys/www.cfg
     sys/settings.cfg
-# supervisor
-    sys/high-availability.cfg
-    sys/maintenance.cfg
-    apache/apache.cfg
-    sys/maintenance.cfg
+    sys/settings-local.cfg
 versions = versions
 parts =
-    scripts
-    omelette
-    instance
-    test
-    supervisor
-    supervisor-initd
-# apache
-    apache_vhost
-# security
-    chmod
+    \${v:project-parts}
+#if $with_supervisor
+    \${v:supervisor-parts}
+#end if
+    \${v:www-parts}
 
-# vim:set et ts=4 sts=4 ft=cfg:
+#if $with_supervisor
+[supervisor]
+programs=\${v:project-programs}
+#end if
+
+\# vim:set et ts=4 sts=4 ft=cfg:

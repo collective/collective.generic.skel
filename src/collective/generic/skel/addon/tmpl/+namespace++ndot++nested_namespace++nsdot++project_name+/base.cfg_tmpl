@@ -69,7 +69,7 @@ ZopeSkel =
 distribute =
 #if $with_ploneproduct_solr
 collective.recipe.solrinstance = 3.6
-gocept.download = 0.9.5 
+gocept.download = 0.9.5
 #end if
 
 [instance]

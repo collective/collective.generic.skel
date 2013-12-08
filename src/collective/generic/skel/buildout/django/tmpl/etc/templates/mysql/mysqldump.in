@@ -1,3 +1,0 @@
-#!/bin/sh
-
-${locations:mysql_bin}/mysqldump --defaults-file=${mycnf-conf:output} $*

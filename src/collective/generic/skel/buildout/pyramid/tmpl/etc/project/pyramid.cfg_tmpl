@@ -1,0 +1,231 @@
+$hr
+# Project specific settings
+$hr
+
+[v]
+project-parts=
+    env
+    grp
+    code-analysis
+#if $with_supervisor_instance1
+    instance1
+#end if
+#if $with_supervisor_instance2
+    instance2
+#end if
+#if $with_supervisor_instance3
+    instance3
+#end if
+#if $with_supervisor_instance4
+    instance4
+#end if
+    scripts
+    omelette
+    instance
+    test
+# security
+    chmod
+    chown
+#if $with_supervisor
+project-programs =
+#if $with_supervisor_instance1
+    70  instance1 \${buildout:directory}/bin/pserve [--pid-file=\${buildout:directory}/var/instance1.pid  --log-file=\${buildout:directory}/var/log/instance1.log \${buildout:directory}/etc/wsgi/instance1.ini] \${buildout:directory} true \${v:sys-user}
+#else
+    60 instance \${buildout:directory}/bin/paster [serve --pid-file=\${buildout:directory}/var/instance1.pid  --log-file=\${buildout:directory}/var/log/instance.log \${buildout:directory}/etc/wsgi/instance.ini] \${buildout:directory} true \${v:sys-user}
+#end if
+#if $with_supervisor_instance2
+    80  instance2 \${buildout:directory}/bin/pserve [--pid-file=\${buildout:directory}/var/instance2.pid  --log-file=\${buildout:directory}/var/log/instance2.log \${buildout:directory}/etc/wsgi/instance2.ini] \${buildout:directory} true \${v:sys-user}
+#end if
+#if $with_supervisor_instance3
+    90  instance3 \${buildout:directory}/bin/pserve [--pid-file=\${buildout:directory}/var/instance3.pid  --log-file=\${buildout:directory}/var/log/instance3.log \${buildout:directory}/etc/wsgi/instance3.ini] \${buildout:directory} true \${v:sys-user}
+#end if
+#if $with_supervisor_instance4
+    100 instance4 \${buildout:directory}/bin/pserve [--pid-file=\${buildout:directory}/var/instance4.pid  --log-file=\${buildout:directory}/var/log/instance4.log \${buildout:directory}/etc/wsgi/instance4.ini] \${buildout:directory} true \${v:sys-user}
+#end if
+#end if
+
+#set $slashdn = $project.replace('.', '/')
+[buildout]
+versions = versions
+find-links=\${v:find-links}
+# extra directories to add to the python path
+extra-paths+=
+# better have mr.developer mananing your eggs, see sources.cfg
+develop=
+eggs=
+    \${buildout:package}
+package=\${v:application}
+package-extras=
+auto-checkout =
+
+[versions]
+# bin/buildout -Nvvvvv |sed -ne "s/.*satisfies '//p" |sed -re "s/==/=/g"| sed -re "s/'.//g"|sort | uniq
+pyramid=$pyramid_version
+
+[sources]
+# see http://pypi.python.org/pypi/mr.developer for documentation
+# better to edit ./sources.cfg
+
+[code-analysis]
+recipe = plone.recipe.codeanalysis
+directory = src/${sane_name}
+pre-commit-hook = true
+flake8 = True
+flake8-ignore = E501,C901
+flake8-max-complexity=1000
+return-status-codes = True
+
+[scripts]
+recipe=zc.recipe.egg
+# attacking zopepy:eggs make instance be built after zopepy
+# in any case thx to the buildout automatic parts sort.
+extra-paths=\${buildout:extra-paths}
+eggs = \${buildout:eggs}
+    z3c.checkversions
+#for $product in $additional_eggs
+#if product.startswith('#')
+$product
+#else
+    ${product}
+#end if
+#end for
+# Scripts generated filtering
+scripts=
+        checkversions
+        paster
+        pcreate
+        pdistreport
+        prequest
+        proutes
+        pserve
+        pserve
+        pshell
+        ptweens
+        pviews
+        waitress-serve
+        paster
+        #slurp
+#for $product in $plone_scripts:
+#if product.startswith('#'):
+${product}
+#else:
+    ${product}
+#end if
+#end for
+interpreter = pyramidpy
+dependant-scripts=true
+
+[test]
+recipe = zc.recipe.testrunner
+eggs = \${scripts:eggs}
+script = selftest
+
+[omelette]
+order=\${scripts:recipe}
+recipe = collective.recipe.omelette
+eggs = \${buildout:eggs}
+packages =\${scripts:extra-paths}
+
+# zope.testing testrunner support
+[testenv]
+
+# This testrunner is a zc.recipe.testrunner like
+# See http://pypi.python.org/pypi/zc.recipe.testrunner/
+# It can do xml reports addon if you supply -x as a command line argument
+# It is useful for generating reports for hudson or other contineous integration
+[${sane_name}.test]
+recipe = collective.xmltestreport
+eggs =
+    \${buildout:package} \${buildout:package-extras}
+    \${scripts:eggs}
+extra-paths = \${scripts:extra-paths}
+defaults = ['--exit-with-status', '--auto-color', '--auto-progress', '-s', '\${buildout:package}']
+environment = testenv
+
+[instance]
+name = instance
+recipe = collective.recipe.template
+server = egg:waitress#main
+# set here your project application wsgi application
+egg=\${v:application}
+ep=\${instance:egg}
+input = \${buildout:directory}/etc/templates/wsgi/paster.ini.in
+output = \${buildout:directory}/etc/wsgi/instance.ini
+host=\${hosts:instance}
+port=\${ports:instance}
+intercept_exc_debug=debug
+debugtoolbar.eval_exc=true
+debug=true
+# points to egg/jinja2 directory
+jinja2_templates=\${instance:egg}:jinja2
+commit_veto = pyramid_tm.default_commit_veto
+# scheme type can be zeo | file
+# see https://docs.pylonsproject.org/projects/pyramid_zodbconn/dev/
+zodb = zeo://\${hosts:zeo}:\${ports:zeo}
+
+#if $with_supervisor_instance1
+[instance1]
+<= instance
+output = \${buildout:directory}/etc/wsgi/instance1.ini
+host=\${hosts:instance1}
+port=\${ports:instance1}
+
+#end if
+#if $with_supervisor_instance2
+[instance2]
+<= instance
+output = \${buildout:directory}/etc/wsgi/instance2.ini
+host=\${hosts:instance2}
+port=\${ports:instance2}
+
+#end if
+#if $with_supervisor_instance3
+[instance3]
+<= instance
+output = \${buildout:directory}/etc/wsgi/instance3.ini
+host=\${hosts:instance3}
+port=\${ports:instance3}
+
+#end if
+#if $with_supervisor_instance4
+[instance4]
+<= instance
+output = \${buildout:directory}/etc/wsgi/instance4.ini
+host=\${hosts:instance4}
+port=\${ports:instance4}
+
+#end if
+[chmod]
+recipe = plone.recipe.command
+update-command = \${chmod:command}
+command=
+    chmod 600 .installed.cfg
+    chmod 744 \${buildout:directory}/bin/*
+    chmod -v 750 \${buildout:directory}/etc/init.d/*
+    chmod -Rf 700 \${buildout:directory}/etc
+    chmod -Rf 700 \${buildout:directory}/var
+    chmod  700 \${buildout:directory}
+
+[chown]
+recipe = plone.recipe.command
+update-command = \${chown:command}
+command=
+    chown -Rf  \${v:sys-user}:\${v:sys-group}  \${buildout:directory}/etc
+    chown -Rf  \${v:sys-user}:\${v:sys-group}  \${buildout:directory}/var
+    chown      \${v:sys-user}:\${v:sys-group}  \${buildout:directory}
+
+[env]
+recipe = collective.recipe.environment
+PS1 =
+TERMCAP =
+SSH_CLIENT =
+SSH_TTY =
+SSH_CONNECTION =
+LANG =
+SHELL =
+
+[grp]
+recipe = collective.recipe.grp
+ 
+
+\# vim:set ft=cfg:

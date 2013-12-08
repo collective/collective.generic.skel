@@ -1,0 +1,22 @@
+$hr
+# supervisor settings
+$hr
+
+[v]
+supervisor-parts=
+    supervisor
+    supervisor-initd
+
+[supervisor]
+recipe = collective.recipe.supervisor
+port = \${ports:supervisor}
+user = \${v:admin}
+password = \${v:admin-password}
+serverurl = http://\${hosts:supervisor}:\${ports:supervisor}
+
+[supervisor-initd]
+recipe = collective.recipe.template
+input =  \${buildout:directory}/etc/templates/supervisor/supervisor.initd
+output =  \${buildout:directory}/etc/init.d/supervisor.initd
+
+\# vim:set et ts=4 sts=4 ft=cfg:

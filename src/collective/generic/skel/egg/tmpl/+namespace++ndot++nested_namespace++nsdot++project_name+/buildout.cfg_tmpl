@@ -1,0 +1,60 @@
+[buildout]
+extends=https://raw.github.com/collective/buildout.plonetest/master/qa.cfg
+extends-cache=.cache
+extensions=mr.developer buildout_versions
+buildout_versions_file=generated-kgs.cfg
+versions=versions
+package-name = ${pdn}
+package-src = \${buildout:directory}/src/$namespace/$nested_namespace/$project_name
+package-extras=
+package-test-extras=[test]
+flake8-ignore = E501
+package-min-coverage = 80
+eggs =
+    \${buildout:package-name} \${buildout:package-extras}
+    docutils
+    zest.releaser
+parts=
+    script
+    release
+    omelette
+    test
+    createcoverage
+    flake8
+    coverage-sh
+    python-validation-sh
+    code-analysis
+develop = .
+extra-paths =
+
+[script]
+recipe=zc.recipe.egg
+eggs=\${buildout:eggs}
+interpreter=py
+extra-paths = \${buildout:extra-paths}
+
+[omelette]
+recipe = collective.recipe.omelette
+eggs = \${script:eggs}
+packages = \${script:extra-paths}
+
+[release]
+<=script
+eggs=\${script:eggs}
+     docutils
+     collective.dist
+     zest.releaser
+     zest.pocompile
+
+[test]
+recipe = zc.recipe.testrunner
+eggs = \${buildout:package-name} \${buildout:package-test-extras}
+extra-paths = \${script:extra-paths}
+defaults = ['--exit-with-status', '--auto-color', '--auto-progress',
+            '-s', '\${buildout:package-name}']
+
+[code-analysis]
+directory = \${buildout:package-src}
+
+[versions]
+\# vim:set ft=cfg:

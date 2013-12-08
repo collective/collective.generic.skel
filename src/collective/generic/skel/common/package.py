@@ -46,7 +46,7 @@ class Package(common.Package):
     that need to have all sort
     of variables defined. That's why there is some curious plone bits there.
     """
-    summary = "A Generic double namespaced egg."
+    summary = "OVERRIDE ME"
     egg_plugins = ['PasteScript']
     python = 'python-2.7'
     pyver = python[-3:]
@@ -84,6 +84,7 @@ class Package(common.Package):
                     # user may try to only give namespace/project
                     # as he is doing a template with a predefined project.
                     pdata = project.split('.')
+                    infos['namespace'] = ''
                     infos['nested_namespace'] = pdata[0]
                     infos['project'] = pdata[1]
                 except:

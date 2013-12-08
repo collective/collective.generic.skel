@@ -1,0 +1,10 @@
+::
+
+    >>> 1 == 1
+    True
+    >>> from ${pdn}.${project_name} import main
+    >>> main()
+    hello world!
+
+
+.. vim:set ft=doctest tw=0:

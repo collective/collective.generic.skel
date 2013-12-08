@@ -14,7 +14,7 @@ class Package(c.Package):
     buildout_template = django.Package
 
     def pre(self, command, output_dir, vars):
-        Package.pre(self, command, output_dir, vars)
+        c.Package.pre(self, command, output_dir, vars)
         self.load_django_vars(command, output_dir, vars)
 
     def load_django_vars(self, command, output_dir, vars):
@@ -22,15 +22,4 @@ class Package(c.Package):
             self.buildout_template, 'eggs_mappings')
 
     def post(self, command, output_dir, vars):
-        c.DjangoPackage.post(self, command, output_dir, vars)
-        os.path.join(
-            self.output_dir,
-            '%s%s%s.%s' % (vars['namespace'],
-                           vars['ndot'],
-                           vars['nested_namespace'],
-                           vars['project_name']),
-            'src',
-            vars['namespace'],
-            vars['nested_namespace'],
-            vars['project_name'],
-        )
+        c.Package.post(self, command, output_dir, vars)

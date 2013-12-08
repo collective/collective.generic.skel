@@ -1,3 +1,4 @@
+
 # Copyright (C) 2009, Mathieu PASQUET <kiorky@cryptelium.net>
 # All rights reserved.
 #
@@ -72,13 +73,25 @@ for name in sources_k:
         )
     )
 
-base_pyramid_eggs = ['pyramid',
-                     'repoze.tm2',
-                     #'pyramid_who',
-                     'cryptacular',
-                     'PasteDeploy', 'waitress',
-                     'WebOb', 'WebError', 'repoze.vhm',
-                     'CherryPy', 'gunicorn']
+base_pyramid_eggs = [
+    'CherryPy',
+    'cryptacular',
+    'gunicorn',
+    'iniparse',
+    'Paste',
+    'PasteDeploy',
+    'Pastescript',
+    'pyramid',
+    'pyramid_chameleon',
+    'pyramid_debugtoolbar',
+    'pyramid_zcml',
+    'repoze.tm2',
+    'repoze.vhm',
+    'waitress',
+    'WebError',
+    'WebOb',
+    'zope.component',
+]
 
 
 class Package(common.Package):
@@ -87,7 +100,7 @@ class Package(common.Package):
         'Package for creating a '
         'basic pyramid project')
     _template_dir = pkg_resources.resource_filename(
-        'collective.generic.skel', 'projects/pyramid/template')
+        'collective.generic.skel', 'buildout/pyramid/tmpl')
     python = 'python-2.7'
     init_messages = ()
 
@@ -108,12 +121,19 @@ class Package(common.Package):
     plone_vsp_mappings = plone_vsp_mappings
     plone_sources = plone_sources
 
+    def post(self, command, output_dir, vars):
+        """register catogory, and roll in common,"""
+        common.Package.post(self, command, output_dir, vars)
+        if not vars['with_supervisor']:
+            common.remove_path(self.output_dir + '/etc/sys/supervisor.cfg')
+            common.remove_path(self.output_dir + '/etc/templates/supervisor')
+
     def pre(self, command, output_dir, vars):
         """register catogory, and roll in common,"""
         vars['category'] = 'pyramid'
         common.Package.pre(self, command, output_dir, vars)
         if not os.path.exists(self.output_dir):
-            self.makedirs(self.output_dir)
+            os.makedirs(self.output_dir)
         vars['sane_name'] = common.SPECIALCHARS.sub('', vars['project'])
         vars['includesdirs'] = ''
         vars['hr'] = '#' * 120
@@ -122,40 +142,6 @@ class Package(common.Package):
         for var in self.sections_mappings:
             if var in vars:
                 vars[var] = [a.strip() for a in vars[var].split(',')]
-
-        vars['autocheckout'] = []
-        for var in vars:
-            if var.startswith('with_autocheckout') and vars[var]:
-                vn = var.replace('with_autocheckout_', '')
-                vars['autocheckout'].append(
-                    self.plone_sources[vn]['name']
-                )
-
-        for var in self.plone_sources:
-            if self.plone_sources[var].get('autocheckout', '') == 'y':
-                if not self.plone_sources[var]['name'] in vars['autocheckout']:
-                    if (
-                        (True in [vars.get(o, False)
-                                  for o in self.plone_sources[var]['options']])
-                        and (
-                            self.plone_sources[var]['name']
-                            not in vars['autocheckout'])
-                    ):
-                        vars['autocheckout'].append(
-                            self.plone_sources[var]['name']
-                        )
-
-        lps = copy.deepcopy(self.plone_sources)
-        for item in self.plone_sources:
-            col = self.plone_sources[item]
-            found = False
-            for option in col['options']:
-                if vars.get(option, False):
-                    found = True
-                    break
-            if not found:
-                del lps[item]
-        vars['plone_sources'] = lps
 
         # Django core eggs
         vars['additional_eggs'].append('#Pyramid')
@@ -172,22 +158,6 @@ class Package(common.Package):
                      for a in eggs_mappings['with_database_%s' % db]
                      if not a in vars['additional_eggs']]
                 )
-        # do we need some pinned version
-        vars['plone_versions'] = []
-        for var in self.versions_mappings:
-            vars['plone_versions'].append(('# %s' % var, '',))
-            for pin in self.versions_mappings[var]:
-                vars['plone_versions'].append(pin)
-
-        if vars["with_checked_versions"]:
-            for var in self.checked_versions_mappings:
-                if vars.get(var, False):
-                    vars['plone_versions'].append(('# %s' % var, '',))
-                    for pin in self.checked_versions_mappings[var]:
-                        vars['plone_versions'].append(
-                            (pin,
-                             self.checked_versions_mappings[var][pin]))
-
         if not os.path.exists(self.output_dir):
             os.makedirs(self.output_dir)
 
@@ -202,18 +172,22 @@ class Package(common.Package):
                         if not item in vars[section]:
                             vars[section].append(item)
         # http serverS ports
-        vars['http_port1'] = int(vars['http_port']) + 1
-        vars['http_port2'] = int(vars['http_port']) + 2
-        vars['http_port3'] = int(vars['http_port']) + 3
-        vars['http_port4'] = int(vars['http_port']) + 4
-        vars['http_port5'] = int(vars['http_port']) + 5
-        vars['http_port6'] = int(vars['http_port']) + 6
-        vars['http_port7'] = int(vars['http_port']) + 7
+        vars['supervisor_port'] = int(vars['http_port']) - 1
+        vars['supervisor_host'] = vars['address']
+        for i in range(30):
+            vars['http_port%s' % i] = int(vars['http_port']) + i
         vars['running_user'] = common.running_user
         vars['instances_description'] = common.INSTANCES_DESCRIPTION % vars
         if not vars['reverseproxy_aliases']:
             vars['reverseproxy_aliases'] = ''
         vars['sreverseproxy_aliases'] = vars['reverseproxy_aliases'].split(',')
+        # be sure our special python is in priority
+        if vars['with_supervisor_instance4']:
+            vars['with_supervisor_instance3'] = True
+        if vars['with_supervisor_instance3']:
+            vars['with_supervisor_instance2'] = True
+        if vars['with_supervisor_instance2']:
+            vars['with_supervisor_instance1'] = True
 
     def read_vars(self, command=None):
         vars = common.Package.read_vars(self, command)
@@ -234,7 +208,7 @@ class Package(common.Package):
         return vars
 
 Package.vars = common.Package.vars + [
-    var('pyramid_version', 'Pyramid version', default='1.2.1',),
+    var('pyramid_version', 'Pyramid version', default='1.5a2',),
     var('address', 'Address to listen on', default='localhost',),
     var('license', 'License', default='BSD',),
     var('http_port', 'Port to listen to', default='8081',),
@@ -252,8 +226,6 @@ Package.vars = common.Package.vars + [
     var('effective_user',
         'effective user to give the files to in production',
         default=running_user,),
-    var('supervisor_host', 'Supervisor host', default='127.0.0.1',),
-    var('supervisor_port', 'Supervisor port', default='9001',),
     var('supervisor_user', 'Supervisor web user', default='admin',),
     var('supervisor_password', 'Supervisor web password', default='secret',),
     var('with_supervisor',
@@ -267,10 +239,6 @@ Package.vars = common.Package.vars + [
         'launch instance 3 in production mode, y/n', default='n',),
     var('with_supervisor_instance4', 'Supervisor will '
         'automaticly launch instance 4 in production mode, y/n', default='n',),
-    var('with_haproxy', 'haproxy configuration file generation '
-        'support (loadbalancing), http://haproxy.1wt.eu/ y/n', default='y',),
-    var('haproxy_host', 'Haproxy host', default='127.0.0.1',),
-    var('haproxy_port', 'Haproxy port', default='8201',),
     var('plone_products',
         'comma separeted list of adtionnal products to '
         'install: eg: file://a.tz file://b.tgz', default='',),
@@ -279,12 +247,6 @@ Package.vars = common.Package.vars + [
     var('plone_scripts',
         'comma separeted list of scripts to generate '
         'from installed eggs', default='',),
-    var('with_checked_versions',
-        'Use product versions that interact well '
-        'together (can be outdated, check [versions] in buildout.',
-        default='n',),
-    var('buildbot_cron',
-        'Buildbot cron to schedule builds', default='0 3 * * *',),
 ] + Package.addons_vars + dev_vars
 
 # vim:set et sts=4 ts=4 tw=80:

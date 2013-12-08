@@ -1,0 +1,39 @@
+########################################################################################################################
+# High availability settings (production instances and load balancer)
+########################################################################################################################
+
+[v]
+supervisor-parts=
+    supervisor
+    supervisor-initd
+    pidproxy
+
+[omelette]
+eggs+=supervisor
+
+[supervisor]
+recipe = collective.recipe.supervisor
+port = \${ports:supervisor}
+user = \${v:sys-user}
+password = \${v:admin-password}
+serverurl = http://\${hosts:supervisor}:\${ports:supervisor}
+additionnal=false
+
+[supervisor-initd]
+recipe = collective.recipe.template[genshi]
+input =  \${buildout:directory}/etc/templates/supervisor/supervisor.initd
+output =  \${buildout:directory}/etc/init.d/supervisor.initd
+
+[hosts]
+supervisor=127.0.0.1
+
+[ports]
+supervisor=30004
+
+[pidproxy]
+recipe=zc.recipe.egg
+eggs=supervisor
+scripts=pidproxy
+
+
+# vim:set et ts=4 sts=4 ft=cfg:

@@ -20,14 +20,14 @@ EP = {
              slug, name),
         '{0}.buildout.plone   = {1}.buildout.plone:Package'.format(
              slug, name),
+        '{0}.django           = {1}.django.package:Package'.format(
+             slug, name),
         '{0}.pyramid          = {1}.pyramid.package:Package'.format(
              slug, name),
         '{0}.plone_addon      = {1}.addon.package:Package'.format(
              slug, name),
-        '{0}.egg              = {1}.common.package:Package'.format(
+        '{0}.egg              = {1}.egg.package:Package'.format(
              slug, name),
-        '{0}.testing          = {1}.testing.package:Package'.format(
-            slug, name),
     ]}
 
 
@@ -60,8 +60,7 @@ setup(
                         'collective.generic',
                         'collective.generic.skel',
                         'collective.generic.skel.buildout',
-                        'collective.generic.skel.addon',
-                        'collective.generic.skel.testing'],
+                        'collective.generic.skel.addon'],
     include_package_data=True,
     install_requires=['setuptools',
                       'PasteScript',

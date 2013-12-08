@@ -1,0 +1,35 @@
+<VirtualHost *:\${v:reverse-proxy-port}>
+ServerAdmin     ${author_email}
+DocumentRoot    \${buildout:directory}
+ServerName      \${v:reverse-proxy-host}
+#for domain in  $sreverseproxy_aliases
+ServerAlias     $domain
+#end for
+ErrorLog        \${buildout:directory}/var/log/apache/\${v:reverse-proxy-host}_log
+TransferLog     \${buildout:directory}/var/log/apache/\${v:reverse-proxy-host}-access_log
+CustomLog       \${buildout:directory}/var/log/apache/\${v:reverse-proxy-host}-access_log combined
+DirectoryIndex   index.html index.htm
+<Directory "\${buildout:directory}">
+    Options  ExecCGI IncludesNOEXEC FollowSymLinks -Indexes
+    AllowOverride All
+    Order allow,deny
+    Allow from all
+</Directory>
+ProxyRequests off
+<Proxy *>
+  Order allow,deny
+  Allow from all
+</Proxy>
+RewriteEngine  on
+
+#if $with_supervisor
+# supervisor
+ProxyPass         /supervisor/ http://\${hosts:supervisor}:\${ports:supervisor}/
+ProxyPassReverse  /supervisor/ http://\${hosts:supervisor}:\${ports:supervisor}/
+#end if
+
+ProxyPass         / http://\${hosts:front}:\${ports:front}/
+ProxyPassReverse  / http://\${hosts:front}:\${ports:front}/
+
+# vim: set ft=xml:
+</VirtualHost>

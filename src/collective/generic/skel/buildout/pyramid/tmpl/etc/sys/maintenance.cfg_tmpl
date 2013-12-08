@@ -2,16 +2,25 @@
 # Cron and logrotation related stuff
 #echo '#\n'
 
-[chmodcron]
-recipe = plone.recipe.command
-update-command = \${chmodcron:command}
-command =
-    chmod -v 750 \${buildout:directory}/cron_scripts/*.sh
+[v]
+maintainance-parts=
+    logrotate.conf
+    chmod
+    chown
+#if $with_database_postgresql
+    backup_pgsql
+    backup_pgsql_daily
+    backup_pgsqlkeep
+#end if
 
 [logrotate.conf]
 recipe = collective.recipe.template
 input =  \${buildout:directory}/etc/templates/logrotate.conf.template
 output = \${buildout:directory}/etc/logrotate.conf
+
+#if $with_database_postgresql
+[chmod]
+command += chmod -v 750 \${buildout:directory}/cron_scripts/*.sh
 
 [backup_pgsql]
 recipe = collective.recipe.template
@@ -29,27 +38,5 @@ to_keep=\${backup_pgsql:to_keep}
 recipe = z3c.recipe.usercrontab
 times = \${crons:pgsql}
 command = \${backup_pgsql:output}
- 
-[chmod]
-recipe = plone.recipe.command
-update-command = \${chmod:command}
-command=
-    chmod 600 .installed.cfg
-    chmod 744 \${buildout:directory}/bin/*
-    chmod -v 750 \${buildout:directory}/etc/init.d/*
-    chmod -Rf 700 \${buildout:directory}/etc
-    chmod -Rf 700 \${buildout:directory}/var
-    chmod  700 \${buildout:directory}
-
-[chown]
-recipe = plone.recipe.command
-update-command = \${chown:command}
-command=
-    chown -Rf  \${users:pyramid}  \${buildout:directory}/etc
-    chown -Rf  \${users:pyramid}  \${buildout:directory}/var
-    chown      \${users:pyramid}  \${buildout:directory}
-
-#    find \${buildout:directory} -type d -name var -exec chown -R \${users:pyramid} {} \;
- 
-
+#end if
 \# vim:set ft=cfg:

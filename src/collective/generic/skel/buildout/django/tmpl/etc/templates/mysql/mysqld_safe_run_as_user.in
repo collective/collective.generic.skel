@@ -1,2 +1,0 @@
-#!/bin/sh
-${locations:mysql_bin}/mysqld_safe ${mycnf:opt}  

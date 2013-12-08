@@ -5,22 +5,11 @@
 #
 ##############################################################################
 
-
 #set $slashdn = $project.replace('.', '/')
 [buildout]
 extends=etc/base.cfg
-parts+=instance1
-    instance2
-    instance3
-    instance4
-    logrotate.conf
-    chown
-# activate to backup daily pgsql
-#    backup_pgsql
-#    backup_pgsql_daily
-#    backup_pgsqlkeep
-# if you enable some crons, enable this also
-#    chmodcron
+extends-cache=etc/cache
+parts+= \${v:maintainance-parts}
 
 [instance]
 debug=false

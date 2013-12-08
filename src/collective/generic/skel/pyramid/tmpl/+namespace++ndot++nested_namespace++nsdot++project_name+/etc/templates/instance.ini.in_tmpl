@@ -1,0 +1,72 @@
+# CGWB WSGI CONFIGURATION FILE
+
+[DEFAULT]
+url_test = false
+debug = \${parts.buildout.debug}
+
+[composite:main]
+use = egg:Paste#urlmap
+/= ppyramidapp
+
+[pipeline:ppyramidapp]
+pipeline = translogger
+           pyramidappapp
+
+[filter:translogger]
+use=egg:Paste#translogger
+setup_console_handler = False
+logger_name = wsgi
+
+[app:pyramidappapp]
+use = egg:${pdn}#main
+
+[loggers]
+keys = root,wsgi,routes
+
+[handlers]
+keys = console
+
+[formatters]
+keys = generic,accesslog
+
+# Send warnings that are not caught by other loggers to the console
+[logger_root]
+level = NOTSET
+handlers = console
+
+# Send all messages to the 'wsgi' logger to the accesslog and errorlog handlers
+[logger_wsgi]
+level = NOTSET
+handlers = console
+qualname = wsgi
+propagate = 0
+
+# Routes (the URL dispatcher) sends debug information to the 'routes.middleware' logger
+# with DEBUG level.
+[logger_routes]
+level = NOTSET
+handlers = console
+qualname = routes.middleware
+propagate = 0
+
+# Handler for printing messages to the console
+[handler_console]
+class = StreamHandler
+args = (sys.stderr,)
+level = INFO
+formatter = generic
+
+# A generic formatter that prints the time, the logger's name, the level and the message
+[formatter_generic]
+format = %(asctime)s %(name)s[%(levelname)s] %(message)s
+
+# A trivial formatter that just passes-through the log message.
+# Translogger already creates Apache-style log messages. No need to change that.
+[formatter_accesslog]
+format = %(message)s
+
+[server:main]
+use=egg:waitress#main
+host=\${parts.buildout.host}
+port=\${parts.buildout.port}
+# vim:set ft=cfg:

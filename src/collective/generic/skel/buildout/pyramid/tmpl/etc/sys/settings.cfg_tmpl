@@ -1,63 +1,73 @@
-#if $with_haproxy
-#set $hapcomment=''
-#else:
-#set $hapcomment='#'
-#end if
-
-
-[settings]
+[v]
 application  = ${project}
+sys-user=\${env:USER}
+admin-password=${admin_password}
+admin=${admin_user}
+sys-group=\${grp:GROUP}
 debug=false
 find-links =
-    http://\${mirrors:zope}/ppix/
-    http://gijsbert.org/downloads/cmemcache/
-    http://\${mirrors:zope}/distribution/
     http://gijsbert.org/downloads/cmemcache/
     http://initd.org/pub/software/psycopg/PSYCOPG-2-0/
     http://cairographics.org/releases/
     http://dist.plone.org/thirdparty/
-    http://pypi.python.org/simple/ZODB4
 to_keep=16
-
-[reverse_proxy]
-scheme=$reverseproxy_scheme
-host=$reverseproxy_host
-port=$reverseproxy_port
+reverse-proxy-scheme=$reverseproxy_scheme
+reverse-proxy-host=$reverseproxy_host
+reverse-proxy-port=$reverseproxy_port
 
 [hosts]
 instance= $address
+zeo= $address
+#if $with_supervisor_instance1
 instance1=$address
+#end if
+#if $with_supervisor_instance2
 instance2=$address
+#end if
+#if $with_supervisor_instance3
 instance3=$address
+#end if
+#if $with_supervisor_instance4
 instance4=$address
-#may not be used
+#end if
+#if $with_supervisor
 supervisor=$supervisor_host
+#end if
+#if $with_supervisor_instance1
 front=\${hosts:instance1}
-zeo=
+#else
+front=\${hosts:instance}
+#end if
 
 [ports]
 instance=$http_port
+zeo=$http_port22
+#if $with_supervisor_instance1
 instance1=$http_port1
+#end if
+#if $with_supervisor_instance2
 instance2=$http_port2
+#end if
+#if $with_supervisor_instance3
 instance3=$http_port3
+#end if
+#if $with_supervisor_instance4
 instance4=$http_port4
-#may not be used
+#end if
+#if $with_supervisor
 supervisor=$supervisor_port
+#end if
+#if $with_supervisor_instance1
 front=\${ports:instance1}
-zeo=
+#else
+front=\${ports:instance}
+#end if
 
-[users]
-admin=${admin_user}
-pyramid=
-[passwords]
-admin=${admin_password}
-pyramid=
 
 [locations]
 
+#if $with_database_postgresql
 [crons]
-# at 3:00am NO WHITESPACE!!!
-buildbot-${project}=$buildbot_cron
 pgsql = 15 1 * * *
 
 [backup_pgsql]
@@ -69,13 +79,11 @@ user=$db_user
 # space separated list of databases to save on this cluster
 databases=$db_name
 # how much do we rotate ?
-to_keep=\${settings:to_keep}
+to_keep=\${v:to_keep}
 # where to stock dumps
 dumps_path=\${buildout:directory}/var/pgsql_dumps
 pgdump_args=-Fc
 pgdumpall_args=
-
-[mirrors]
-zope = download.zope.org
+#end if
 
 \# vim:set et ts=4 sts=4 ft=cfg:

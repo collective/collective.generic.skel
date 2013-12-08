@@ -2,39 +2,34 @@
 [buildout]
 unzip=true
 allow-hosts = \${mirrors:allow-hosts}
-extensions = mr.developer buildout.dumppickedversions
-dump-picked-versions-file =\${buildout:directory}/etc/project/kgs.cfg
+extensions = mr.developer buildout-versions
+buildout_version_file =\${buildout:directory}/etc/project/generated-kgs.cfg
 extends=
-    project/django.cfg
-    sys/high-availability.cfg
+    project/project.cfg
+#if $with_supervisor
+    sys/supervisor.cfg
+#end if
     sys/maintenance.cfg
-$rabbitmq_comment    sys/rabbitmq.cfg
-$mysql_comment    sys/mysql.cfg
-$mongo_comment    sys/mongodb.cfg
-    www/apache.cfg
+    sys/www.cfg
     project/versions.cfg
     sys/settings.cfg
+    sys/settings-local.cfg
 versions = versions
-#    ubuntulibs
-#    pil
-#    py2cairo
 parts =
-    env
-    grp
-$mysql_comment    \${buildout:mysql-parts}
-$rabbitmq_comment    \${buildout:rabbitmq-parts}
-$mongo_comment    \${buildout:mongodb-parts}
-    \${buildout:supervisor-parts}
-    \${buildout:django-parts}
+#if $with_supervisor
+    \${v:supervisor-parts}
+#end if
+    \${v:project-parts}
+    \${v:www-parts}
+    \${v:maintainance-parts}
     mkdirs
     chmod
     chown
 
+#if $with_supervisor
 [supervisor]
 programs=
-    \${buildout:django-programs}
-#    \${buildout:mysql-programs}
-#    \${buildout:rabbitmq-programs}
-#    \${buildout:mongodb-programs}
+    \${v:project-programs}
+#end if
 
 #  vim:set et ts=4 sts=4 ft=cfg:

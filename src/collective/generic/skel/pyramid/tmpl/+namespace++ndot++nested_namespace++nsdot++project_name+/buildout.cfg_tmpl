@@ -1,0 +1,82 @@
+[buildout]
+package-name=${pdn}
+package-extra=
+package-test-extra=[test]
+#if $namespace and not $nested_namespace:
+package-directory=\${buildout:directory}/src/$namespace
+#elif $nested_namespace:
+package-directory=\${buildout:directory}/src/$namespace/$nested_namespace/
+#else
+package-directory=\${buildout:directory}/src
+#end if 
+develop=.
+extensions=mr.developer buildout-versions
+extends-cache=etc/cache
+extends=etc/kgs.cfg
+buildout_versions_file=etc/generated-kgs.cfg
+versions=versions
+parts= zopepy test wsgi-config application omelette code-analysis createcoverage
+unzip=true
+auto-checkout=
+# settings to be overidden
+debug=true
+host=$address
+port=$http_port
+
+[createcoverage]
+recipe = zc.recipe.egg
+eggs = createcoverage
+
+[code-analysis]
+recipe = plone.recipe.codeanalysis
+directory = \${buildout:package-directory}
+pre-commit-hook = true
+flake8 = True
+flake8-ignore = E501,C901
+flake8-max-complexity=1000
+return-status-codes = True
+
+[zopepy]
+recipe=zc.recipe.egg
+eggs=\${buildout:package-name} \${buildout:package-extra}
+interpreter=zopepy
+dependent-scripts = true
+scripts= paster
+         waitress-serve
+         ptweens
+         pdistreport
+         proutes
+         pshell
+         prequest
+         pviews
+         pcreate
+         pserve
+
+[sources]
+
+[test]
+recipe=zc.recipe.testrunner
+eggs= \${buildout:package-name} \${buildout:package-test-extra}
+defaults = ['--exit-with-status', '--auto-color', '--auto-progress',
+            '-s', '\${buildout:package-name}']
+
+[omelette]
+recipe=collective.recipe.omelette
+eggs=\${test:eggs}
+
+[wsgi-config]
+recipe = collective.recipe.template[genshi]:genshi
+input = \${buildout:directory}/etc/templates/instance.ini.in
+output = \${buildout:directory}/etc/instance.ini
+
+[application]
+recipe = zc.recipe.egg
+initialization =
+    if __name__ == '__main__': sys.exit(1)
+    config = '\${wsgi-config:output}'
+    from pyramid.paster import get_app
+    application = get_app(config, 'main')
+eggs = \${zopepy:eggs}
+entry-points = application=\${buildout:package-name}:main
+
+\# vim:set ft=cfg:

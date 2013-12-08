@@ -1,10 +1,10 @@
-<VirtualHost *:${reverse_proxy:port}>
+<VirtualHost *:${v:reverse-proxy-port}>
 ServerAdmin     kiorky@localhost
 DocumentRoot    ${buildout:directory}
-ServerName      ${reverse_proxy:host}
-ErrorLog        ${buildout:directory}/var/log/apache/${reverse_proxy:host}_log
-TransferLog     ${buildout:directory}/var/log/apache/${reverse_proxy:host}-access_log
-CustomLog       ${buildout:directory}/var/log/apache/${reverse_proxy:host}-access_log combined
+ServerName      ${v:reverse-proxy-host}
+ErrorLog        ${buildout:directory}/var/log/apache/${v:reverse-proxy-host}_log
+TransferLog     ${buildout:directory}/var/log/apache/${v:reverse-proxy-host}-access_log
+CustomLog       ${buildout:directory}/var/log/apache/${v:reverse-proxy-host}-access_log combined
 DirectoryIndex   index.html index.htm
 <Directory "${buildout:directory}">
     Options  ExecCGI IncludesNOEXEC FollowSymLinks -Indexes
@@ -18,14 +18,14 @@ ProxyRequests off
   Allow from all
 </Proxy>
 RewriteEngine  on
-RequestHeader add        X-Vhm-Host ${reverse_proxy:scheme}://${reverse_proxy:host}:${reverse_proxy:port}
+RequestHeader add        X-Vhm-Host ${v:reverse-proxy-scheme}://${v:reverse-proxy-host}:${v:reverse-proxy-port}
 
-# application mounted on / does not needs _vh_
+#if $with_supervisor
 # supervisor
 ProxyPass         /supervisor/ http://${hosts:supervisor}:${ports:supervisor}/
 ProxyPassReverse  /supervisor/ http://${hosts:supervisor}:${ports:supervisor}/
+#end if
 
-# /-> vhmonster proxyreverse because of redirects !
 ProxyPass         / http://${hosts:front}:${ports:front}/
 ProxyPassReverse  / http://${hosts:front}:${ports:front}/
 

@@ -71,26 +71,28 @@ for name in sources_k:
         )
     )
 
-base_django_eggs = ['celery',
-                    'CherryPy',
-                    'coverage',
-                    'cryptacular',
-                    'Django',
-                    'django-celery',
-                    'django-guardian',
-                    'django-nose',
-                    'django-registration',
-                    'django-templated-email',
-                    'dj.paste',
-                    'gunicorn',
-                    'lxml',
-                    'Paste',
-                    'PasteDeploy',
-                    'Pillow',
-                    'repoze.vhm',
-                    'South',
-                    'SQLAlchemy',
-                    'WebError']
+base_django_eggs = [
+    'celery',
+    'CherryPy',
+    'coverage',
+    'cryptacular',
+    'Django',
+    'django-celery',
+    'django-guardian',
+    'django-nose',
+    'django-registration',
+    'django-templated-email',
+    'dj.paste',
+    'gunicorn',
+    'lxml',
+    'Paste',
+    'PasteDeploy',
+    'Pillow',
+    'repoze.vhm',
+    'South',
+    'SQLAlchemy',
+    'WebError'
+]
 
 
 class Package(common.Package):
@@ -98,7 +100,7 @@ class Package(common.Package):
     summary = ('Template for creating a '
                'basic django project')
     _template_dir = pkg_resources.resource_filename(
-        'collective.generic.skel', 'projects/django/template')
+        'collective.generic.skel', 'buildout/django/tmpl')
     python = 'python-2.7'
     init_messages = ()
 
@@ -129,7 +131,7 @@ class Package(common.Package):
         vars['category'] = 'django'
         common.Package.pre(self, command, output_dir, vars)
         if not os.path.exists(self.output_dir):
-            self.makedirs(self.output_dir)
+            os.makedirs(self.output_dir)
         vars['sane_name'] = common.SPECIALCHARS.sub('', vars['project'])
         vars['includesdirs'] = ''
         vars['hr'] = '#' * 120
@@ -157,29 +159,38 @@ class Package(common.Package):
                         if not item in vars[section]:
                             vars[section].append(item)
         # http serverS ports
-        vars['http_port1'] = int(vars['http_port']) + 1
-        vars['http_port2'] = int(vars['http_port']) + 2
-        vars['http_port3'] = int(vars['http_port']) + 3
-        vars['http_port4'] = int(vars['http_port']) + 4
-        vars['http_port5'] = int(vars['http_port']) + 5
-        vars['http_port6'] = int(vars['http_port']) + 6
-        vars['http_port7'] = int(vars['http_port']) + 7
-        vars['http_port8'] = int(vars['http_port']) + 8
-        vars['http_port9'] = int(vars['http_port']) + 9
-        vars['http_port10'] = int(vars['http_port']) + 10
-        vars['http_port11'] = int(vars['http_port']) + 11
-        vars['http_port12'] = int(vars['http_port']) + 12
-        vars['http_port13'] = int(vars['http_port']) + 13
         vars['running_user'] = common.running_user
         vars['instances_description'] = common.INSTANCES_DESCRIPTION % vars
         #if not vars['reverseproxy_aliases']:
         #    vars['reverseproxy_aliases'] = ''
         vars['ndot'] = '.'
-        for i in ['rabbitmq', 'mysql', 'mongo']:
-            if vars['with_django_%s' % i]:
-                vars['%s_comment' % i] = ''
-            else:
-                vars['%s_comment' % i] = '#'
+        # http serverS ports
+        vars['supervisor_port'] = int(vars['http_port']) - 1
+        vars['supervisor_host'] = vars['address']
+        for i in range(30):
+            vars['http_port%s' % i] = int(vars['http_port']) + i
+        # be sure our special python is in priority
+        if vars['with_supervisor_instance4']:
+            vars['with_supervisor_instance3'] = True
+        if vars['with_supervisor_instance3']:
+            vars['with_supervisor_instance2'] = True
+        if vars['with_supervisor_instance2']:
+            vars['with_supervisor_instance1'] = True
+        num = vars['sane_name'].count('.')
+        if num >= 2:
+            vars['tdir'] = '/'.join(vars['sane_name'].split('.')[:2])
+        elif num == 1:
+            vars['tdir'] = '/'.join(vars['sane_name'].split('.')[:1])
+        else:
+            vars['tdir'] = vars['sane_name']
+
+    def post(self, command, output_dir, vars):
+        """register catogory, and roll in common,"""
+        common.Package.post(self, command, output_dir, vars)
+        if not vars['with_supervisor']:
+            common.remove_path(self.output_dir + '/etc/sys/supervisor.cfg')
+            common.remove_path(self.output_dir + '/etc/templates/supervisor')
+
 
     def read_vars(self, command=None):
         vars = common.Package.read_vars(self, command)
@@ -204,9 +215,20 @@ Package.vars = common.Package.vars + [
     var('django_version', 'Django version', default='1.5'),
     var('license', 'License', default='BSD',),
     var('http_port', 'Port to listen to', default='8081'),
-    var('with_django_rabbitmq', 'Rabbitmq', default='n'),
-    var('with_django_mongo', 'Mongo', default='n',),
-    var('with_django_mysql', 'mysql', default='n',),
+    var('address', 'Address to listen to', default='localhost'),
+    var('supervisor_user', 'Supervisor web user', default='admin',),
+    var('supervisor_password', 'Supervisor web password', default='secret',),
+    var('with_supervisor',
+        'Supervisor support (monitoring), http://supervisord.org/ y/n',
+        default='y',),
+    var('with_supervisor_instance1', 'Supervisor will automaticly '
+        'launch instance 1 in production mode  y/n', default='y',),
+    var('with_supervisor_instance2', 'Supervisor will automaticly '
+        'launch instance 2 in production mode, y/n', default='n',),
+    var('with_supervisor_instance3', 'Supervisor will automaticly '
+        'launch instance 3 in production mode, y/n', default='n',),
+    var('with_supervisor_instance4', 'Supervisor will '
+        'automaticly launch instance 4 in production mode, y/n', default='n',),
     var('plone_products',
         'comma separeted list of adtionnal products '
         'to install: eg: file://a.tz file://b.tgz', default='',),

@@ -12,7 +12,7 @@ extends=etc/base.cfg
 extends-cache=etc/cache
 package-extras=
 
-[settings]
+[v]
 debug=true
 
 [scripts]

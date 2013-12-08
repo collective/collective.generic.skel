@@ -1,0 +1,9 @@
+[v]
+www-parts= apache_vhost
+
+[apache_vhost]
+recipe = collective.recipe.template
+input =\${buildout:directory}/etc/templates/www/${apache_vhost_number}-${project}.reverseproxy.conf.in
+output =\${buildout:directory}/etc/sys/${apache_vhost_number}-${project}.reverseproxy.conf
+
+# vim:set et ts=4 sts=4 ft=cfg:

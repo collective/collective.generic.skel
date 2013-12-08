@@ -1,84 +1,69 @@
-[settings]
+[v]
 mysql_database=projectdb
 google_client_id=foo
+mysqlpw=secret
 google_client_secret=secret
 google_map_key=foo
 adminmail=$django_admin
 debug=false
+project=$sane_name
 dsm=settings
 #wsgi_server=egg:Paste#http
+admin-password    = secret
 wsgi_server= egg:gunicorn#main
-
-[reverse_proxy]
-scheme=$reverseproxy_scheme
-host=$reverseproxy_host
-port=$reverseproxy_port
+admin=admin
+sys-user=\${env:USER}
+sys-group=\${grp:GROUP}
+reverse-proxy-scheme=$reverseproxy_scheme
+reverse-proxy-host=$reverseproxy_host
+reverse-proxy-port=$reverseproxy_port
+pkgdir=\${buildout:directory}/src/$sane_name/src/$tdir
 
 [hosts]
 instance= localhost
+#if $with_supervisor_instance1
 instance1=localhost
+#end if
+#if $with_supervisor_instance2
 instance2=localhost
-rabbitmq=127.0.0.1
+#end if
+#if $with_supervisor_instance3
 instance3=localhost
+#end if
+#if $with_supervisor_instance4
 instance4=localhost
+#end if
+#if $with_supervisor
 supervisor=127.0.0.1
+#end if
+#if $with_supervisor_instance1
 front=\${hosts:instance1}
-#may not be used
-balancer=127.0.0.1
-mysql=127.0.0.1
-mongodb=127.0.0.1
+#else
+front=\${hosts:instance}
+#end if
 
 [ports]
+#if $with_supervisor
 supervisor=$http_port1
+#end if
 instance=$http_port2
+#if $with_supervisor_instance1
 instance1=$http_port3
+#end if
+#if $with_supervisor_instance2
 instance2=$http_port4
+#end if
+#if $with_supervisor_instance3
 instance3=$http_port5
+#end if
+#if $with_supervisor_instance4
 instance4=$http_port6
-rabbitmq=$http_port7
-mysql=$http_port8
-mongodb=$http_port9
-#may not be used
-balancer=$http_port10
+#end if
+#if $with_supervisor_instance1
 front=\${ports:instance1}
-
-[users]
-admin=admin
-django=\${env:USER}
-group=\${grp:GROUP}
-
-[passwords]
-admin    = secret
-rabbitmq = \${passwords:admin}
-mysql    = \${passwords:admin}
-django   = \${passwords:admin}
-
-[locations]
-mysql_bin=\${locations:mysql}/bin
-mysql=/usr
-mysql_backup=\${buildout:directory}/var/backups/mysql
-mongodb_backup=\${buildout:directory}/var/backups/mongodb
-
-[crons]
-pgsql = 15 1 * * *
-
-[backup_pgsql]
-# shall we do a full backup (set this to y)
-full=y
-host=localhost
-port=5432
-user=kiorky
-# space separated list of databases to save on this cluster
-databases=djangodb
-# how much do we rotate ?
-to_keep=8
-# where to stock dumps
-dumps_path=\${buildout:directory}/var/pgsql_dumps
-pgdump_args=-Fc
-pgdumpall_args=
-
-[automysqlbackup-conf]
-DBS=\${settings:mysql_database}
+#else
+front=\${ports:instance}
+#end if
 
 [mirrors]
 allow-hosts =
@@ -104,5 +89,8 @@ allow-hosts =
      *ftp.edgewall.org*
      *www.riverbankcomputing.com*
      *.selenic.com*
+ 
+[locations]
+tmp=/tmp
 
 # vim:set et ts=4 sts=4 ft=cfg:

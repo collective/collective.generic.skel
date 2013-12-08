@@ -32,8 +32,11 @@ def wrap(script):
         ).wait()
     )
 
+
 def manage():
     wrap('manage_settings.py')
+
+
 def manage():
     wrap('manage.py')
 
