@@ -60,7 +60,7 @@ setup(
         "plone.app.upgrade",
         "plone.app.themingplugins",
         "collective.dexteritytextindexer",
-        "plone.app.dexterity",
+        "plone.app.dexterity [relations]",
         "plone.app.referenceablebehavior",
         "plone.directives.dexterity",
         "plone.directives.form",
