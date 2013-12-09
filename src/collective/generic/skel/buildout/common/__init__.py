@@ -83,6 +83,7 @@ def get_user_group():
 
 
 running_user, gid, group = get_user_group()
+default_var_order = 99999
 
 
 class var(templates.var):
@@ -93,9 +94,11 @@ class var(templates.var):
                  description,
                  default='',
                  should_echo=True,
-                 mandatory=False):
+                 mandatory=False,
+                 order=default_var_order):
         templates.var.__init__(self, name, description, default, should_echo)
         self.mandatory = mandatory
+        self.order = order
 
 
 def boolify(d, boolean_values=None):
@@ -361,19 +364,18 @@ def parse_xmlconfig(xml,
                 nodes = elem.getElementsByTagName('option')
                 for o in nodes:
                     oattrs = dict(o.attributes.items())
-                    order = int(oattrs.get('order', 99999))
+                    order = int(oattrs.get('order', default_var_order))
                     # be sure not to have unicode params
                     # there because paster will swallow them up
-                    addons_vars[oattrs.get('name')] = (
-                        order,
-                        var(
-                            oattrs.get('name'),
-                            UNSPACER.sub(' ',
-                                         oattrs.get(
-                                             'description', '').strip()),
-                            default=oattrs.get('default')
-                        )
+                    addon_var = var(
+                        oattrs.get('name'),
+                        UNSPACER.sub(' ',
+                                     oattrs.get(
+                                         'description', '').strip()),
+                        default=oattrs.get('default'),
+                        order=order,
                     )
+                    addons_vars[oattrs.get('name')] = (order, addon_var)
 
         # discover development sources information
         sources_node = xmlTemplate.getElementsByTagName('sources')

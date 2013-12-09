@@ -94,8 +94,6 @@ class Package(c.Package):
             remove_path(glob.glob(egg + '/skins')[0])
         if not vars['with_policy_support']:
             remove_path(egg + '/profiles/default/mailhost.xml')
-        if not vars['with_ploneproduct_patheming']:
-            remove_path(egg + '/diazo_theme')
         for f in glob.glob(out + '/scripts/*') + [egg + '/rebuild_i18n.sh']:
             os.chmod(f, 0700)
 

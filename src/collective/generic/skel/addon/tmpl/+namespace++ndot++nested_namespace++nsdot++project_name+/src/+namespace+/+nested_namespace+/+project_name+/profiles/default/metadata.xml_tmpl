@@ -5,17 +5,9 @@
   <!-- QuickInstalled dependencies -->
       <dependency>profile-${pdn}:qi</dependency>
   <!-- GenericSetup dependencies -->
+      <dependency>profile-plone.app.dexterity:default</dependency>
 #for package, profile, order in $gs
       <dependency>profile-${package}:${profile}</dependency>
 #end for
-#if $with_ploneproduct_plonejqtools
-        <dependency>profile-plone.app.jquerytools:default</dependency>
-#end if
-#if $with_ploneproduct_cjqui
-      <dependency>profile-collective.js.jqueryui:default</dependency>
-#if $with_ploneproduct_plonejqtools
-      <dependency>profile-collective.js.jqueryui:withjqtools</dependency>
-#end if
-#end if
  </dependencies>
 </metadata>
