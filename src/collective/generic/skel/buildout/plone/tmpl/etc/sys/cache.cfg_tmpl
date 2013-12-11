@@ -56,7 +56,7 @@ configure-options=--prefix=\${locations:pcre}
 [varnish-build]
 recipe = zc.recipe.cmmi
 md5sum = 714310c83fdbd2061d897dacd3f63d8b
-url = http://gentoo.tiscali.nl/distfiles/varnish-3.0.3.tar.gz
+url = http://gentoo.tiscali.nl/distfiles/varnish-3.0.4.tar.gz
 shared=false
 configure-options =
     --prefix="\${buildout:parts-directory}/varnish-build"
