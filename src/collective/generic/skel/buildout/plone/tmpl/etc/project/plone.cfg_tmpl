@@ -416,6 +416,7 @@ command =
     chmod 600 .installed.cfg etc/sys/settings*;
     find \${buildout:directory}/var -type d -exec chmod 700 {} \;
     chmod 744 \${buildout:directory}/bin/*;
+    chmod -R 740 \${buildout:directory}/etc/sys/settings-local.cfg;
     chmod -R 740 \${buildout:directory}/parts/;
     chmod -v 750 \${buildout:directory}/cron_scripts/*.sh;
 
