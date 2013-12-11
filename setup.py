@@ -53,7 +53,7 @@ setup(
     author='Mathieu Pasquet / Jean-Philippe Camguilhem',
     author_email='kiorky@cryptelium.net, jpc@makina-corpus.com',
     url='http://makina-corpus.com',
-    license='BSD    ',
+    license='BSD',
     packages=find_packages('src'),
     package_dir = {'': 'src'},
     namespace_packages=['collective',
