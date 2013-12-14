@@ -87,18 +87,19 @@ project-parts =
     flake8
     zptlint
     coverage-sh
-    ${sane_name}.test
+    test
 
 [buildout]
 versions=versions
 sources = sources
 # project packages
-eggs =
-    Pillow
-zcml =
+eggs = ${pdn}
+       Pillow
+zcml =${pdn}
 # extra directories oto add to the python path
 extra-paths =
 auto-checkout =
+    $pdn
 # $autocheckout.sort()
 #for $item in $autocheckout:
     $item
@@ -107,22 +108,7 @@ auto-checkout =
 
 # auto tracked developement products
 [sources]
-
-[versions]
-# never ever pin paste and other base eggs
-Paste =
-PasteDeploy =
-PasteScript =
-docutils =
-# do not fix latest templates
-ZopeSkel =
-# do not fix for latest Cheetah sake
-Markdown =
-
-# MISC
-nodejs = 0.10.0
-libxml2 = 2.9.1
-libxslt = 1.1.28
+$pdn=fs $pdn
 
 [remotes]
 # Plone
@@ -157,6 +143,8 @@ zeoserver=\${buildout:parts-directory}/zeoserver
 
 [zeoserver]
 recipe = plone.recipe.zeoserver
+zeopack-script-name=zeoserver-zeopack
+pack-days=\${v:zeo-pack-days}
 #if $with_zeo_socket:
 # zeo-address = $zeoh
 #end if
@@ -208,7 +196,7 @@ zeo-client-cache-size = 5MB
 # in any case thx to the buildout automatic parts sort.
 extra-paths = \${buildout:extra-paths}
 eggs = \${buildout:eggs}
-# security hotfixes
+#* security hotfixes
 #    Products.PloneHotfix20110720
 #for $product in $additional_eggs:
 #if product.startswith('#'):
@@ -217,14 +205,10 @@ $product
     ${product}
 #end if
 #end for
-
-products =
-    \${buildout:directory}/products
-    \${locations:productdistros}
-
-zcml =
-    \${buildout:zcml}
-
+*#
+products = \${buildout:directory}/products
+           \${locations:productdistros}
+zcml = \${buildout:zcml}
 #if $with_ploneproduct_paasync
 \# plone.app.async instance if any
 zcml-additional =
@@ -374,15 +358,15 @@ INSTANCE_HOME = \${locations:instance}
 CONFIG_FILE = \${locations:instance}/etc/zope.conf
 
 # See http://pypi.python.org/pypi/zc.recipe.testrunner/
-[${sane_name}.test]
+[test]
 recipe = zc.recipe.testrunner
 eggs =
     plone.app.upgrade
     Plone
-    ${project} [test]
+    ${pdn} [test]
     \${instance:eggs}
 extra-paths = \${instance:extra-paths}
-defaults = ['--exit-with-status', '--auto-color', '--auto-progress', '-s', '${project}']
+defaults = ['--exit-with-status', '--auto-color', '--auto-progress', '-s', '${pdn}']
 environment = testenv
 extra-paths = \${zopepy:extra-paths}
 
@@ -511,7 +495,8 @@ package-min-coverage = \${v:package-min-coverage}
 
 [code-analysis]
 recipe = plone.recipe.codeanalysis
-directory = src/${sane_name}
+#set $policy=$project.split('.')
+directory = \${buildout:directory}/src/${pdn}
 pre-commit-hook = \${v:pre-commit-hook}
 flake8 = True
 flake8-ignore = \${v:flake8-ignore}
@@ -543,7 +528,7 @@ input = inline:
         MINIMUM=\$DEFAULT
     fi
     if [ ! -f "\$REPORT" ]; then
-        bin/createcoverage run bin/${sane_name}.test
+        bin/createcoverage run bin/test
     fi
     # find first percentage value in file (module test coverage) and return it
     COVERAGE=`grep "[0-9]\{1,3\}[%]" \$REPORT -m 1 -o | grep "[0-9]\{1,3\}" -o`

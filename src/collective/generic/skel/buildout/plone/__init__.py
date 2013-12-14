@@ -277,8 +277,6 @@ class Package(common.Package):
 
         if not os.path.exists(self.output_dir):
             self.makedirs(self.output_dir)
-        # install also the official template from
-        # ZopeSkel, setting its variables
         vars['plone_products_install'] = ''
         vars['zope2_install'] = ''
         vars['debug_mode'] = 'off'
@@ -404,24 +402,6 @@ plone_vars = [
     common.var('with_haproxy',
                'haproxy support (loadbalancing), '
                'http://haproxy.1wt.eu/ y/n', default='y',),
-    common.var('plone_products',
-               'comma separeted list of adtionnal products '
-               'to install: eg: file://a.tz file://b.tgz', default='',),
-    common.var('additional_eggs',
-               'comma separeted list of additionnal eggs to install',
-               default='',),
-    common.var('plone_zcml',
-               'comma separeted list of eggs to include for '
-               'searching ZCML slugs', default='',),
-    common.var('plone_np',
-               'comma separeted list of nested packages for '
-               'products distro part', default='',),
-    common.var('plone_vsp',
-               'comma separeted list of versionned suffix '
-               'packages for product distro part', default='',),
-    common.var('plone_scripts',
-               'comma separeted list of scripts to '
-               'generate from installed eggs', default='',),
     common.var('with_no_zcml',
                'Do not include zcml information', default='n',),
     common.var('with_generic',

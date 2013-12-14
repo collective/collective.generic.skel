@@ -65,6 +65,7 @@ extends =
     http://dist.plone.org/release/${plone_version}/versions.cfg
 #end if
     project/plone.cfg
+    project/versions.cfg
     sys/system.cfg
 #if $with_ploneproduct_etherpad
     project/etherpad.cfg

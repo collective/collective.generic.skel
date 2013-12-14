@@ -42,7 +42,5 @@
     <depends name="plone-content"/>
   </genericsetup:importStep>
   <!-- -->
-  <utility factory="${namespace}${nunderscore}${nested_namespace}${nsunderscore}${project_name}.HiddenProducts" name="${namespace}${nunderscore}${nested_namespace}${nsunderscore}${project_name}.hiddenproducts"/>
-  <utility factory="${namespace}${nunderscore}${nested_namespace}${nsunderscore}${project_name}.HiddenProfiles" name="${namespace}${nunderscore}${nested_namespace}${nsunderscore}${project_name}.hiddenprofiles"/>
   <include package=".upgrades"/>
 </configure>

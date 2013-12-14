@@ -57,6 +57,7 @@ eggs=
 package=\${v:application}
 package-extras=
 auto-checkout =
+    $pdn
 
 [versions]
 # bin/buildout -Nvvvvv |sed -ne "s/.*satisfies '//p" |sed -re "s/==/=/g"| sed -re "s/'.//g"|sort | uniq
@@ -64,7 +65,7 @@ pyramid=$pyramid_version
 
 [sources]
 # see http://pypi.python.org/pypi/mr.developer for documentation
-# better to edit ./sources.cfg
+$pdn=fs $pdn
 
 [code-analysis]
 recipe = plone.recipe.codeanalysis
@@ -115,11 +116,6 @@ ${product}
 interpreter = pyramidpy
 dependant-scripts=true
 
-[test]
-recipe = zc.recipe.testrunner
-eggs = \${scripts:eggs}
-script = selftest
-
 [omelette]
 order=\${scripts:recipe}
 recipe = collective.recipe.omelette
@@ -133,7 +129,7 @@ packages =\${scripts:extra-paths}
 # See http://pypi.python.org/pypi/zc.recipe.testrunner/
 # It can do xml reports addon if you supply -x as a command line argument
 # It is useful for generating reports for hudson or other contineous integration
-[${sane_name}.test]
+[test]
 recipe = collective.xmltestreport
 eggs =
     \${buildout:package} \${buildout:package-extras}

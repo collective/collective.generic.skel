@@ -24,7 +24,9 @@ from Products.CMFDefault.upgrade.to22 import upgrade_dcmi_metadata
 
 from Products.contentmigration.migrator import BaseInlineMigrator
 \#from Products.SimpleAttachment.migration import migrations as sa_migrations
-from Products.CMFCore.CachingPolicyManager import manage_addCachingPolicyManager
+from Products.CMFCore.CachingPolicyManager import (
+    manage_addCachingPolicyManager
+)
 from Products.CMFPlone.setuphandlers import addCacheHandlers
 from Products.CMFPlone.setuphandlers import addCacheForResourceRegistry
 
@@ -109,7 +111,9 @@ class BlobMigrator(BaseInlineMigrator):
             except Exception:
                 upgrades.log(
                     'Migration to blob failed for %s:\n'
-                    '%s' % (ppath, traceback.format_exc()))
+                    '%s' % (
+                        ppath, traceback.format_exc())
+                )
                 data = _marker
             #upgrades.log(
             #        '%s %s;%s;%s' %(
@@ -360,7 +364,9 @@ class ${PdN}_migrate(grok.View):
             except:
                 upgrades.log("cannot delete %s" % path)
         except:
-            upgrades.log("Cannot delete %s because parent does not exist anymore" % path)
+            upgrades.log(
+                "Cannot delete %s because parent "
+                "does not exist anymore" % path)
         return ret
 
     def pack(self):
@@ -462,13 +468,16 @@ class ${PdN}_migrate(grok.View):
     def to_blob(self):
         portal_setup = getToolByName(self.context, 'portal_setup')
         upgrade_dcmi_metadata(portal_setup)
-        portal_setup.runAllImportStepsFromProfile('profile-plone.app.registry:default')
-        portal_setup.runAllImportStepsFromProfile('profile-plone.app.blob:default')
+        portal_setup.runAllImportStepsFromProfile(
+            'profile-plone.app.registry:default')
+        portal_setup.runAllImportStepsFromProfile(
+            'profile-plone.app.blob:default')
         upgrades.commit(self.context)
 
     @onlyonce
     def to_blob_i(self):
-        """To avoir conflicts during the plonemigration loop, run the blob migration now"""
+        """To avoir conflicts during the plonemigration loop,
+        run the blob migration now"""
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
         migrator = ImgMigrator
         walker = CustomQueryWalker(portal, migrator, full_transaction=True)
@@ -478,7 +487,8 @@ class ${PdN}_migrate(grok.View):
 
     @onlyonce
     def to_blob_f(self):
-        """To avoir conflicts during the plonemigration loop, run the blob migration now"""
+        """To avoid conflicts during the plonemigration loop,
+        run the blob migration now"""
         portal = getToolByName(self.context, 'portal_url').getPortalObject()
         migrator = FMigrator
         walker = CustomQueryWalker(portal, migrator, full_transaction=True)
@@ -661,9 +671,15 @@ class ${PdN}_migrate(grok.View):
                 if IIndexableObject.providedBy(obj):
                     interface.noLongerProvides(obj, IIndexableObject)
                     catalog.reindexObject(obj, [
-                        "allowedRolesAndUsers", "object_provides", "sortable_title",
-                        "getObjPositionInParent", "getObjSize", "is_folderish",
-                        "syndication_enabled", "is_default_page", "getIcon"]
+                        "allowedRolesAndUsers",
+                        "object_provides",
+                        "sortable_title",
+                        "getObjPositionInParent",
+                        "getObjSize",
+                        "is_folderish",
+                        "syndication_enabled",
+                        "is_default_page",
+                        "getIcon"]
                     )
             except Exception, e:
                 upgrades.log('pb cataloging %s; %s' % (itm.getPath(), e))
@@ -753,13 +769,16 @@ class ${PdN}_migrate(grok.View):
         ])
         self.upproducts.extend(['ContentWellPortlets'])
 
-##########################################################################
+##############################################################
 ####### CUSTOM METHODS
-##########################################################################
+##############################################################
     @onlyonce
     def migrate_file${PdN}_to_blob(self):
         upgrades.log('Migrating File${PdN} to blob')
-        walker = CustomQueryWalker(self.context, File${PdN}Migrator, full_transaction=True)
+        walker = CustomQueryWalker(
+            self.context,
+            File${PdN}Migrator,
+            full_transaction=True)
         walker.go()
         upgrades.commit(self.context)
 
@@ -782,7 +801,9 @@ class ${PdN}_migrate(grok.View):
         return self.log_files("5")
 
     def log_files(self, idx='1'):
-        ptypes = ['Image', 'File${PdN}', 'File',
+        ptypes = ['Image',
+                  'File${PdN}',
+                  'File',
                   'FileAttachment', 'ImageAttachment']
         lsize = 0
         for ptype in ptypes:

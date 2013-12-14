@@ -38,7 +38,6 @@
   <option name="with_tool_cgeneric"                       order="10030"  description="include a bundle of collective.generic development tools y/n"       default="n"                                                                                       />
   <option name="with_tool_i18ndude"                       order="0000"   description="i18n http://pypi.python.org/pypi/i18ndude y/n" default="y"                                                                                                            />
   <option name="with_tool_ipython"                        order="0000"   description="ipython, see http://ipython.scipy.org/ y/n" default="y"                                                                                                               />
-  <option name="with_tool_zopeskel"                       order="0000"   description="ZopeSkel http://pypi.python.org/pypi/ZopeSkel y/n" default="y"                                                                                                        />
   <option description="collective.addthis, see http://pypi.python.org/pypi/collective.addthis y/n"                                                                             name="with_ploneproduct_addthis"                            default="n"  />
   <option description="collective.solr, see https://pypi.python.org/pypi/collective.solr/3.1 y/n" name="with_ploneproduct_solr"    />
   <option description="collective.captcha, see http://pypi.python.org/pypi/collective.recaptcha  -- http://pypi.python.org/pypi/collective.captcha  y/n"                       name="with_ploneproduct_captcha"                            default="n"  />
@@ -73,6 +72,7 @@
   <option description="collective.z3cform.norobots, see http://pypi.python.org/pypi/collective.z3cform.norobots y/n"                                                           name="with_ploneproduct_cz3cformnorobots"                   default="n"  />
   <option description="eea.daviz, see http://pypi.python.org/pypi/eea.daviz y/n"                                                                                               name="with_ploneproduct_eeadaviz"                           default="n"  />
   <option description="eea.tags, see http://pypi.python.org/pypi/eea.tags y/n"                                                                                                 name="with_ploneproduct_eeatags"                            default="n"  />
+  <option description="eea.facetednavigation, see http://pypi.python.org/pypi/eea.facetednavigation y/n"                                                                                                 name="with_ploneproduct_eeafn"                            default="n"  />
   <option description="five.grok, see http://pypi.python.org/pypi/five.grok (dangerous to disable) y/n"                                                                        name="with_ploneproduct_fivegrok"                           default="n"  />
   <option description="Plone.app.async, see http://pypi.python.org/pypi/plone.app.async/ y/n"                                                                                  name="with_ploneproduct_paasync"                            default="n"  />
   <option description="plone.app.caching, see http://pypi.python.org/pypi/plone.app.caching y/n"                                                                               name="with_ploneproduct_pacaching"                          default="y"  />
@@ -126,6 +126,7 @@
       comma sepaated values != 'y' -> install the list of products
   -->
   <eggs>
+    <egg name="python-dateutil"                      options="with_ploneproduct_eeadaviz,with_ploneproduct_eeafn"/>
     <egg name="bda.ldap"                      options="with_binding_ldap,with_ploneproduct_ldap"/>
     <egg name="bibliograph.core"           options="with_ploneproduct_cmfbibliographyat"          zcml="configure"/>
     <egg name="bibliograph.parsing"         options="with_ploneproduct_cmfbibliographyat"          zcml="configure"/>
@@ -144,8 +145,9 @@
     <egg name="collective.easyslider"     options="with_ploneproduct_eslider"       zcml="configure"/>
     <egg name='collective.etherpad'           zcml="configure"   options="with_ploneproduct_etherpad"/>
     <egg name="collective.flowplayer"          options="with_ploneproduct_flowplayer"   zcml="configure"/>
+    <egg name="collective.js.galleria"   options="with_ploneproduct_galleria,with_ploneproduct_galleria"      zcml="configure"/>
     <egg name="collective.galleria"   options="with_ploneproduct_galleria"      zcml="configure"/>
-    <egg name="collective.gallery"                   options="with_ploneproduct_cgallery"                            zcml="configure"/>
+    <egg name="collective.gallery"                   options="with_ploneproduct_cgallery"  zcml="configure"/>
     <egg name="collective.generic.devmode"    options="with_tool_cgeneric" scripts="cg.devmode" />
     <egg name="collective.generic.skel"       options="with_tool_cgeneric"  />
     <egg name="collective.generic.webbuilder" options="with_tool_cgeneric" scripts="cgwb"/>
@@ -172,10 +174,12 @@
     <egg name="collective.z3cform.norobots"          options="with_ploneproduct_cz3cformnorobots"                    zcml="configure"/>
     <egg name="cx_Oracle"                     options="with_database_oracle"/>
     <egg name="demjson"                       options="with_binding_json"/>
+    <!-- order here is important -->
+    <egg name='eea.facetednavigation' zproduct="y" options="with_ploneproduct_eeadaviz,with_ploneproduct_eeatags,with_ploneproduct_eeafn" zcml="meta,configure,overrides"/>
+    <egg name='eea.relations'       zproduct="y" options="with_ploneproduct_eeadaviz" zcml="configure"/>
     <egg name='eea.daviz[full]'        options="with_ploneproduct_eeadaviz" zcml="configure,overrides,full"/>
-    <egg name='eea.facetednavigation'              options="with_ploneproduct_eeafn" zcml="configure,meta,overrides"/>
-    <egg name='eea.relations'              options="with_ploneproduct_eeadaviz" />
-    <egg name='eea.tags'              options="with_ploneproduct_eeatags" zcml="configure"/>
+    <egg name='eea.tags'               options="with_ploneproduct_eeatags"  zcml="configure"/>
+    <!-- -->
     <egg name="egenix-mx-base"                options="with_database_postgresql"/>
     <egg name="five.grok"                      options="with_ploneproduct_fivegrok"      zcml="configure" order="100" zcmlorder="101"/>
     <egg name="flickrapi"                     options="with_ploneproduct_truegallery"/>
@@ -185,9 +189,8 @@
     <egg name="lxml"                          options="with_binding_lxml"   />
     <egg name="mapscript"                     options="with_binding_mapscript"/>
     <egg name="MySQL_python"                  options="with_database_mysql"               />
-    <egg name="PasteScript"                   options="with_tool_zopeskel" scripts="paster"/>
     <egg name="Pillow"                        options="with_binding_pil" />
-    <egg name="plomino.tinymce"                      options="with_ploneproduct_plominotinymce" zcml="configure"/>
+    <egg name="plomino.tinymce"    options="with_ploneproduct_plomino,with_ploneproduct_plominotinymce" zcml="configure"/>
     <egg name="plone.app.async"       options="with_ploneproduct_paasync"/>
     <egg name="plone.app.caching"     options="with_ploneproduct_pacaching" zcml="configure" />
     <egg name="plone.app.event [archetypes,dexterity]"     options="with_ploneproduct_paevent" zcml="configure" />
@@ -202,7 +205,7 @@
     <egg name="Products.ATExtensions"                options="with_ploneproduct_atextensions"                        zcml="configure"/>
     <egg name="Products.ATVocabularyManager"   options="with_ploneproduct_atvmanager" zpackage="y" zcml="configure" />
     <egg name="Products.CMFBibliographyAT"  options="with_ploneproduct_cmfbibliographyat"          zcml="configure"/>
-    <egg name="Products.CMFPlomino"               options="with_ploneproduct_plomino"/>
+    <egg name="Products.CMFPlomino"               options="with_ploneproduct_plomino" zcml="configure"/>
     <egg name="Products.ContentWellPortlets"   options="with_ploneproduct_contentwellportlet" zproduct="y" zcml="configure"/>
     <egg name="Products.csvreplicata"          options="with_ploneproduct_csvreplica"       zproduct="y" zcml="configure"/>
     <egg name="Products.EasyNewsletter"        options="with_ploneproduct_enewsletter" zpackage="y" zcml="configure"       />
@@ -212,12 +215,12 @@
     <egg name="Products.MasterSelectWidget"    options="with_ploneproduct_masterselect" zpackage="y" zcml="configure" />
     <egg name="Products.PloneArticle"          options="with_ploneproduct_plonearticle"     zproduct="y" zcml="configure"/>
     <egg name="Products.PloneboardNotify"      options="with_ploneproduct_ploneboardnotify" zcml="configure" />
-    <egg name="Products.Ploneboard"            options="with_ploneproduct_ploneboard"       zproduct="y" zcml="configure"/>
+    <egg name="Products.Ploneboard"            options="with_ploneproduct_ploneboard,with_ploneproduct_ploneboardnotify"       zproduct="y" zcml="configure"/>
     <egg name="Products.PloneFormGen"          options="with_ploneproduct_ploneformgen"     zproduct="y" zcml="configure"/>
     <egg name="Products.PloneLDAP"             options="with_ploneproduct_ldap"             zproduct="y" zcml="configure"/>
     <egg name="Products.PloneSurvey"           options="with_ploneproduct_plonesurvey"      zproduct="y" zcml="configure"/>
     <egg name="Products.Poi"                  options="with_ploneproduct_poi"               zproduct="y" zcml="configure"/>
-    <egg name="Products.SimpleAttachment"      options="with_ploneproduct_ploneboard"       zproduct="y" zcml="configure"/>
+    <egg name="Products.SimpleAttachment"      options="with_ploneproduct_ploneboard,with_ploneproduct_ploneboardnotify"       zproduct="y" zcml="configure"/>
     <egg name="psycopg2"                      options="with_database_postgresql"/>
     <egg name="pypdf"                         options="with_binding_pdf"                />
     <egg name="pysugarNG"                     options="with_binding_sugar"/>
@@ -229,7 +232,6 @@
     <egg name="z3c.unconfigure"      options="with_ploneproduct_paevent"  />
     <egg name="zc.z3monitor"       options="with_ploneproduct_paasync"/>
     <egg name="zope.app.keyreference"  options="with_ploneproduct_paasync"/>
-    <egg name="ZopeSkel"                      options="with_tool_zopeskel"                />
     <!-- zope products -->
   </eggs>
   <!--
@@ -248,7 +250,6 @@
 
     <product name="ATExtensions"                   options="with_ploneproduct_atextensions"     />
     <product name="ATVocabularyManager"            options="with_ploneproduct_atvmanager"     />
-    <product name="CMFPlomino"                     options="with_ploneproduct_plomino"          />
     <product name="ContentWellPortlets"            options="with_ploneproduct_contentwellportlet"/>
     <product name="csvreplicata"                   options="with_ploneproduct_csvreplica"       />
     <product name="LinguaPlone"                    options="with_ploneproduct_lingua"           />
@@ -283,7 +284,7 @@
     <product name='collective.easyslider'   options="with_ploneproduct_eslider" order="900"/>
     <product name='plone.app.theming'   options="with_ploneproduct_patheming" order="900"/>
     <product name='collective.etherpad'   options="with_ploneproduct_etherpad" order="900"/>
-    <product name="collective.flowplayer"          options="with_ploneproduct_flowplayer"  />
+    <product name="collective.flowplayer" options="with_ploneproduct_flowplayer"  />
     <product name='collective.galleria'   options="with_ploneproduct_galleria" order="900"/>
     <product name="collective.googleanalytics"     options="with_ploneproduct_cga"          />
     <product name='collective.js.chosen'   options="with_ploneproduct_jschosen" order="900"/>
@@ -300,9 +301,12 @@
     <product name="collective.quickupload"          options="with_ploneproduct_qupload"         order="900" />
     <product name='collective.seo'   options="with_ploneproduct_seo" order="900"/>
     <product name="collective.solr"            options="with_ploneproduct_solr"               />
-    <product name='eea.daviz'   options="with_ploneproduct_eeadaviz" order="900"/>
-    <product name='eea.facetednavigation'   options="with_ploneproduct_eeafn" order="900"/>
-    <product name='eea.tags'   options="with_ploneproduct_eeatags" order="900"/>
+    <!-- order here is important -->
+    <product name='eea.facetednavigation'   options="with_ploneproduct_eeadaviz,with_ploneproduct_eeafn" order="700"/>
+    <product name='eea.relations'           options="with_ploneproduct_eeadaviz" order="800"/>
+    <product name='eea.daviz'               options="with_ploneproduct_eeadaviz" order="900"/>
+    <product name='eea.tags'                options="with_ploneproduct_eeatags" order="900"/>
+    <!-- -->
     <product name='plone.app.caching'   options="with_ploneproduct_pacaching" order="900"/>
     <product name="plone.app.dexterity"          options="with_ploneproduct_dexterity"   order="900" />
     <product name='plone.app.event.ploneintegration'   options="with_ploneproduct_paevent" order="900"/>
@@ -322,11 +326,11 @@
     <product name="Products.MasterSelectWidget"    options="with_ploneproduct_masterselect" />
     <product name="Products.PloneArticle"          options="with_ploneproduct_plonearticle"     />
     <product name="Products.PloneboardNotify"      options="with_ploneproduct_ploneboardnotify" />
-    <product name="Products.Ploneboard"            options="with_ploneproduct_ploneboard"   profile="ploneboard" comment="after cpw" order="110"/>
+    <product name="Products.Ploneboard"            options="with_ploneproduct_ploneboard,with_ploneproduct_ploneboardnotify"   profile="ploneboard" comment="after cpw" order="110"/>
     <product name="Products.PloneFormGen"          options="with_ploneproduct_ploneformgen"     />
     <product name="Products.PloneSurvey"           options="with_ploneproduct_plonesurvey"      />
     <product name="Products.Poi"        options="with_ploneproduct_poi"  order="300"/>
-    <product name="Products.SimpleAttachment"      options="with_ploneproduct_ploneboard"   profile="SimpleAttachment"/>
+    <product name="Products.SimpleAttachment"      options="with_ploneproduct_ploneboard,with_ploneproduct_ploneboardnotify"   profile="SimpleAttachment"/>
     <product name="Solgema.fullcalendar"          options="with_ploneproduct_sfcalendar"   order="900" profile="default" />
     <product name="webcouturier.dropdownmenu"      options="with_ploneproduct_wc_dd_menu"       />
     <!-- makina-->
@@ -336,7 +340,7 @@
     <product name="collective.js.s3slider"               options="with_ploneproduct_jss3slider" />
     <product name="collective.z3cform.norobots"          options="with_ploneproduct_cz3cformnorobots"  />
     <product name="Products.CMFPlomino"                  options="with_ploneproduct_plomino"/>
-    <product name="plomino.tinymce"                      options="with_ploneproduct_plominotinymce" />
+    <product name="plomino.tinymce"                      options="with_ploneproduct_plominotinymce,with_ploneproduct_plomino" />
     <product name="Products.ATExtensions"                options="with_ploneproduct_atextensions"  order="200"   />
   </gs>
   <!--
@@ -384,7 +388,6 @@
       name is mandatory only for zcml slugs.
   -->
   <miscproducts>
-    <product name="Products.CMFPlomino" zproduct="CMFPlomino"  zcml="configure" options="with_ploneproduct_plomino"/>
   </miscproducts>
   </template>
   <purge/>

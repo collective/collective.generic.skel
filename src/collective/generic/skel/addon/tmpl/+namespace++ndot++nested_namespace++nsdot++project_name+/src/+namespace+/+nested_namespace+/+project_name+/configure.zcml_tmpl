@@ -15,10 +15,15 @@
   <include package="Products.CMFCore" file="permissions.zcml" />
   <!-- safe check for dexterity or multilingual & tests -->
   <include package="plone.app.contentmenu" />
+  <include package="plone.app.theming" file="configure.zcml" />
+  <include package="plone.app.themingplugins" file="configure.zcml" />
   <include package="plone.app.dexterity" file="configure.zcml" />
   <include package="plone.app.dexterity" file="meta.zcml" />
   <!-- Load the ZCML configuration for the ${pdn} package.-->
+#set $passed_zcml = []
 #for $package in $zcml:
+#if not $package in $passed_zcml
+#set $dummy = $passed_zcml.append($package)
 #if isinstance($package, basestring):
   <!--$package -->
 #else
@@ -34,12 +39,25 @@
   <include package="plone.app.event.ploneintegration" file="configure.zcml"/>
   <include package="plone.app.event.at" file="configure.zcml"/>
   <include package="plone.app.event.dx" file="configure.zcml"/>
+  #*
+  #elif $item.startswith('eea.facetednavigation')
+  <include package="eea.facetednavigation" file='meta.zcml'      />
+  <includeOverrides package="eea.facetednavigation" file='overrides.zcml' />
+  <include package="eea.facetednavigation" file='configure.zcml' />
+  <include package="eea.facetednavigation" file='dexterity.zcml' />
+  <include package="eea.facetednavigation" file='configure.zcml' />
+  <include package="eea.facetednavigation" file='permissions.zcml' />
+  #elif $item.startswith('eea.relations')
+  <include package="$item" file="configure.zcml"/>
+  <include package="${item}.default" file="configure.zcml"/>
+  *#
   #else
             #if '[' in $item:
             #set $item=$item.split('[')[0].strip()
             #end if
   <include package="$item" file="${slug}.zcml"/>
   #end if
+#end if
 #end if
 #end if
 #end if

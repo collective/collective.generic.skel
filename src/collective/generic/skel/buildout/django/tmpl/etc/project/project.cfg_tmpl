@@ -56,15 +56,16 @@ find-links=
     http://initd.org/pub/software/psycopg/PSYCOPG-2-0/
 extra-paths=
 extras =
-eggs =
+eggs = ${pdn}
 # change to your django app dir
 sources=sources
-auto-checkout += dj.paste
+auto-checkout +=
+    dj.paste
+    ${pdn}
 
 [sources]
 # see http://pypi.python.org/pypi/mr.developer for documentation
-
-[sources]
+$pdn=fs $pdn
 dj.paste = git https://github.com/kiorky/dj.paste.git
 
 [ubuntulibs]

@@ -1,5 +1,5 @@
 [v]
-application  = ${project}
+application  = ${pdn}
 sys-user=\${env:USER}
 admin-password=${admin_password}
 admin=${admin_user}

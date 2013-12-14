@@ -4,7 +4,10 @@ Launching all doctests in the tests directory using:
     - the base layer in testing.py
 
 """
-from ${pdn}.testing import ${P_D_N}_FUNCTIONAL_TESTING as FUNCTIONAL_TESTING
+from ${pdn}.testing import (
+    ${P_D_N}_FUNCTIONAL_TESTING
+    as FUNCTIONAL_TESTING
+)
 
 import unittest2 as unittest
 import glob
@@ -24,8 +27,12 @@ def test_suite():
     try:
         files = []
         for e in ['*rst', '*txt']:
-            for d in [cwd, os.path.dirname(cwd)]:
-                files += glob.glob(os.path.join(d, e))
+            uplevel = os.path.dirname(cwd)
+            for d in [cwd, uplevel]:
+                files += [a for a in
+                          glob.glob(os.path.join(d, e))
+                          if a != os.path.join(
+                              uplevel, 'version.txt')]
     except Exception:
         logger.warn('No doctests for ${pdn}')
     suite = unittest.TestSuite()

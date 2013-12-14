@@ -1,6 +1,8 @@
 \#import unittest2 as unittest
 import os
 import transaction
+import random
+import socket
 \#import ConfigParser
 \#import re
 import sys
@@ -41,49 +43,115 @@ from plone.app.testing.selenium_layers import (
 )
 
 TESTED_PRODUCTS = (
+#set $passed = []
+#set $passed_np = []
 #for item in $z2products:
-#$item
+#if not $item in $passed:
+#set dummy = $passed.append($item)
+    #$item
 #for package in $z2products[$item]:
+#if not $package in $passed_np
+#set dummy = $passed_np.append($package)
 #if $package.startswith('#'):
     #'$package.replace('#', '')',
 #else
     '$package',
 #end if
+#end if
 #end for
+#end if
 #end for
 )
 
 PLONE_MANAGER_NAME = 'Plone_manager'
 PLONE_MANAGER_ID = 'plonemanager'
 PLONE_MANAGER_PASSWORD = 'plonemanager'
-GENTOO_FF_UA = 'Mozilla/5.0 (X11; U; Linux i686; en-US; rv:1.9.1.3) Gecko/20090912 Gentoo Shiretoko/3.5.3'
+GENTOO_FF_UA = ('Mozilla/5.0 (X11; U; Linux i686; en-US; '
+                'rv:1.9.1.3) Gecko/20090912 '
+                'Gentoo Shiretoko/3.5.3')
+cwd = os.path.dirname(__file__)
+zope.component.provideAdapter(DefaultTraversable, [None])
+
+
+def _get_port():
+    for i in range(10000):
+        port = random.randrange(20000, 30000)
+        s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        try:
+            try:
+                s.connect(('localhost', port))
+            except socket.error:
+                return port
+        finally:
+            s.close()
+    raise RuntimeError("Can't find port")
+
+
+def get_interfaces(obj):
+    return [o for o in obj.__provides__.interfaces()]
+
+
+def errprint(msg):
+    """Writes 'msg' to stderr and flushes the stream."""
+    sys.stderr.write(msg)
+    sys.stderr.flush()
+
+
+def pstriplist(s):
+    print '\n'.join([a.rstrip() for a in s.split('\n') if a.strip()])
+
+
+class Request(zope.publisher.browser.TestRequest):
+    def __setitem__(self, name, value):
+        self._environ[name] = value
+
+
+TestRequest = Request
+
+
+def make_request(url='http://nohost/@@myview', form=None, *args, **kwargs):
+    r = Request(environ={'SERVER_URL': url, 'ACTUAL_URL': url},
+                form=form, *args, **kwargs)
+    zope.interface.alsoProvides(
+        r, zope.annotation.interfaces.IAttributeAnnotatable)
+    return r
 
 
 class ${PdN}Layer(PloneSandboxLayer):
+    """Layer to setup the $project site"""
 
     defaultBases = (PLONE_FIXTURE, )
-    """Layer to setup the $project site"""
+
     class Session(dict):
         def set(self, key, value):
             self[key] = value
 
     def setUpZope(self, app, configurationContext):
-        """Set up the additional products required for the ${namespace}${ndot}${nested_namespace}) site ${project_name}.
+        """Set up the additional products required for the ${namespace}${ndot}${nested_namespace} site ${project_name}.
         until the setup of the Plone site testing layer.
         """
         self.app = app
-        self.browser = Browser(app)
-        # old zope2 style products
-        z2.installProduct(app, 'Products.PythonScripts')
-        for product in TESTED_PRODUCTS:
-            z2.installProduct(app, product)
 
-        # ----------------------------------------------------------------------
+        # ------------------------------------------------------
         # Import all our python modules required by our packages
-        # ---------------------------------------------------------------------
+        # ------------------------------------------------------
+
+        import plone.app.dexterity
+        self.loadZCML('configure.zcml', package=plone.app.dexterity)
+        import plone.app.theming
+        self.loadZCML('configure.zcml', package=plone.app.theming)
+        import plone.app.themingplugins
+        self.loadZCML('configure.zcml', package=plone.app.themingplugins)
+
+        #set $passed_mods = []
+        #set $passed_packages = []
         #for $item in $py_modules:
+        #if not $item in $passed_mods
+        #set dummy = $passed_mods.append($item)
         \#$item
         #for $package in $py_modules[$item]:
+        #if not $package in $passed_packages
+        #set dummy = $passed_packages.append($package)
         #if $package.startswith('#'):
         #set $package=$package[1:]
         #end if
@@ -96,6 +164,21 @@ class ${PdN}Layer(PloneSandboxLayer):
         self.loadZCML('configure.zcml', package=plone.app.event.ploneintegration)
         self.loadZCML('configure.zcml', package=plone.app.event.dx)
         self.loadZCML('configure.zcml', package=plone.app.event.at)
+        #
+        #elif $package.startswith('eea.relations')
+        import $package
+        import ${package}.default
+        self.loadZCML('configure.zcml', package=$package)
+        self.loadZCML('configure.zcml', package=${package}.default)
+        #elif $package.startswith('eea.facetednavigation')
+        from eea import facetednavigation
+        self.loadZCML('meta.zcml', package=facetednavigation)
+        self.loadZCML('overrides.zcml', package=facetednavigation)
+        self.loadZCML('permissions.zcml', package=facetednavigation)
+        self.loadZCML('configure.zcml', package=facetednavigation)
+        self.loadZCML('dexterity.zcml', package=facetednavigation)
+        self.loadZCML('configure.zcml', package=facetednavigation.subtypes)
+        #
         #else
         #if '[' in $package:
         #set $package=$package.split('[')[0].strip()
@@ -103,35 +186,57 @@ class ${PdN}Layer(PloneSandboxLayer):
         import $package
         self.loadZCML('configure.zcml', package=$package)
         #end if
+        #end if
         #end for
+        #end if
         #end for
 
-        # -----------------------------------------------------------------------
+        # old zope2 style products
+        z2.installProduct(app, 'Products.PythonScripts')
+        for product in TESTED_PRODUCTS:
+            z2.installProduct(app, product)
+
+        # ----------------------------------------------------
         # Load our own ${project_name}
-        # -----------------------------------------------------------------------
+        # ----------------------------------------------------
         import ${pdn}
-        self.loadZCML('configure.zcml', package=${pdn})
+        self.loadZCML(
+            'configure.zcml',
+            package=${pdn}
+        )
 
-        # ------------------------------------------------------------------------
-        # - Load the python packages that are registered as Zope2 Products
+        # ----------------------------------------------------------
+        # - Load the python packages that are registered as
+        #   Zope2 Products
         #   which can't happen until we have loaded the package ZCML.
-        # ------------------------------------------------------------------------
+        # -----------------------------------------------------------
 
+        #set $passed_z2 = []
         #for $package in $z2packages:
+        #if not $package in  $passed_z2
+        #set dummy=$passed_z2.append($package)
         #$package
         #for $item in $z2packages[$package]:
         #if $item.startswith('#'):
         #z2.installProduct("$item.replace('#', '')")
         #else
-        z2.installProduct(app, '$item')
+        z2.installProduct(
+            app,
+            '$item'
+        )
         #end if
         #end for
+        #end if
         #end for
-        z2.installProduct(app, '${pdn}')
+        z2.installProduct(
+            app,
+            '${pdn}'
+        )
 
-        # -------------------------------------------------------------------------
-        # support for sessions without invalidreferences if using zeo temp storage
-        # -------------------------------------------------------------------------
+        # -------------------------------------------------
+        # support for sessions without invalidreferences
+        # if using zeo temp storage
+        # -------------------------------------------------
         app.REQUEST['SESSION'] = self.Session()
         if not hasattr(app, 'temp_folder'):
             tf = Folder('temp_folder')
@@ -142,27 +247,34 @@ class ${PdN}Layer(PloneSandboxLayer):
     def setUpPloneSite(self, portal):
         self.portal = portal
         # Plone stuff. Workflows, portal content. Members folder, etc.
-        self.applyProfile(portal, 'Products.CMFPlone:plone')
-        self.applyProfile(portal, 'Products.CMFPlone:plone-content')
         self.applyProfile(portal, '${pdn}:default')
 
 
-${P_D_N}_FIXTURE = ${PdN}Layer(name='${PdN}:Fixture')
+${P_D_N}_FIXTURE = ${PdN}Layer(
+    name='${PdN}:Fixture')
 
 
-class LayerMixin(Layer):
-    defaultBases = (${P_D_N}_FIXTURE,)
+class IntegrationTesting(BIntegrationTesting):
+
+    defaultBases = (
+        ${P_D_N}_FIXTURE,
+        z2.INTEGRATION_TESTING,
+    )
 
     def testTearDown(self):
         self.loginAsPortalOwner()
         if 'test-folder' in self['portal'].objectIds():
             self['portal'].manage_delObjects('test-folder')
+        # Set up the local site manager
+        from zope.site.hooks import setSite
+        setSite(self['portal'])
         self['portal'].portal_membership.deleteMembers([PLONE_MANAGER_NAME])
         self.setRoles()
         self.login()
-        transaction.commit()
+        super(IntegrationTesting, self).testTearDown()
 
     def testSetUp(self):
+        super(IntegrationTesting, self).testSetUp()
         if not self['portal']['acl_users'].getUser(PLONE_MANAGER_NAME):
             self.loginAsPortalOwner()
             self.add_user(
@@ -178,8 +290,9 @@ class LayerMixin(Layer):
             self['portal'].invokeFactory('Folder', 'test-folder')
         self['test-folder'] = self['folder'] = self['portal']['test-folder']
         self.setRoles(TEST_USER_ROLES)
-        transaction.commit()
         self['globs'] = globals()
+        self['globs'].update(locals())
+        self['globs'][Browser] = Browser
 
     def add_user(self, portal, id, username, password, roles=None):
         if not roles:
@@ -212,18 +325,34 @@ class LayerMixin(Layer):
             z2.login(self['portal']['acl_users'], id)
 
 
-class IntegrationTesting(LayerMixin, BIntegrationTesting):
-
-    def testSetUp(self):
-        BIntegrationTesting.testSetUp(self)
-        LayerMixin.testSetUp(self)
+${P_D_N}_INTEGRATION_TESTING = (
+    IntegrationTesting(name="${PdN}:Integration")
+)
 
 
-class FunctionalTesting(LayerMixin, BFunctionalTesting):
+class FunctionalTesting(BFunctionalTesting):
 
-    def testSetUp(self):
-        BFunctionalTesting.testSetUp(self)
-        LayerMixin.testSetUp(self)
+    defaultBases = (
+        ${P_D_N}_INTEGRATION_TESTING,
+    )
+
+
+${P_D_N}_FUNCTIONAL_TESTING = (
+    FunctionalTesting(name="${PdN}:Functional")
+)
+
+
+class SeleniumTesting(FunctionalTesting):
+
+    defaultBases = (
+        ${P_D_N}_FUNCTIONAL_TESTING,
+        SELENIUM_TESTING,
+    )
+
+
+${P_D_N}_SELENIUM_TESTING = (
+    SeleniumTesting(name="${PdN}:Selenium")
+)
 
 
 class SimpleLayer(Layer):
@@ -231,22 +360,28 @@ class SimpleLayer(Layer):
     defaultBases = tuple()
 
 
-${P_D_N}_SIMPLE = SimpleLayer(name='${PdN}:Simple')
-${P_D_N}_INTEGRATION_TESTING = IntegrationTesting(name="${PdN}:Integration")
-${P_D_N}_FUNCTIONAL_TESTING = FunctionalTesting(name="${PdN}:Functional")
-${P_D_N}_SELENIUM_TESTING = FunctionalTesting(
-    bases=(SELENIUM_TESTING, ${P_D_N}_FUNCTIONAL_TESTING,),
-    name="${PdN}:Selenium")
+${P_D_N}_SIMPLE = SimpleLayer(
+    name='${PdN}:Simple'
+)
 
 
 class Browser(z2.Browser):  # pragma: no cover
     """Patch the browser class to be a little more like a webbrowser."""
 
-    def __init__(self, app, url=None, headers=None):
+    def __init__(self, app=None, url=None, headers=None):
+        if not url:
+            url = '/plone'
+        if not url.startswith('http'):
+            host = ${P_D_N}_FUNCTIONAL_TESTING['host']
+            port = ${P_D_N}_FUNCTIONAL_TESTING['port']
+            url = 'http://{0}:{1}/{2}'.format(host, port, url)
+        self.handle_errors = False
         if headers is None:
             headers = []
-        z2.Browser.__init__(self, app, url)
-        self.mech_browser.set_handle_robots(False)
+        if not app:
+            app = z2.INTEGRATION_TESTING['app']
+        super(Browser, self).__init__(app)
+        self.mech_browser.set_handle_robots(0)
         for h in headers:
             k, val = h
             self.addHeader(k, val)
@@ -262,18 +397,14 @@ class Browser(z2.Browser):  # pragma: no cover
     @property
     def print_contents(self):
         """Print the browser contents somewhere for you to see its
-        context in doctest pdb, t
-        ype browser.print_contents(browser) and that's it,
-        open firefox with file://~/browser.html."""
+        context in doctest pdb, 
+        Then browser.print_contents(browser) and that's it,
+        Open firefox with file://~/browser.html."""
         self.print_contents_to_file()
 
     @classmethod
     def new(cls, url=None, user=None, passwd=None, headers=None, login=False):
         """instantiate and return a testbrowser for convenience """
-        app = ${P_D_N}_FUNCTIONAL_TESTING['app']
-        portal = ${P_D_N}_FUNCTIONAL_TESTING['portal']
-        if not url:
-            url = portal.absolute_url()
         if headers is None:
             headers = []
         if user:
@@ -286,39 +417,6 @@ class Browser(z2.Browser):  # pragma: no cover
             auth = 'Basic %s:%s' % (user, passwd)
             headers.append(('Authorization', auth))
         headers.append(('User-agent', GENTOO_FF_UA))
-        browser = cls(app, url, headers=headers)
-        return browser
+        return cls(z2.INTEGRATION_TESTING['app'], url=url, headers=headers)
 
-
-zope.component.provideAdapter(DefaultTraversable, [None])
-cwd = os.path.dirname(__file__)
-
-
-def get_interfaces(obj):
-    return [o for o in obj.__provides__.interfaces()]
-
-
-def errprint(msg):
-    """Writes 'msg' to stderr and flushes the stream."""
-    sys.stderr.write(msg)
-    sys.stderr.flush()
-
-
-def pstriplist(s):
-    print '\n'.join([a.rstrip() for a in s.split('\n') if a.strip()])
-
-
-class Request(zope.publisher.browser.TestRequest):
-    def __setitem__(self, name, value):
-        self._environ[name] = value
-
-TestRequest = Request
-
-
-def make_request(url='http://nohost/@@myview', form=None, *args, **kwargs):
-    r = Request(environ={'SERVER_URL': url, 'ACTUAL_URL': url}, form=form, *args, **kwargs)
-    zope.interface.alsoProvides(r, zope.annotation.interfaces.IAttributeAnnotatable)
-    return r
-
-
-# vim:set ft=python:
+\# vim:set ft=python:

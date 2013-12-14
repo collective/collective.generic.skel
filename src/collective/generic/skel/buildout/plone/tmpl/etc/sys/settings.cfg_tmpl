@@ -53,6 +53,7 @@ autostart_instancewk = true
 # plone site id
 plonesite = $plonesite
 # zope settings
+zeo-pack-days=0
 z2-log-level = INFO
 event-log-level = INFO
 #debug mode
@@ -81,7 +82,7 @@ reverse-proxy-edit-host = $reverseproxy_edit_host
 reverse-proxy-port = $reverseproxy_port
 # QA settings
 package-min-coverage = 80
-flake8-ignore = E501,C901
+flake8-ignore = C901
 flake8-max-complexity=1000
 pre-commit-hook = True
 

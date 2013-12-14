@@ -31,9 +31,9 @@ setup(
     name=name,
     namespace_packages=[
 #if $namespace:
-         "${namespace}",
+        "${namespace}",
 #elif $nested_namespace:
-         "${namespace}${ndot}${nested_namespace}"
+        "${namespace}${ndot}${nested_namespace}"
 #end if
     ],
     version=version,
@@ -64,6 +64,8 @@ setup(
         "plone.app.referenceablebehavior",
         "plone.directives.dexterity",
         "plone.directives.form",
+        "plone.app.theming",
+        "plone.app.themingplugins",
         #if not $with_generic:
             #set $skipped = ["binding_pil", "ploneproduct_tinymce" "ploneproduct_paevent"]
         #else:

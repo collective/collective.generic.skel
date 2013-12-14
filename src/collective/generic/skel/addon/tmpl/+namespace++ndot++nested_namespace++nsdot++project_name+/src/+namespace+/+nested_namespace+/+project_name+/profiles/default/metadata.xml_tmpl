@@ -6,8 +6,13 @@
       <dependency>profile-${pdn}:qi</dependency>
   <!-- GenericSetup dependencies -->
       <dependency>profile-plone.app.dexterity:default</dependency>
+      <dependency>profile-plone.app.theming:default</dependency>
+#set $passed_packages = []
 #for package, profile, order in $gs
+#if not ($package, $profile, $order) in $passed_packages
+#set dummy = $passed_packages.append(($package, $profile, $order))
       <dependency>profile-${package}:${profile}</dependency>
+#end if
 #end for
  </dependencies>
 </metadata>

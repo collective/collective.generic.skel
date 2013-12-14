@@ -4,14 +4,33 @@ Checking specifics portal settings.
 
 import unittest2 as unittest
 
-from base import IntegrationTestCase
+from ${pdn}.tests import (
+    base
+)
+from ${pdn}.testing import (
+    Browser,
+)
 
 
-class TestSetup(IntegrationTestCase):
+class TestSetup(base.IntegrationTestCase):
     """Check Policy."""
 
     def test_Noop(self):
         self.assertEquals(True, True)
+
+
+class TestFunctionnalSetup(base.FunctionalTestCase):
+    """Check Policy."""
+
+    def test_FNoop(self):
+        self.assertTrue(
+            'Plone'
+            in Browser.new(self.portal.absolute_url()).contents
+        )
+        self.assertTrue(
+            'Plone'
+            in Browser.new('/plone').contents
+        )
 
 
 def test_suite():
