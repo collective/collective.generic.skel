@@ -52,7 +52,7 @@ maintainance-parts =
 [apache_vhost]
 recipe = collective.recipe.template
 input = \${buildout:directory}/etc/templates/www/apache.reverseproxy.conf.in
-output = \${buildout:directory}/etc/www/apache.reverseproxy.conf
+output = \${buildout:directory}/www/apache.reverseproxy.conf
 host = \${v:reverse-proxy-host}
 edit-host = \${v:reverse-proxy-edit-host}
 scheme = \${v:reverse-proxy-scheme}
@@ -62,7 +62,7 @@ listen = \${v:reverse-proxy-listen}
 [nginx_vhost]
 recipe = collective.recipe.template
 input = \${buildout:directory}/etc/templates/www/nginx.reverseproxy.conf.in
-output = \${buildout:directory}/etc/www/nginx.reverseproxy.conf
+output = \${buildout:directory}/www/nginx.reverseproxy.conf
 host = \${v:reverse-proxy-host}
 edit-host = \${v:reverse-proxy-edit-host}
 scheme = \${v:reverse-proxy-scheme}

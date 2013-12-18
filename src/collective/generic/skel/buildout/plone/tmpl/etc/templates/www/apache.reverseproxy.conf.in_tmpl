@@ -1,6 +1,6 @@
 <VirtualHost \${listen}:\${port}>
 ServerAdmin     ${author_email}
-DocumentRoot    \${buildout:directory}/etc/www/htdocs/
+DocumentRoot    \${buildout:directory}/www/htdocs/
 ServerName      \${host}
 ErrorLog        \${buildout:directory}/var/log/apache/\${host}_log
 TransferLog     \${buildout:directory}/var/log/apache/\${host}-access_log
@@ -23,8 +23,8 @@ RewriteEngine  on
 ProxyPass         /zmiroot/ http://\${hosts:zope-front}:\${ports:zope-front}/VirtualHostBase/\${scheme}/\${host}:\${port}/VirtualHostRoot/_vh_zmiroot/ retry=1
 ProxyPassReverse  /zmiroot/ http://\${hosts:zope-front}:\${ports:zope-front}/VirtualHostBase/\${scheme}/\${host}:\${port}/VirtualHostRoot/_vh_zmiroot/
 
-## maintenance page
-RewriteCond \${buildout:directory}/etc/www/htdocs/maintainance/maintainance.html -f
+# maintenance page
+RewriteCond \${buildout:directory}/www/htdocs/maintainance/maintainance.html -f
 RewriteCond %{REQUEST_URI} !^/maintainance
 RewriteRule $ /maintainance/maintainance.html [R=302,L]
 
@@ -45,7 +45,7 @@ ProxyPassReverse  /     http://\${hosts:zope-front}:\${ports:zope-front}/Virtual
 #if $with_cache_support
 <VirtualHost \${listen}:\${port}>
 ServerAdmin     ${author_email}
-DocumentRoot    \${buildout:directory}
+DocumentRoot    \${buildout:directory}/www/htdocs
 ServerName      \${edit-host}
 ErrorLog        \${buildout:directory}/var/log/apache/\${edit-host}_log
 TransferLog     \${buildout:directory}/var/log/apache/\${edit-host}-access_log
@@ -66,6 +66,11 @@ RewriteEngine  on
 
 ProxyPass         /zmiroot/ http://\${hosts:zope-front}:\${ports:zope-front}/VirtualHostBase/\${scheme}/\${edit-host}:\${port}/VirtualHostRoot/_vh_zmiroot/ retry=1
 ProxyPassReverse  /zmiroot/ http://\${hosts:zope-front}:\${ports:zope-front}/VirtualHostBase/\${scheme}/\${edit-host}:\${port}/VirtualHostRoot/_vh_zmiroot/
+
+# maintenance page
+RewriteCond \${buildout:directory}/www/htdocs/maintainance/maintainance.html -f
+RewriteCond %{REQUEST_URI} !^/maintainance
+RewriteRule $ /maintainance/maintainance.html [R=302,L]
 
 #if $with_supervisor
 # supervisor
