@@ -17,6 +17,8 @@ etc/project/${project}-kgs.cfg
 etc/sys/settings-local.cfg
 etc/sys/settings-prod.cfg
 etc/varnish.vcl
+www/apache.reverseproxy.conf
+www/nginx.reverseproxy.conf
 etc/www/apache.reverseproxy.conf
 etc/www/nginx.reverseproxy.conf
 .installed.cfg
