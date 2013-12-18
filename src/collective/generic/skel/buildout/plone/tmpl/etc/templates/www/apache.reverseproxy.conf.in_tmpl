@@ -24,7 +24,7 @@ ProxyPass         /zmiroot/ http://\${hosts:zope-front}:\${ports:zope-front}/Vir
 ProxyPassReverse  /zmiroot/ http://\${hosts:zope-front}:\${ports:zope-front}/VirtualHostBase/\${scheme}/\${host}:\${port}/VirtualHostRoot/_vh_zmiroot/
 
 ## maintenance page
-RewriteCond ${buildout:directory}/etc/www/htdocs/maintainance/maintainance.html -f
+RewriteCond \${buildout:directory}/etc/www/htdocs/maintainance/maintainance.html -f
 RewriteCond %{REQUEST_URI} !^/maintainance
 RewriteRule $ /maintainance/maintainance.html [R=302,L]
 
