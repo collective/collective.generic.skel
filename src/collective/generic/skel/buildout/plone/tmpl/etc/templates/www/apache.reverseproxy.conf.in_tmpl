@@ -23,6 +23,11 @@ RewriteEngine  on
 ProxyPass         /zmiroot/ http://\${hosts:zope-front}:\${ports:zope-front}/VirtualHostBase/\${scheme}/\${host}:\${port}/VirtualHostRoot/_vh_zmiroot/ retry=1
 ProxyPassReverse  /zmiroot/ http://\${hosts:zope-front}:\${ports:zope-front}/VirtualHostBase/\${scheme}/\${host}:\${port}/VirtualHostRoot/_vh_zmiroot/
 
+## maintenance page
+RewriteCond ${buildout:directory}/etc/www/maintenance.html -f
+RewriteCond %{REQUEST_URI} !/etc/www/maintenance.html
+RewriteRule $ /etc/www/maintenance.html [R=302,L]
+
 #if $with_supervisor
 # supervisor
 ProxyPass         /supervisor/ http://\${hosts:supervisor}:\${ports:supervisor}/ retry=1
