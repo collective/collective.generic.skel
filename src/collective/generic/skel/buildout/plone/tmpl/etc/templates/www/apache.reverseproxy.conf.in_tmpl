@@ -25,7 +25,7 @@ ProxyPassReverse  /zmiroot/ http://\${hosts:zope-front}:\${ports:zope-front}/Vir
 
 ## maintenance page
 RewriteCond ${buildout:directory}/etc/www/maintenance.html -f
-RewriteCond %{REQUEST_URI} !/etc/www/maintenance.html
+RewriteCond %{REQUEST_URI} !/etc/www/
 RewriteRule $ /etc/www/maintenance.html [R=302,L]
 
 #if $with_supervisor
