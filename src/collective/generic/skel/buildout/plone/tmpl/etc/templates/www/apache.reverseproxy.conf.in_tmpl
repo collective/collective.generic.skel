@@ -13,7 +13,7 @@ DirectoryIndex   index.html index.htm
     Order allow,deny
     Allow from all
     </IfVersion>
-    <IfVersion >= 2.4>
+    <IfVersion >= 2.3>
     Require all granted
     </IfVersion>
 </Directory>
@@ -62,7 +62,7 @@ DirectoryIndex   index.html index.htm
     Order allow,deny
     Allow from all
     </IfVersion>
-    <IfVersion >= 2.4>
+    <IfVersion >= 2.3>
     Require all granted
     </IfVersion>
 </Directory>
