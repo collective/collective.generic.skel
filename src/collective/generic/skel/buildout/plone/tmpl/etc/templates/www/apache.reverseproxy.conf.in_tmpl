@@ -6,13 +6,10 @@ ErrorLog        \${buildout:directory}/var/log/apache/\${host}_log
 TransferLog     \${buildout:directory}/var/log/apache/\${host}-access_log
 CustomLog       \${buildout:directory}/var/log/apache/\${host}-access_log combined
 DirectoryIndex   index.html index.htm
-
-
-
 <Directory "\${buildout:directory}/www/htdocs">
     Options  +ExecCGI +IncludesNOEXEC +FollowSymLinks -Indexes
     AllowOverride All
-    <IfVersion < 2.4>
+    <IfVersion < 2.3>
     Order allow,deny
     Allow from all
     </IfVersion>
@@ -61,7 +58,7 @@ CustomLog       \${buildout:directory}/var/log/apache/\${edit-host}-access_log c
 DirectoryIndex   index.html index.htm
 <Directory "\${buildout:directory}">
     Options  +ExecCGI +IncludesNOEXEC +FollowSymLinks -Indexes
-    <IfVersion < 2.4>
+    <IfVersion < 2.3>
     Order allow,deny
     Allow from all
     </IfVersion>
