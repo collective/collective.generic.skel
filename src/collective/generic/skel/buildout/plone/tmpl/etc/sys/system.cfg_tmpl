@@ -37,7 +37,6 @@ $hr
 sys-programs =
 sys-parts=
     \${v:www-parts}
-    \${v:maintainance-parts}
 www-parts =
     apache_vhost
     nginx_vhost
