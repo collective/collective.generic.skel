@@ -32,6 +32,8 @@
 
 [v]
 # plone settings
+apache-extra=
+nginx-extra=
 admin-user = $zope_user
 admin-password = $zope_password
 project = ${project}

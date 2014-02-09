@@ -57,7 +57,7 @@ edit-host = \${v:reverse-proxy-edit-host}
 scheme = \${v:reverse-proxy-scheme}
 port = \${v:reverse-proxy-port}
 listen = \${v:reverse-proxy-listen}
-extra=
+extra=\${v:apache-extra}
 
 [nginx_vhost]
 recipe = collective.recipe.template
@@ -68,7 +68,7 @@ edit-host = \${v:reverse-proxy-edit-host}
 scheme = \${v:reverse-proxy-scheme}
 port = \${v:reverse-proxy-port}
 uname = zopeserver
-extra=
+extra=\${v:nginx-extra}
 
 # CRON JOBS
 # make an incremental backup per day
