@@ -1,5 +1,4 @@
 var gulp = require('gulp');
-var sass = require('gulp-ruby-sass');
 var autoprefixer = require('gulp-autoprefixer');
 var minifycss = require('gulp-minify-css');
 var less = require('gulp-less');
@@ -12,8 +11,8 @@ var clean = require('gulp-clean');
 var concat = require('gulp-concat');
 var notify = require('gulp-notify');
 var cache = require('gulp-cache');
-#set pt = ("./src/"+$pdn+"/src/"+$namespace+"/"+$nested_namespace+"/"+$project_name+"/static").replace('//', '/')
-var d = $pt
+#set pt = ("./src/"+$pdn+"/src/"+$namespace+"/"+$nested_namespace+"/"+$project_name+"/static").replace('//', '/') + "/"
+var d = "$pt";
 var lessfiles = [d+'less/_${project_name}.less'];
 var javascripts = [d+'js/theme.js'];
 w = process.cwd();
