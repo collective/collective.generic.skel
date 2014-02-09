@@ -48,6 +48,7 @@ RewriteCond \${buildout:directory}/www/htdocs/maintainance/index.html !-f
 RewriteRule ^(.*)$ http://\${hosts:zope-front}:\${ports:zope-front}/VirtualHostBase/\${scheme}/\${host}:\${port}/\${v:plonesite}/VirtualHostRoot/$1 [P]
 ProxyPassReverse  / http://\${hosts:zope-front}:\${ports:zope-front}/VirtualHostBase/\${scheme}/\${host}:\${port}/\${v:plonesite}/VirtualHostRoot/
 
+\${extra}
 #RewriteLog "\${buildout:directory}/var/log/apache/rewrite.log"
 #RewriteLogLevel 3
 
@@ -97,6 +98,7 @@ RewriteCond \${buildout:directory}/www/htdocs/maintainance/index.html !-f
 RewriteRule ^(.*)$   http://\${hosts:zope-front}:\${ports:zope-front}/VirtualHostBase/\${scheme}/\${edit-host}:\${port}/\${v:plonesite}/VirtualHostRoot/$1 [P]
 ProxyPassReverse  /  http://\${hosts:zope-front}:\${ports:zope-front}/VirtualHostBase/\${scheme}/\${edit-host}:\${port}/\${v:plonesite}/VirtualHostRoot/
 
+\${extra}
 # vim: set ft=xml:
 </VirtualHost>
 #end if
