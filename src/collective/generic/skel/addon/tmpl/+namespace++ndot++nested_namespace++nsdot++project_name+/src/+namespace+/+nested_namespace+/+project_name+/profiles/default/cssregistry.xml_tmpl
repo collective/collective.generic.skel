@@ -23,9 +23,17 @@
   <!--
     <stylesheet id="++resource++${pdn}/something.css"/>
     -->
+
+#if $diazo_skin in ['960']
   <stylesheet applyPrefix="True" title="" id="++theme++${pthemename}/css/960_12_col.css" />
-  <stylesheet applyPrefix="True" title="" id="++theme++${pthemename}/css/project.css"
+  <stylesheet applyPrefix="True" title="" id="++theme++${pthemename}/css/$project.css"
       expression="request/HTTP_X_THEME_ENABLED | nothing" />
+#end if
+#if $diazo_skin in ['bootstrap']
+  <stylesheet applyPrefix="True" title="" id="++theme++${pthemename}/css/theme.min.css"
+    expression="request/HTTP_X_THEME_ENABLED | nothing" />
   <stylesheet applyPrefix="True" title="" id="columns.css"
       expression="not:request/HTTP_X_THEME_ENABLED | nothing" />
+  <stylesheet id="mobile.css"  enabled="False" />
+#end if
 </object>

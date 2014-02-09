@@ -486,8 +486,6 @@ ${product}
 
 [nodejs]
 recipe = gp.recipe.node
-npms = csslint jshint coffee-script less
-scripts = csslint jshint coffee lessc npm
 url = http://nodejs.org/dist/v\${versions:nodejs}/node-v\${versions:nodejs}.tar.gz
 
 ############# QA

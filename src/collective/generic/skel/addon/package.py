@@ -17,6 +17,7 @@ p4_themes = {
 
 borrowed_vars = []
 c.borrow_vars(borrowed_vars, plone.Package)
+diazo_skins = ['bootstrap', '960']
 
 
 def skin_chooser(self, command, output_dir, vars):
@@ -49,6 +50,9 @@ class Package(c.Package):
             'SMTP port if you are creating a policy addon',
             default='25'),
         var('pthemename', 'diazo theme name', default=''),
+        var('diazo_skin',
+            'one of: {0}'.format(', '.join(diazo_skins)),
+            default='bootstrap'),
         var('default_theme', 'default theme %s' % (
             tuple(p4_themes.keys()),), default='sunburst'),
     ]
@@ -65,6 +69,8 @@ class Package(c.Package):
         self.load_xml_vars(command, output_dir, vars)
         skin_chooser(self, command, output_dir, vars)
         vars['dot'] = '.'
+        if not vars['diazo_skin'] in diazo_skins:
+            raise Exception('Invalid diazo skin')
         if not vars['with_policy_support']:
             vars['policy_tag'] = '<!--'
             vars['policy_end'] = '-->'
@@ -96,4 +102,10 @@ class Package(c.Package):
             remove_path(egg + '/profiles/default/mailhost.xml')
         for f in glob.glob(out + '/scripts/*') + [egg + '/rebuild_i18n.sh']:
             os.chmod(f, 0700)
+        os.rename(
+            egg + '/static_{0}'.format(vars['diazo_skin']),
+            egg + '/static')
+        for i in glob.glob(egg + '/static_*'):
+            shutil.rmtree(i)
 
+#

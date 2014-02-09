@@ -23,10 +23,15 @@ ProxyRequests off
   Allow from all
 </Proxy>
 RewriteEngine  on
+
 # maintainance page
 RewriteCond \${buildout:directory}/www/htdocs/maintainance/index.html -f
 RewriteCond %{REQUEST_URI} !^/(maintainance|zmiroot)
 RewriteRule $ /maintainance/index.html [R=302,L]
+
+# /zmiroot -> access to zmi
+ProxyPass         /zmiroot/ http://\${hosts:zope-front}:\${ports:zope-front}/VirtualHostBase/\${scheme}/\${host}:\${port}/VirtualHostRoot/_vh_zmiroot/ retry=1
+ProxyPassReverse  /zmiroot/ http://\${hosts:zope-front}:\${ports:zope-front}/VirtualHostBase/\${scheme}/\${host}:\${port}/VirtualHostRoot/_vh_zmiroot/
 
 #if $with_supervisor
 # supervisor
