@@ -68,7 +68,7 @@ session-timeout-minutes = 90
 sys-user = \${env:USER}
 sys-group = \${grp:GROUP}
 #if $with_cache_support
-varnish-debug = \${v:debug}
+varnish-debug = false
 \#varnish max age rewrite support
 rewrite-max-age = false
 #end if
