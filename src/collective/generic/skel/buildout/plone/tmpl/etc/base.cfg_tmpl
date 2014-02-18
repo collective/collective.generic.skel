@@ -35,6 +35,7 @@ $hr
 [buildout]
 extensions = mr.developer buildout-versions
 timeout = 3
+unzip=true
 find-links =
     http://dist.plone.org/release/${plone_version}
     http://pypi.python.org/simple/ZODB4
