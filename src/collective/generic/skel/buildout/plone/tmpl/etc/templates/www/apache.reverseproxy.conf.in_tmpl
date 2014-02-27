@@ -1,5 +1,5 @@
 <VirtualHost \${listen}:\${port}>
-ServerAdmin     ${author_email}
+ServerAdmin     \${v:reverse-proxy-admin}
 DocumentRoot    \${buildout:directory}/www/htdocs/
 ServerName      \${host}
 ErrorLog        \${buildout:directory}/var/log/apache/\${host}_log
@@ -62,7 +62,7 @@ ProxyPassReverse  /zmiroot/  http://\${hosts:zope-front}:\${ports:zope-front}/Vi
 </VirtualHost>
 #if $with_cache_support
 <VirtualHost \${listen}:\${port}>
-ServerAdmin     ${author_email}
+ServerAdmin     \${v:reverse-proxy-admin}
 DocumentRoot    \${buildout:directory}/www/htdocs
 ServerName      \${edit-host}
 ErrorLog        \${buildout:directory}/var/log/apache/\${edit-host}_log

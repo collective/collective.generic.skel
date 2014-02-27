@@ -15,6 +15,9 @@ etc/logrotate.conf
 etc/project/kgs.cfg
 etc/project/${project}-kgs.cfg
 etc/sys/settings-local.cfg
+.buildout/
+buildout-salt.cfg
+uuid.txt
 etc/sys/settings-prod.cfg
 etc/varnish.vcl
 www/apache.reverseproxy.conf
@@ -32,3 +35,4 @@ var/log/instance?.log
 !etc/sys
 !src/zopelib
 !src/*${project}*
+

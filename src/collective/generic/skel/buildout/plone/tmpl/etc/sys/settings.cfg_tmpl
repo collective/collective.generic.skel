@@ -77,6 +77,7 @@ supervisor-user = \${v:admin-user}
 supervisor-password = \${v:admin-password}
 #end if
 # reverse proxy settings
+reverse-proxy-admin = postmaster@localhost
 reverse-proxy-docroot = \${buildout:directory}/www/htdocs
 reverse-proxy-listen = *
 reverse-proxy-scheme = $reverseproxy_scheme
