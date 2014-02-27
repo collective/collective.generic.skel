@@ -6,10 +6,10 @@ delaycompress
 
 \${buildout:directory}/var/log/instance1*.log {
     compress
-    rotate 10
+    rotate \${v:logrotate}
     daily
     notifempty
-    size 10M  
+    size 10M
     sharedscripts
     postrotate
         /bin/kill -USR2 \$(cat \${buildout:directory}/var/instance1.pid)
@@ -18,10 +18,10 @@ delaycompress
 
 \${buildout:directory}/var/log/instance2*.log {
     compress
-    rotate 10
+    rotate \${v:logrotate}
     daily
     notifempty
-    size 10M  
+    size 10M
     sharedscripts
     postrotate
         /bin/kill -USR2 \$(cat \${buildout:directory}/var/instance2.pid)
@@ -30,10 +30,10 @@ delaycompress
 
 \${buildout:directory}/var/log/instance3*.log {
     compress
-    rotate 10
+    rotate \${v:logrotate}
     daily
     notifempty
-    size 10M  
+    size 10M
     sharedscripts
     postrotate
         /bin/kill -USR2 \$(cat \${buildout:directory}/var/instance3.pid)
@@ -43,10 +43,10 @@ delaycompress
 
 \${buildout:directory}/var/log/instance4*.log {
     compress
-    rotate 10
+    rotate \${v:logrotate}
     daily
     notifempty
-    size 10M  
+    size 10M
     sharedscripts
     postrotate
         /bin/kill -USR2 \$(cat \${buildout:directory}/var/instance4.pid)
@@ -55,10 +55,10 @@ delaycompress
 
 \${buildout:directory}/var/log/zeoserver.log {
     compress
-    rotate 10
+    rotate \${v:logrotate}
     daily
     notifempty
-    size 10M  
+    size 10M
     postrotate
         /bin/kill -USR2 \$(cat \${buildout:directory}/var/zeoserver.pid)
     endscript
@@ -69,7 +69,7 @@ delaycompress
     rotate 10
     daily
     notifempty
-    size 10M  
+    size 10M
     sharedscripts
     postrotate
         /bin/kill -USR1 \$(cat \${buildout:directory}/var/main.pid)
@@ -78,10 +78,10 @@ delaycompress
 
 \${buildout:directory}/var/log/transform*.log {
     compress
-    rotate 10
+    rotate \${v:logrotate}
     daily
     notifempty
-    size 10M 
+    size 10M
     sharedscripts
     postrotate
         /bin/kill -USR1 \$(cat \${buildout:directory}/var/transform.pid)
@@ -89,7 +89,7 @@ delaycompress
 }
 \${buildout:directory}/var/log/supervisor*.log {
     compress
-    rotate 10
+    rotate \${v:logrotate}
     daily
     notifempty
     size 10M
@@ -106,7 +106,7 @@ delaycompress
     size 10M
     sharedscripts
     missingok
-    copytruncate 
+    copytruncate
 }
 
 
@@ -119,5 +119,5 @@ delaycompress
     size 10M
     sharedscripts
     missingok
-    copytruncate 
+    copytruncate
 }

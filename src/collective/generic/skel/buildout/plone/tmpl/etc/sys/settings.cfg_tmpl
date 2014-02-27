@@ -89,6 +89,8 @@ package-min-coverage = 80
 flake8-ignore = C901
 flake8-max-complexity=1000
 pre-commit-hook = True
+# logrotation days
+rotate=365
 
 [hosts]
 ip = 127.0.0.1
