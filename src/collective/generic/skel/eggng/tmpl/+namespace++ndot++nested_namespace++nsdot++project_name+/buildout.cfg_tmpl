@@ -1,0 +1,34 @@
+[buildout]
+extends-cache=.cache
+extensions=mr.developer buildout_versions
+buildout_versions_file=generated-kgs.cfg
+versions=versions
+package-name = ${pdn}
+package-src = \${buildout:directory}/src/$namespace/$nested_namespace/$project_name
+package-extras=
+package-test-extras=[test]
+eggs =
+    \${buildout:package-name} \${buildout:package-extras}
+    docutils
+    flake8
+    pylama
+    pylint
+    zest.releaser
+    pytest
+parts= script omelette
+develop = .
+extra-paths =
+
+[script]
+recipe=zc.recipe.egg
+eggs=\${buildout:eggs}
+interpreter=py
+extra-paths = \${buildout:extra-paths}
+
+[omelette]
+recipe = collective.recipe.omelette
+eggs = \${script:eggs}
+packages = \${script:extra-paths}
+
+[versions]
+\# vim:set ft=cfg:

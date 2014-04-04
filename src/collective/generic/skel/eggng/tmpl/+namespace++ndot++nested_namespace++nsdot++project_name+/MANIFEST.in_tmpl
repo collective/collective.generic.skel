@@ -1,0 +1,10 @@
+include *.txt *.cfg *.rst .coveragerc
+recursive-include docs *
+#if $namespace and not $nested_namespace:
+recursive-include src/$namespace *
+#elif $nested_namespace:
+recursive-include src/$namespace *
+#else
+recursive-include src/${pdn} *
+#end if
+global-exclude *pyc

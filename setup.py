@@ -28,6 +28,8 @@ EP = {
              slug, name),
         '{0}.egg              = {1}.egg.package:Package'.format(
              slug, name),
+        '{0}.eggng            = {1}.eggng.package:Package'.format(
+             slug, name),
     ]}
 
 

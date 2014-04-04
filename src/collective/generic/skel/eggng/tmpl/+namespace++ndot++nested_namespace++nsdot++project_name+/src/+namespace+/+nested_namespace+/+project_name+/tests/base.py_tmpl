@@ -1,0 +1,11 @@
+import unittest2 as unittest
+class TestCase(unittest.TestCase):
+    """We use this base class for all the tests in this package.
+    If necessary, we can put common utility or setup code in here.
+    """
+
+    def setUp(self):
+        super(TestCase, self).setUp()
+
+
+# vim:set ft=python:
