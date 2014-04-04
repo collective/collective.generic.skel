@@ -215,8 +215,8 @@ zcml-additional =
     <include package="plone.app.async" file="multi_db_instance.zcml" />
 #end if
 environment-vars =
-    zope_i18n_compile_mo_files = true
-    TMPDIR = \${locations:tmp}
+    zope_i18n_compile_mo_files true
+    TMPDIR \${locations:tmp}
 #if $with_ploneproduct_paasync
     ZC_ASYNC_UUID \${buildout:directory}/var/instance-uuid.txt
 zope-conf-additional =
