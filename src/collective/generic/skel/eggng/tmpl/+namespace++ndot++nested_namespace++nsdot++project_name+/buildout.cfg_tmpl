@@ -1,4 +1,5 @@
 [buildout]
+unzip=true
 extends-cache=.cache
 extensions=mr.developer buildout_versions
 buildout_versions_file=generated-kgs.cfg
