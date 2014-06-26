@@ -82,7 +82,7 @@ project-parts =
     zopepy
     backup
     omelette
-    code-analysis
+#    code-analysis
     createcoverage
     flake8
     zptlint
