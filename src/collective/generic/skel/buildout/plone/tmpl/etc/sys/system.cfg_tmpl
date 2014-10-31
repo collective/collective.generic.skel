@@ -120,6 +120,7 @@ command = #slurp
 recipe = collective.recipe.template
 input =  \${buildout:directory}/etc/templates/logrotate.conf.template
 output = \${buildout:directory}/etc/logrotate.conf
+mode=644
 
 # supervisor STUFF
 [supervisor]
