@@ -106,6 +106,7 @@ delaycompress
     copytruncate
 }
 
+\${buildout:directory}/var/log/apache/*_log
 \${buildout:directory}/var/log/apache/*.log {
     user root \${v:sys-group}
     compress
