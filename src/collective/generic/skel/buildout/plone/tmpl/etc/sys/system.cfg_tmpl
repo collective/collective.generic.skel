@@ -127,7 +127,7 @@ mode=644
 recipe = collective.recipe.supervisor
 port = \${hosts:supervisor}:\${ports:supervisor}
 user = \${v:supervisor-user}
-password = \${v:supervior-password}
+password = \${v:supervisor-password}
 serverurl = http://\${hosts:supervisor}:\${ports:supervisor}
 programs =
 
