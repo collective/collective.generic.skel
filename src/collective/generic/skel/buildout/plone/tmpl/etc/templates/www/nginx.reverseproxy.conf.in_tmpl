@@ -36,6 +36,9 @@ server {
     root \${v:reverse-proxy-docroot};
     access_log \${buildout:directory}/var/log/nginx/\${host}.access.log;
     error_log  \${buildout:directory}/var/log/nginx/\${host}.error.log;
+   location /zmiroot/ {
+        proxy_pass  http://\${uname}/VirtualHostBase/http/\${host}:\${port}/VirtualHostRoot/_vh_zmiroot/;
+    }
     location / {
         set \$maint "n";
         if ( -f \${v:reverse-proxy-docroot}/maintainance/index.html ){
