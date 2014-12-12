@@ -88,7 +88,7 @@ for name in sources_k:
 
 
 class Package(common.Package):
-    packaged_version = '4.3.2'
+    packaged_version = '4.3.4'
     summary = 'Template for creating a plone43 project'
     python = 'python-2.7'
     _template_dir = pkg_resources.resource_filename(

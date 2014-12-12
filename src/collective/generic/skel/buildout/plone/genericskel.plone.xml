@@ -100,6 +100,8 @@
   <option description="WebCouturier.dropdownmenu, see http://plone.org/products/webcouturier-dropdownmenu y/n"                                                                 name="with_ploneproduct_wc_dd_menu"                                      />
   <option description="Plomino.tinymce, see http://pypi.python.org/pypi/plomino.tinymce/ y/n"                                                                                  name="with_ploneproduct_plominotinymce"         order="1"   default="n"  />
   <option description="Products.Plomino, see http://plone.org/products/plomino y/n"                                                                                            name="with_ploneproduct_plomino"                order="1"   default="n"  />
+  <option description="collective.zipfiletransport, see http://plone.org/products/plomino y/n"                                                                                  name="with_ploneproduct_zipfiletransport"                  default="n"  />
+
 </options>
   <!--
     LINK THERE YOUR EGGS TO BE Installed on option triggering.
@@ -138,6 +140,7 @@
     <egg name='collective.configviews'        zcml="configure"   options="with_ploneproduct_configviews"/>
     <egg name="collective.contentrules.mailtolocalrole"        options="with_ploneproduct_cmailtolrole" zpackage="y" zcml="configure"       />
     <egg name="collective.cron"     options="with_ploneproduct_ccron" zcml="configure" />
+    <egg name="collective.zipfiletransport"     options="with_ploneproduct_zipfiletransport" zcml="configure" />
     <egg name='collective.datatablesviews'    zcml="configure"   options="with_ploneproduct_dtviews"/>
     <egg name="collective.dewplayer"                 options="with_ploneproduct_cdewplayer"             zpackage="y" zcml="configure"/>
     <egg name="collective.dewslider"                 options="with_ploneproduct_cdewslider"                          zcml="configure"/>
@@ -341,6 +344,7 @@
     <product name="collective.z3cform.norobots"          options="with_ploneproduct_cz3cformnorobots"  />
     <product name="Products.CMFPlomino"                  options="with_ploneproduct_plomino"/>
     <product name="plomino.tinymce"                      options="with_ploneproduct_plominotinymce,with_ploneproduct_plomino" />
+    <product name="collective.zipfiletransport"          options="with_ploneproduct_zipfiletransport" />
     <product name="Products.ATExtensions"                options="with_ploneproduct_atextensions"  order="200"   />
   </gs>
   <!--
