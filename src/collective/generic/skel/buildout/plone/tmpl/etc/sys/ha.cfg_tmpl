@@ -44,7 +44,7 @@ haproxy-path=\${buildout:directory}/bin/haproxy
 # HA STUFF
 [haproxy-build]
 recipe = plone.recipe.haproxy
-url =  http://gentoo.tiscali.nl/distfiles/haproxy-1.4.24.tar.gz
+url = https://github.com/makinacorpus/makina-states/releases/download/attachedfiles/haproxy-1.5.9.tar.gz
 target = generic
 
 [balancer.config]
