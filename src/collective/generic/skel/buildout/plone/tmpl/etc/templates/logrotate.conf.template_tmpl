@@ -7,7 +7,7 @@ delaycompress
 \${buildout:directory}/var/log/instance1*.log {
     user root \${v:sys-group}
     compress
-    rotate \${v:logrotate}
+    rotate \${v:rotate}
     daily
     notifempty
     size 10M
@@ -20,7 +20,7 @@ delaycompress
 \${buildout:directory}/var/log/instance2*.log {
     user root \${v:sys-group}
     compress
-    rotate \${v:logrotate}
+    rotate \${v:rotate}
     daily
     notifempty
     size 10M
@@ -33,7 +33,7 @@ delaycompress
 \${buildout:directory}/var/log/instance3*.log {
     user root \${v:sys-group}
     compress
-    rotate \${v:logrotate}
+    rotate \${v:rotate}
     daily
     notifempty
     size 10M
@@ -47,7 +47,7 @@ delaycompress
 \${buildout:directory}/var/log/instance4*.log {
     user root \${v:sys-group}
     compress
-    rotate \${v:logrotate}
+    rotate \${v:rotate}
     daily
     notifempty
     size 10M
@@ -60,7 +60,7 @@ delaycompress
 \${buildout:directory}/var/log/zeoserver.log {
     user root \${v:sys-group}
     compress
-    rotate \${v:logrotate}
+    rotate \${v:rotate}
     daily
     notifempty
     size 10M
@@ -85,7 +85,7 @@ delaycompress
 \${buildout:directory}/var/log/transform*.log {
     user root \${v:sys-group}
     compress
-    rotate \${v:logrotate}
+    rotate \${v:rotate}
     daily
     notifempty
     size 10M
@@ -97,7 +97,7 @@ delaycompress
 \${buildout:directory}/var/log/supervisor*.log {
     user root \${v:sys-group}
     compress
-    rotate \${v:logrotate}
+    rotate \${v:rotate}
     daily
     notifempty
     size 10M
