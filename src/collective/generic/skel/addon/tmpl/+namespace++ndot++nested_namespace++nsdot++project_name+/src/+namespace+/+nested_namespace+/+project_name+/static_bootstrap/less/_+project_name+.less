@@ -59,9 +59,11 @@ h1{
 h2{
   font-size: @font-size-title2;
 }
+/*
 a:focus{
   outline: @color-focus dotted 3px;
 }
+*/
 #visual-portal-wrapper {
   margin-top: 1em;
 }
@@ -91,12 +93,22 @@ a:focus{
   margin: 5px 0;
   margin-top: 7em;
 }
+#portal-personaltools-wrapper{
+  position: relative;
+  z-index: 5200;
+}
+
 #nolivesearchGadget{
   width: 146px; height: 20px;
   vertical-align: top;
 }
 #portal-searchbox-wrapper{
+  position: relative;
+  z-index: 5000;
   height: 42px;
+}
+#portal-searchbox-wrapper .LSResult {
+  margin-top: 11px;
 }
 #portal-languageselector{
   background-color: transparent;
@@ -134,6 +146,7 @@ body#content{
   background-color: White;
 }
 div#nav-wrapper{
+  z-index: 50;
   background: @color-bg-wrappernav;
   margin-top:    15px;
   margin-bottom: 10px;
