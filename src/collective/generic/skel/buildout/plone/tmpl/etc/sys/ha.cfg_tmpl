@@ -48,7 +48,7 @@ url = https://github.com/makinacorpus/makina-states/releases/download/attachedfi
 target = generic
 
 [balancer.config]
-recipe = collective.recipe.template
+recipe = collective.recipe.template[genshi]
 input =  \${buildout:directory}/etc/templates/ha/balancer.conf.template
 output = \${buildout:directory}/etc/loadbalancing/balancer.conf
 

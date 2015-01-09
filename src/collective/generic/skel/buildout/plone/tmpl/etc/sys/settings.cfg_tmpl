@@ -50,6 +50,8 @@ autostart_instance4 = $si4
 #if $with_ploneproduct_paasync
 autostart_instancewk = true
 #end if
+# space separated domains aliases
+server_aliases=
 # plone site id
 plonesite = $plonesite
 # zope settings

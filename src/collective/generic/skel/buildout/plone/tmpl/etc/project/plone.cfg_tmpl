@@ -508,7 +508,7 @@ recipe = zc.recipe.egg
 eggs = flake8
 
 [coverage-sh]
-recipe = collective.recipe.template
+recipe = collective.recipe.template[genshi]
 output = \${buildout:directory}/bin/coverage.sh
 mode = 755
 input = inline:

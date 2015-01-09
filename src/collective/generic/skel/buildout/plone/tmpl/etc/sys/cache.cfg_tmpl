@@ -77,14 +77,14 @@ varnish_version = 3
 config = \${vcl:output}
 
 [vcl]
-recipe = collective.recipe.template
+recipe = collective.recipe.template[genshi]
 mode = 750
 input = \${buildout:directory}/etc/templates/varnish/varnish.vcl.in
 output = \${buildout:directory}/etc/varnish.vcl
 anon_cache_time = \${v:anon_cache_time}
 
 [varnishwrapper]
-recipe = collective.recipe.template
+recipe = collective.recipe.template[genshi]
 mode = 750
 input =  \${buildout:directory}/etc/templates/varnish/\${:_buildout_section_name_}.in
 output =  \${buildout:directory}/bin/\${:_buildout_section_name_}

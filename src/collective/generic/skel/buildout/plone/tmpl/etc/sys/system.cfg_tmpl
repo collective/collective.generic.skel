@@ -49,7 +49,7 @@ maintainance-parts =
 
 # REVERSE PROXIES
 [apache_vhost]
-recipe = collective.recipe.template
+recipe = collective.recipe.template[genshi]:genshi
 input = \${buildout:directory}/etc/templates/www/apache.reverseproxy.conf.in
 output = \${buildout:directory}/www/apache.reverseproxy.conf
 host = \${v:reverse-proxy-host}
@@ -60,7 +60,7 @@ listen = \${v:reverse-proxy-listen}
 extra=\${v:apache-extra}
 
 [nginx_vhost]
-recipe = collective.recipe.template
+recipe = collective.recipe.template[genshi]:genshi
 input = \${buildout:directory}/etc/templates/www/nginx.reverseproxy.conf.in
 output = \${buildout:directory}/www/nginx.reverseproxy.conf
 host = \${v:reverse-proxy-host}
@@ -117,7 +117,7 @@ command = #slurp
 
 
 [logrotate.conf]
-recipe = collective.recipe.template
+recipe = collective.recipe.template[genshi]
 input =  \${buildout:directory}/etc/templates/logrotate.conf.template
 output = \${buildout:directory}/etc/logrotate.conf
 mode=644
@@ -132,7 +132,7 @@ serverurl = http://\${hosts:supervisor}:\${ports:supervisor}
 programs =
 
 [supervisor-initd]
-recipe = collective.recipe.template
+recipe = collective.recipe.template[genshi]
 input =  \${buildout:directory}/etc/templates/supervisor.initd
 output =  \${buildout:directory}/etc/init.d/supervisor.initd
 mode = 750
