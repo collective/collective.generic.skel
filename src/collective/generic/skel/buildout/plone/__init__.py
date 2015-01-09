@@ -383,7 +383,7 @@ plone_vars = [
     common.var('zope_password',
                'Admin Password in the ZMI', default='secret',),
     common.var('with_cache_support',
-               'Proxy cache (varnish)  support y/n', default='y',),
+               'Proxy cache (varnish)  support y/n', default='n',),
     common.var('with_supervisor',
                'Supervisor support (monitoring), '
                'http://supervisord.org/ y/n', default='y',),
