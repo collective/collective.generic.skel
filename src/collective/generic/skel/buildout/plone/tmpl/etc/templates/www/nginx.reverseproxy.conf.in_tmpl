@@ -1,62 +1,61 @@
-upstream \${uname} {
-    server \${hosts:zope-front}:\${ports:zope-front};
+upstream \${options.uname} {
+    server \${parts.hosts['zope-front']}:\${parts.ports['zope-front']};
 }
 server {
-    listen \${port};
-    server_name \${host};
-    root \${v:reverse-proxy-docroot};
-    access_log \${buildout:directory}/var/log/nginx/\${host}.access.log;
-    error_log  \${buildout:directory}/var/log/nginx/\${host}.error.log;
+    listen \${options.port};
+    server_name \${options.host};
+    root \${parts.v['reverse-proxy-docroot']};
+    access_log \${parts.buildout.directory}/var/log/nginx/\${options.host}.access.log;
+    error_log  \${parts.buildout.directory}/var/log/nginx/\${options.host}.error.log;
     location /zmiroot/ {
-        proxy_pass  http://\${uname}/VirtualHostBase/http/\${host}:\${port}/VirtualHostRoot/_vh_zmiroot/;
+        proxy_pass  http://\${options.uname}/VirtualHostBase/http/\${options.host}:\${options.port}/VirtualHostRoot/_vh_zmiroot/;
     }
 
     location / {
-        set \$maint "n";
-        if ( -f \${v:reverse-proxy-docroot}/maintainance/index.html ){
-            set \$maint "m";
+        set \${'$maint'} "n";
+        if ( -f \${parts.v['reverse-proxy-docroot']}/maintainance/index.html ){
+            set \${'$maint'} "m";
         }
-        if ( \$uri ~ ^/maintainance ) {
-            set \$maint "o\$maint";
+        if ( \${'$uri'} ~ ^/maintainance ) {
+            set \${'$maint'} "o\${'$maint'}";
         }
-        if ( \$maint = "m" ) {
+        if ( \${'$maint'} = "m" ) {
             rewrite ^(.*)$ /maintainance/index.html permanent;
         }
-        if ( \$maint = "n" ){
-            rewrite ^(/zmiroot/.*)$ /VirtualHostBase/http/\${host}:\${port}/_vh_zmiroot/$1 break;
-            rewrite ^(.*)$ /VirtualHostBase/http/\${host}:\${port}/\${v:plonesite}/VirtualHostRoot/$1 break;
-            proxy_pass http://\${uname};
+        if ( \${'$maint'} = "n" ){
+            rewrite ^(/zmiroot/.*)$ /VirtualHostBase/http/\${options.host}:\${options.port}/_vh_zmiroot/$1 break;
+            rewrite ^(.*)$ /VirtualHostBase/http/\${options.host}:\${options.port}/\${parts.v.plonesite}/VirtualHostRoot/$1 break;
+            proxy_pass http://\${options.uname};
         }
     }
 }
 #if $with_cache_support
 server {
-    listen \${port};
-    server_name \${edit-host};
-    root \${v:reverse-proxy-docroot};
-    access_log \${buildout:directory}/var/log/nginx/\${host}.access.log;
-    error_log  \${buildout:directory}/var/log/nginx/\${host}.error.log;
-   location /zmiroot/ {
-        proxy_pass  http://\${uname}/VirtualHostBase/http/\${host}:\${port}/VirtualHostRoot/_vh_zmiroot/;
+    listen \${options.port};
+    server_name \${options['edit-host']};
+    root \${parts.v['reverse-proxy-docroot']};
+    access_log \${parts.buildout.directory}/var/log/nginx/\${options.host}.access.log;
+    error_log  \${parts.buildout.directory}/var/log/nginx/\${options.host}.error.log;
+    location /zmiroot/ {
+        proxy_pass  http://\${options.uname}/VirtualHostBase/http/\${options.host}:\${options.port}/VirtualHostRoot/_vh_zmiroot/;
     }
     location / {
-        set \$maint "n";
-        if ( -f \${v:reverse-proxy-docroot}/maintainance/index.html ){
-            set \$maint "m";
+        set \${'$maint'} "n";
+        if ( -f \${parts.v['reverse-proxy-docroot']}/maintainance/index.html ){
+            set \${'$maint'} "m";
         }
-        if ( \$uri ~ ^/maintainance ) {
-            set \$maint "o\$maint";
+        if ( \${'$uri'} ~ ^/maintainance ) {
+            set \${'$maint'} "o\${'$maint'}";
         }
-        if ( \$maint = "m" ) {
+        if ( \${'$maint'} = "m" ) {
             rewrite ^(.*)$ /maintainance/index.html permanent;
         }
-        if ( \$maint = "n" ){
-            rewrite ^(/zmiroot/.*)$ /VirtualHostBase/http/\${host}:\${port}/_vh_zmiroot/$1 break;
-            rewrite ^(.*)$ /VirtualHostBase/http/\${host}:\${port}/\${v:plonesite}/VirtualHostRoot/$1 break;
-            proxy_pass http://\${uname};
+        if ( \${'$maint'} = "n" ){
+            rewrite ^(/zmiroot/.*)$ /VirtualHostBase/http/\${options.host}:\${options.port}/_vh_zmiroot/$1 break;
+            rewrite ^(.*)$ /VirtualHostBase/http/\${options.host}:\${options.port}/\${parts.v.plonesite}/VirtualHostRoot/$1 break;
+            proxy_pass http://\${options.uname};
         }
     }
 }
 #end if
-
 \# vim: set sts=4 ts=4 et tw=0 ai et nocompatible:
