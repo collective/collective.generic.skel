@@ -40,9 +40,7 @@ eggs +=
 
 [v]
 autostart_${first_instance} = false
-#if $with_supervisor_instance2
 autostart_instance2 = false
-#end if
 #if $with_supervisor_instance3
 autostart_instance3 = false
 #end if

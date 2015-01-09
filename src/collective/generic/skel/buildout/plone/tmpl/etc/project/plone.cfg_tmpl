@@ -67,9 +67,7 @@ project-parts =
 #if $with_supervisor_instance1
     instance1
 #end if
-#if $with_supervisor_instance2
     instance2
-#end if
 #if $with_supervisor_instance3
     instance3
 #end if
@@ -274,12 +272,10 @@ blob-storage = \${zeoserver:blob-storage}
 http-address = \${hosts:instance1}:\${ports:instance1}
 
 #end if
-#if $with_supervisor_instance2
 [instance2]
 <= instance
 http-address = \${hosts:instance2}:\${ports:instance2}
 
-#end if
 #if $with_supervisor_instance3
 [instance3]
 <= instance

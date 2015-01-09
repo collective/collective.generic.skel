@@ -40,9 +40,7 @@ project = ${project}
 proxycache_size = 256M
 anon_cache_time = 600s
 autostart_${first_instance} = $si1
-#if $with_supervisor_instance2
 autostart_instance2 = $si2
-#end if
 #if $with_supervisor_instance3
 autostart_instance3 = $si3
 #end if
@@ -111,9 +109,7 @@ instance = \${hosts:address}
 #if $with_supervisor_instance1
 instance1 = \${hosts:address}
 #end if
-#if $with_supervisor_instance2
 instance2 = \${hosts:address}
-#end if
 #if $with_supervisor_instance3
 instance3 = \${hosts:address}
 #end if
@@ -160,9 +156,7 @@ balancer = $http_port2
 #if $with_supervisor_instance1
 instance1 = $http_port4
 #end if
-#if $with_supervisor_instance2
 instance2 = $http_port5
-#end if
 #if $with_supervisor_instance3
 instance3 = $http_port6
 #end if
