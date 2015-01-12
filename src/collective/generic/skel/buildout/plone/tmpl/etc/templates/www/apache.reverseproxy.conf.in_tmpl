@@ -16,6 +16,17 @@ DirectoryIndex   index.html index.htm
     <IfVersion >= 2.3>
     Require all granted
     </IfVersion>
+#raw
+{% if parts.v.get('http-users', '').strip() %}
+#end raw
+AuthType Basic
+AuthName "Restricted website"
+AuthBasicProvider file
+AuthUserFile ^${parts.buildout.directory}/www/htusers;
+Require valid-user
+#raw
+{% end %}
+#end raw
 </Directory>
 ProxyRequests off
 <Proxy *>
@@ -72,6 +83,17 @@ DirectoryIndex   index.html index.htm
     <IfVersion >= 2.3>
     Require all granted
     </IfVersion>
+#raw
+{% if parts.v.get('http-users', '').strip() %}
+#end raw
+AuthType Basic
+AuthName "Restricted website"
+AuthBasicProvider file
+AuthUserFile ^${parts.buildout.directory}/www/htusers;
+Require valid-user
+#raw
+{% end %}
+#end raw 
 </Directory>
 ProxyRequests off
 <Proxy *>

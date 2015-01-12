@@ -40,6 +40,8 @@ sys-parts=
 www-parts =
     apache_vhost
     nginx_vhost
+    htpasswd.in
+    htpasswd
 maintainance-parts =
     zopepackdaily
     logrotate.conf
@@ -69,6 +71,22 @@ scheme = \${v:reverse-proxy-scheme}
 port = \${v:reverse-proxy-port}
 uname = zopeserver
 extra=\${v:nginx-extra}
+
+[htpasswd.in]
+recipe = collective.recipe.template[genshi]:genshi
+input = \${buildout:directory}/etc/templates/www/htusers_gen.py
+output = \${buildout:directory}/www/htusers_gen.py
+mode=0750
+htpasswd =\${buildout:directory}/www/htusers
+credentials =
+    \${v:admin-user}:\${v:admin-password}
+    \${v:http-users}
+
+[htpasswd]
+recipe = collective.recipe.cmd
+cmds = \${htpasswd.in:output}
+on_install=true
+on_update=true
 
 # CRON JOBS
 # make an incremental backup per day

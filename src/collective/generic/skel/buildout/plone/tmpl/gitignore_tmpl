@@ -33,10 +33,10 @@ downloads
 /var/log/apache/*.log
 /var/log/instance?.log
 /venv/
+/www/htusers*
 /www/apache.reverseproxy.conf
 /www/nginx.reverseproxy.conf
 !/src/zopelib
 !/src/*${pdn}*
 !/eggs/.empty
 !/etc/sys
-

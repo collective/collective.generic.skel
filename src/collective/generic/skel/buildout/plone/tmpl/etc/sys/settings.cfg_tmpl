@@ -52,6 +52,14 @@ autostart_instancewk = true
 #end if
 # space separated domains aliases
 server_aliases=
+# protect reverse proxy with HTTP BASIC AUTH
+# one user per line
+# by default we also have in the admin list the
+# plone siteadmin, but the site is auth protected
+# only and onlyif we define here at least 1user
+# password is the string after the ":", trimmed.
+http-users=
+#   root:secret
 # plone site id
 plonesite = $plonesite
 # zope settings
