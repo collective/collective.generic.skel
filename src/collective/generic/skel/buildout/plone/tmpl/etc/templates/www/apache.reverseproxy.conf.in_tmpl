@@ -1,3 +1,4 @@
+#raw
 <VirtualHost \${options.listen}:\${options.port}>
 ServerAdmin     \${parts.v['reverse-proxy-admin']}
 DocumentRoot    \${parts.buildout.directory}/www/htdocs/
@@ -16,17 +17,13 @@ DirectoryIndex   index.html index.htm
     <IfVersion >= 2.3>
     Require all granted
     </IfVersion>
-#raw
 {% if parts.v.get('http-users', '').strip() %}
-#end raw
 AuthType Basic
 AuthName "Restricted website"
 AuthBasicProvider file
 AuthUserFile ^${parts.buildout.directory}/www/htusers;
 Require valid-user
-#raw
 {% end %}
-#end raw
 </Directory>
 ProxyRequests off
 <Proxy *>
@@ -65,7 +62,9 @@ ProxyPassReverse  /zmiroot/  http://\${parts.hosts['zope-front']}:\${parts.ports
 
 
 </VirtualHost>
+#end raw
 #if $with_cache_support
+#raw
 <VirtualHost \${options.listen}:\${options.port}>
 ServerAdmin     \${parts.v['reverse-proxy-admin']}
 DocumentRoot    \${parts.buildout.directory}/www/htdocs
@@ -83,17 +82,13 @@ DirectoryIndex   index.html index.htm
     <IfVersion >= 2.3>
     Require all granted
     </IfVersion>
-#raw
 {% if parts.v.get('http-users', '').strip() %}
-#end raw
 AuthType Basic
 AuthName "Restricted website"
 AuthBasicProvider file
 AuthUserFile ^${parts.buildout.directory}/www/htusers;
 Require valid-user
-#raw
 {% end %}
-#end raw 
 </Directory>
 ProxyRequests off
 <Proxy *>
@@ -129,4 +124,5 @@ ProxyPassReverse  /zmiroot/ http://\${parts.hosts['zope-front']}:\${parts.ports[
 #</IfVersion>
 # vim: set ft=xml:
 </VirtualHost>
+#end raw
 #end if
