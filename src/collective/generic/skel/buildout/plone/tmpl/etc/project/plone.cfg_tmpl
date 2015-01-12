@@ -398,7 +398,7 @@ command =
     chmod 744 \${buildout:directory}/bin/*;
     chmod -R 740 \${buildout:directory}/etc/sys/settings-local.cfg;
     chmod -R o-rwx \${buildout:directory}/etc/;
-    chmod -R 740 \${buildout:directory}/parts/;
+    chmod -R 740 \${buildout:parts-directory};
     chmod -v 755 \${buildout:directory}/www/;
 
 [chown]
