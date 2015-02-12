@@ -71,6 +71,7 @@ scheme = \${v:reverse-proxy-scheme}
 port = \${v:reverse-proxy-port}
 uname = zopeserver
 extra=\${v:nginx-extra}
+server_aliases = \${v:server_aliases}
 
 [htpasswd.in]
 recipe = collective.recipe.template[genshi]:genshi
