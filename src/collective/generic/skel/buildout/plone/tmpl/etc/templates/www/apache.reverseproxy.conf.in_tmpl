@@ -1,13 +1,13 @@
 #raw
-<VirtualHost \${options.listen}:\${options.port}>
-ServerAdmin     \${parts.v['reverse-proxy-admin']}
-DocumentRoot    \${parts.buildout.directory}/www/htdocs/
-ServerName      \${options.host}
-ErrorLog        \${parts.buildout.directory}/var/log/apache/\${options.host}_log
-TransferLog     \${parts.buildout.directory}/var/log/apache/\${options.host}-access_log
-CustomLog       \${parts.buildout.directory}/var/log/apache/\${options.host}-access_log combined
+<VirtualHost ${options.listen}:${options.port}>
+ServerAdmin     ${parts.v['reverse-proxy-admin']}
+DocumentRoot    ${parts.buildout.directory}/www/htdocs/
+ServerName      ${options.host}
+ErrorLog        ${parts.buildout.directory}/var/log/apache/${options.host}_log
+TransferLog     ${parts.buildout.directory}/var/log/apache/${options.host}-access_log
+CustomLog       ${parts.buildout.directory}/var/log/apache/${options.host}-access_log combined
 DirectoryIndex   index.html index.htm
-<Directory "\${parts.buildout.directory}/www/htdocs">
+<Directory "${parts.buildout.directory}/www/htdocs">
     Options  +ExecCGI +IncludesNOEXEC +FollowSymLinks -Indexes
     AllowOverride All
     <IfVersion < 2.3>
@@ -33,27 +33,27 @@ ProxyRequests off
 RewriteEngine  on
 
 # maintainance page
-RewriteCond \${parts.buildout.directory}/www/htdocs/maintainance/index.html -f
+RewriteCond ${parts.buildout.directory}/www/htdocs/maintainance/index.html -f
 RewriteCond %{REQUEST_URI} !^/(maintainance|zmiroot)
 RewriteRule $ /maintainance/index.html [R=302,L]
 
 # /zmiroot -> access to zmi
 RewriteCond %{REQUEST_URI} ^/(zmiroot)
-RewriteRule ^/(.*)$   /VirtualHostBase/\${options.scheme}/\${options.host}:\${options.port}/VirtualHostRoot/_vh_zmiroot$1 [L,PT]
+RewriteRule ^/(.*)$   /VirtualHostBase/${options.scheme}/${options.host}:${options.port}/VirtualHostRoot/_vh_zmiroot$1 [L,PT]
 
 # /-> vhmonster proxyreverse because of redirects !
-RewriteCond \${parts.buildout.directory}/www/htdocs/maintainance/index.html !-f
+RewriteCond ${parts.buildout.directory}/www/htdocs/maintainance/index.html !-f
 RewriteCond %{REQUEST_URI} !^/(maintainance|.*zmiroot)
-RewriteRule ^/(.*)$ /VirtualHostBase/\${options.scheme}/\${options.host}:\${options.port}/\${parts.v.plonesite}/VirtualHostRoot/$1 [L,PT]
+RewriteRule ^/(.*)$ /VirtualHostBase/${options.scheme}/${options.host}:${options.port}/${parts.v.plonesite}/VirtualHostRoot/$1 [L,PT]
 
 # for https://issues.apache.org/bugzilla/show_bug.cgi?id=53218, only use a simple worker url
-ProxyPass         /          http://\${parts.hosts['zope-front']}:\${parts.ports['zope-front']}/ retry=1
-ProxyPassReverse  /          http://\${parts.hosts['zope-front']}:\${parts.ports['zope-front']}/VirtualHostBase/\${options.scheme}/\${options.host}:\${options.port}/\${parts.v.plonesite}/VirtualHostRoot/
-ProxyPassReverse  /zmiroot/  http://\${parts.hosts['zope-front']}:\${parts.ports['zope-front']}/VirtualHostBase/\${options.scheme}/\${options.host}:\${options.port}/VirtualHostRoot/_vh_zmiroot/
+ProxyPass         /          http://${parts.hosts['zope-front']}:${parts.ports['zope-front']}/ retry=1
+ProxyPassReverse  /          http://${parts.hosts['zope-front']}:${parts.ports['zope-front']}/VirtualHostBase/${options.scheme}/${options.host}:${options.port}/${parts.v.plonesite}/VirtualHostRoot/
+ProxyPassReverse  /zmiroot/  http://${parts.hosts['zope-front']}:${parts.ports['zope-front']}/VirtualHostBase/${options.scheme}/${options.host}:${options.port}/VirtualHostRoot/_vh_zmiroot/
 
-\${extra}
+${options.extra}
 #<IfVersion < 2.3>
-#RewriteLog "\${parts.buildout.directory}/var/log/apache/rewrite.log"
+#RewriteLog "${parts.buildout.directory}/var/log/apache/rewrite.log"
 #RewriteLogLevel 3
 #</IfVersion>
 #<IfVersion >= 2.3>
@@ -65,15 +65,15 @@ ProxyPassReverse  /zmiroot/  http://\${parts.hosts['zope-front']}:\${parts.ports
 #end raw
 #if $with_cache_support
 #raw
-<VirtualHost \${options.listen}:\${options.port}>
-ServerAdmin     \${parts.v['reverse-proxy-admin']}
-DocumentRoot    \${parts.buildout.directory}/www/htdocs
-ServerName      \${options['edit-host']}
-ErrorLog        \${parts.buildout.directory}/var/log/apache/\${options['edit-host']}_log
-TransferLog     \${parts.buildout.directory}/var/log/apache/\${options['edit-host']}-access_log
-CustomLog       \${parts.buildout.directory}/var/log/apache/\${options['edit-host']}-access_log combined
+<VirtualHost ${options.listen}:${options.port}>
+ServerAdmin     ${parts.v['reverse-proxy-admin']}
+DocumentRoot    ${parts.buildout.directory}/www/htdocs
+ServerName      ${options['edit-host']}
+ErrorLog        ${parts.buildout.directory}/var/log/apache/${options['edit-host']}_log
+TransferLog     ${parts.buildout.directory}/var/log/apache/${options['edit-host']}-access_log
+CustomLog       ${parts.buildout.directory}/var/log/apache/${options['edit-host']}-access_log combined
 DirectoryIndex   index.html index.htm
-<Directory "\${parts.buildout.directory}">
+<Directory "${parts.buildout.directory}">
     Options  +ExecCGI +IncludesNOEXEC +FollowSymLinks -Indexes
     <IfVersion < 2.3>
     Order allow,deny
@@ -97,26 +97,26 @@ ProxyRequests off
 </Proxy>
 RewriteEngine  on
 RewriteCond %{REQUEST_URI} ^/zmiroot
-RewriteRule ^/(.*)$  /VirtualHostBase/\${options.scheme}/\${options['edit-host']}:\${options.port}/VirtualHostRoot/_vh_zmiroot$1
+RewriteRule ^/(.*)$  /VirtualHostBase/${options.scheme}/${options['edit-host']}:${options.port}/VirtualHostRoot/_vh_zmiroot$1
 
 # maintenance page
-RewriteCond \${parts.buildout.directory}/www/htdocs/maintainance/index.html -f
+RewriteCond ${parts.buildout.directory}/www/htdocs/maintainance/index.html -f
 RewriteCond %{REQUEST_URI} !^/(maintainance|zmiroot)
 RewriteRule $ /maintainance/maintainance.html [R=302,L]
 
 # /-> vhmonster proxyreverse because of redirects !
-RewriteCond \${parts.buildout.directory}/www/htdocs/maintainance/index.html !-f
+RewriteCond ${parts.buildout.directory}/www/htdocs/maintainance/index.html !-f
 RewriteCond %{REQUEST_URI} !^/(maintainance|.*zmiroot)
-RewriteRule ^/(.*)$ /VirtualHostBase/\${options.scheme}/\${options['edit-host']}:\${options.port}/\${parts.v.plonesite}/VirtualHostRoot/$1 [L,PT]
+RewriteRule ^/(.*)$ /VirtualHostBase/${options.scheme}/${options['edit-host']}:${options.port}/${parts.v.plonesite}/VirtualHostRoot/$1 [L,PT]
 
 # for https://issues.apache.org/bugzilla/show_bug.cgi?id=53218, only use a simple worker url
-ProxyPass         /         http://\${parts.hosts['zope-front']}:\${parts.ports['zope-front']}/ retry=1
-ProxyPassReverse  /         http://\${parts.hosts['zope-front']}:\${parts.ports['zope-front']}/VirtualHostBase/\${options.scheme}/\${options['edit-host']}:\${options.port}/\${parts.v.plonesite}/VirtualHostRoot/
-ProxyPassReverse  /zmiroot/ http://\${parts.hosts['zope-front']}:\${parts.ports['zope-front']}/VirtualHostBase/\${options.scheme}/\${options['edit-host']}:\${options.port}/VirtualHostRoot/_vh_zmiroot/
+ProxyPass         /         http://${parts.hosts['zope-front']}:${parts.ports['zope-front']}/ retry=1
+ProxyPassReverse  /         http://${parts.hosts['zope-front']}:${parts.ports['zope-front']}/VirtualHostBase/${options.scheme}/${options['edit-host']}:${options.port}/${parts.v.plonesite}/VirtualHostRoot/
+ProxyPassReverse  /zmiroot/ http://${parts.hosts['zope-front']}:${parts.ports['zope-front']}/VirtualHostBase/${options.scheme}/${options['edit-host']}:${options.port}/VirtualHostRoot/_vh_zmiroot/
 
-\${options.extra}
+${options.extra}
 #<IfVersion < 2.3>
-#RewriteLog "\${parts.buildout.directory}/var/log/apache/rewrite.log"
+#RewriteLog "${parts.buildout.directory}/var/log/apache/rewrite.log"
 #RewriteLogLevel 3
 #</IfVersion>
 #<IfVersion >= 2.3>
