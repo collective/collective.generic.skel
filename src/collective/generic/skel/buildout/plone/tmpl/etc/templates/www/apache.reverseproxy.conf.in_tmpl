@@ -1,4 +1,52 @@
 #raw
+{% if options.server_aliases.strip() %}
+{% for h in options.server_aliases.split(',') %}
+<VirtualHost ${options.listen}:${options.port}>
+ServerAdmin     ${parts.v['reverse-proxy-admin']}
+DocumentRoot    ${parts.buildout.directory}/www/htdocs/
+ServerName      ${h.strip}
+ErrorLog        ${parts.buildout.directory}/var/log/apache/${h.strip}_log
+TransferLog     ${parts.buildout.directory}/var/log/apache/${h.strip}-access_log
+CustomLog       ${parts.buildout.directory}/var/log/apache/${h.strip}-access_log combined
+DirectoryIndex   index.html index.htm
+<Directory "${parts.buildout.directory}/www/htdocs">
+    Options  +ExecCGI +IncludesNOEXEC +FollowSymLinks -Indexes
+    AllowOverride All
+    <IfVersion < 2.3>
+    Order allow,deny
+    Allow from all
+    </IfVersion>
+    <IfVersion >= 2.3>
+    Require all granted
+    </IfVersion>
+{% if parts.v.get('http-users', '').strip() %}
+AuthType Basic
+AuthName "Restricted website"
+AuthBasicProvider file
+AuthUserFile ^${parts.buildout.directory}/www/htusers;
+Require valid-user
+{% end %}
+</Directory>
+ProxyRequests off
+<Proxy *>
+  Order allow,deny
+  Allow from all
+</Proxy>
+Redirect permanent / http://${options.host}/
+RewriteEngine  on
+${options.extra}
+#<IfVersion < 2.3>
+#RewriteLog "${parts.buildout.directory}/var/log/apache/rewrite.log"
+#RewriteLogLevel 3
+#</IfVersion>
+#<IfVersion >= 2.3>
+#LogLevel warn rewrite:trace3
+#</IfVersion>
+</VirtualHost>
+{% end %}
+{% end %}
+
+
 <VirtualHost ${options.listen}:${options.port}>
 ServerAdmin     ${parts.v['reverse-proxy-admin']}
 DocumentRoot    ${parts.buildout.directory}/www/htdocs/

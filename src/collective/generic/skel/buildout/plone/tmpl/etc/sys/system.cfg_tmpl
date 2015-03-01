@@ -60,6 +60,7 @@ scheme = \${v:reverse-proxy-scheme}
 port = \${v:reverse-proxy-port}
 listen = \${v:reverse-proxy-listen}
 extra=\${v:apache-extra}
+server_aliases = \${v:server_aliases}
 
 [nginx_vhost]
 recipe = collective.recipe.template[genshi]:genshi
