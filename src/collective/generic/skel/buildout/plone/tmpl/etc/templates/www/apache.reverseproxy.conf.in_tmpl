@@ -114,7 +114,7 @@ ProxyPass         /         http://\${parts.hosts['zope-front']}:\${parts.ports[
 ProxyPassReverse  /         http://\${parts.hosts['zope-front']}:\${parts.ports['zope-front']}/VirtualHostBase/\${options.scheme}/\${options['edit-host']}:\${options.port}/\${parts.v.plonesite}/VirtualHostRoot/
 ProxyPassReverse  /zmiroot/ http://\${parts.hosts['zope-front']}:\${parts.ports['zope-front']}/VirtualHostBase/\${options.scheme}/\${options['edit-host']}:\${options.port}/VirtualHostRoot/_vh_zmiroot/
 
-\${extra}
+\${options.extra}
 #<IfVersion < 2.3>
 #RewriteLog "\${parts.buildout.directory}/var/log/apache/rewrite.log"
 #RewriteLogLevel 3
