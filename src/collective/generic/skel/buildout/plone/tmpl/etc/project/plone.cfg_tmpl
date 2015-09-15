@@ -285,6 +285,7 @@ http-address = \${hosts:instance3}:\${ports:instance3}
 #if $with_supervisor_instance4
 [instance4]
 <= instance
+http-address = \${hosts:instance4}:\${ports:instance4}
 
 #end if
 # Use this section to download additional old-style products.
