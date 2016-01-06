@@ -33,7 +33,7 @@ $hr
 #end if
 
 [buildout]
-extensions = mr.developer buildout-versions
+extensions = mr.developer
 timeout = 3
 unzip=true
 find-links =
@@ -61,6 +61,7 @@ allow-hosts =
      *www.riverbankcomputing.com*
      *.selenic.com*
 buildout_versions_file = \${buildout:directory}/etc/project/kgs.cfg
+show-picked-versions = true
 extends =
 #if $major > 3:
     http://dist.plone.org/release/${plone_version}/versions.cfg
